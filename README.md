@@ -20,12 +20,6 @@ Some packages will be required:
     conda install geopandas dataprep
 
 
-Background and funding
-======================
-
-**cuba** has been developed by researchers at George Mason University.
-
-
 Contributors
 ============
-- Ed Oughton (George Mason University) (Project lead)
+- Ed Oughton (George Mason University)
