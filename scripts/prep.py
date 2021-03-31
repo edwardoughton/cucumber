@@ -469,7 +469,7 @@ def find_nodes(country, regions):
         nodes.loc[(nodes['sum'] <= 5000) | (nodes['sum'] < 10000), 'type'] = '5-10k'
         nodes.loc[(nodes['sum'] <= 1000) | (nodes['sum'] < 5000), 'type'] = '1-5k'
         nodes.loc[(nodes['sum'] <= 500) | (nodes['sum'] < 1000), 'type'] = '0.5-1k'
-        nodes.loc[(nodes['sum'] <= 500), 'type'] = '<0.5k'
+        nodes.loc[(nodes['sum'] <= 500), 'type'] = '0.1-0.5k'
         nodes = nodes.dropna()
 
         for idx, item in nodes.iterrows():
