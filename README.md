@@ -17,7 +17,7 @@ Activate it (run this each time you switch projects):
 
 Some packages will be required:
 
-    conda install geopandas dataprep
+    conda install geopandas rasterio rasterstats
 
 
 Contributors
