@@ -66,11 +66,10 @@ def grep_folder():
 
             network_type = os.path.basename(folder)
 
-            # print('--Working on {} with {}'.format(file_type, network_type))
-
             search_path = os.path.join(directory, network_type)
 
             for path in Path(search_path).rglob('*{}'.format(file_type)):
+
                 file_name = os.path.basename(path)
 
                 # if not file_name == 'Claro_KML_Enlaces_of138.gdb':
@@ -87,17 +86,20 @@ def grep_folder():
                             os.path.basename(os.path.splitext(path)[0]),
                             layer
                         )
-
                         path_out = os.path.join(folder, filename + '.shp')
-                        gdf.to_file(path_out)
+                        gdf.to_file(path_out, crs='epsg:4326')
+                        continue
 
                 try:
-                    gdf = gpd.read_file(path, crs='epsg:4328')
-                    path_out = os.path.join(folder, os.path.basename(path) + '.shp')
-                    gdf.to_file(path_out)
+                    ext = os.path.basename(path)[-4:]
+                    filename = os.path.basename(path)[:-4]
+                    gdf = gpd.read_file(path, crs='epsg:4326')
+                    path_out = os.path.join(folder,  filename + ext)
+                    gdf.to_file(path_out, crs='epsg:4326')
 
                 except:
                     print('path failed: {}'.format(path))
+
 
 
 if __name__ == "__main__":
