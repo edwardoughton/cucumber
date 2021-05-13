@@ -8,10 +8,11 @@ May 2021
 """
 import os
 import configparser
+import math
 import pandas as pd
 import geopandas as gpd
 from tqdm import tqdm
-from shapely.geometry import LineString, shape
+from shapely.geometry import LineString, shape, MultiPoint
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
@@ -198,6 +199,10 @@ def process_fiber():
     files = os.listdir(os.path.join(DATA_INTERMEDIATE, 'Fiber Optic Backbone'))#[:20]
 
     for filename in files:
+
+        # if not filename == 'RED GAS ANDES.shp':
+        #     continue
+
         if os.path.splitext(filename)[1] == '.shp':
 
             path = os.path.join(DATA_INTERMEDIATE, 'Fiber Optic Backbone', filename)
@@ -210,11 +215,17 @@ def process_fiber():
                 continue
 
             for idx, routing_structure in data.iterrows():
+
+                if math.isnan(routing_structure['geometry'].length):
+                    continue
+
                 if routing_structure['geometry'].geom_type == 'Point':
                     output.append({
                         'type': 'Feature',
                         'geometry': routing_structure['geometry'],
-                        'properties': {}
+                        'properties': {
+                            'filename': filename
+                        }
                     })
                 elif routing_structure['geometry'].geom_type == 'LineString':
 
@@ -223,11 +234,10 @@ def process_fiber():
                     for node in nodes:
                         output.append({
                             'type': 'Feature',
-                            'geometry': {
-                                'type': 'Point',
-                                'coordinates': [node[0], node[1]],
-                            },
-                            'properties': {},
+                            'geometry': node,
+                            'properties': {
+                                'filename': filename
+                            }
                         })
                 else:
                     print('Did not recognize stated geometry type {}'.format(
@@ -251,28 +261,13 @@ def get_nodes(routing_structure):
     """
     new_routing_nodes = []
 
-    point_start = routing_structure['geometry'].coords[0]
-    point_end = routing_structure['geometry'].coords[-1]
+    points_num = int(round(routing_structure['geometry'].length / 1000))
 
-    new_routing_nodes.append(point_start)
-    new_routing_nodes.append(point_end)
+    line = routing_structure['geometry']
+    new_routing_nodes = MultiPoint([line.interpolate((i/points_num),
+        normalized=True) for i in range(1, points_num)])
 
-    if routing_structure['geometry'].length <= 250:
-        return new_routing_nodes
-
-    while not point_end == point_start:
-
-        total_remaining_path = LineString([point_start, point_end])
-
-        intermediate_point = total_remaining_path.interpolate(250).coords[0]
-
-        new_routing_nodes.append(intermediate_point)
-        point_start = intermediate_point
-
-    #remove duplicate nodes
-    new_routing_nodes = list(dict.fromkeys(new_routing_nodes))
-
-    return new_routing_nodes
+    return list(new_routing_nodes)
 
 
 if __name__ == "__main__":
