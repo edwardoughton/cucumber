@@ -1,5 +1,5 @@
 import pytest
-from qubic.demand import (estimate_demand, get_per_user_capacity,
+from cuba.demand import (estimate_demand, get_per_user_capacity,
     estimate_arpu, discount_arpu)
 
 
@@ -25,7 +25,7 @@ def test_estimate_demand(
         setup_penetration_lut,
         {'urban': {2020: 50}}
     )
-
+    print(answer)
     # pop = 10000
     # pen = 50%
     # = 5000 phones
@@ -168,7 +168,7 @@ def test_estimate_demand(
         ((smartphones_on_network * 50 / 100 / 2) * 11) / 11
     )
 
-    setup_region[0]['population'] = 0
+    setup_region[0]['population_total'] = 0
     setup_region[0]['population_km2'] = 0
 
     answer, annual_answer = estimate_demand(

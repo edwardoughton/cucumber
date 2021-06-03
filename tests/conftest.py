@@ -93,11 +93,11 @@ def setup_country_parameters():
                     'bandwidth': '2x10',
                     'status': 'inactive',
                 },
-                {
-                    'frequency': 2100,
-                    'bandwidth': '2x10',
-                    'status': 'active',
-                },
+                # {
+                #     'frequency': 2100,
+                #     'bandwidth': '2x10',
+                #     'status': 'active',
+                # },
             ],
             '5G': [
                 {

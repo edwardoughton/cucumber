@@ -1,5 +1,5 @@
 import pytest
-from qubic.assess import (get_spectrum_costs, calculate_tax,
+from cuba.assess import (get_spectrum_costs, calculate_tax,
     calculate_profit, assess,
     estimate_subsidies, allocate_available_excess)
 

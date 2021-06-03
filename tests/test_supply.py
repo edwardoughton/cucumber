@@ -1,6 +1,6 @@
 import pytest
-from qubic.demand import estimate_demand
-from qubic.supply import (estimate_supply, find_site_density,
+from cuba.demand import estimate_demand
+from cuba.supply import (estimate_supply, find_site_density,
     estimate_site_upgrades, estimate_backhaul_upgrades)
 
 

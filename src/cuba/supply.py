@@ -252,6 +252,7 @@ def lookup_capacity(capacity_lut, env, ant_type, frequency,
     #     frequency = '1800'
     # if frequency == '2600':
     #     frequency = '2100'
+
     if (env, ant_type, frequency, generation, ci) not in capacity_lut:
         raise KeyError("Combination %s not found in lookup table",
                        (env, ant_type, frequency, generation, ci))

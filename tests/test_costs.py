@@ -1,6 +1,6 @@
 import pytest
 import math
-from qubic.costs import (
+from cuba.costs import (
     upgrade_existing_site,
     greenfield_site,
     backhaul_quantity,

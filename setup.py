@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-"""Setup qubic package
+"""Setup cuba package
 """
 from glob import glob
 from os.path import basename, splitext
