@@ -38,8 +38,8 @@ def grep_folder():
     )
 
     folders = [
-        os.path.join(DATA_INTERMEDIATE, 'Mobile Broadband'),
-        os.path.join(DATA_INTERMEDIATE, 'Fiber Optic Backbone'),
+        os.path.join(DATA_INTERMEDIATE, 'CHL', 'existing_network', 'Mobile Broadband'),
+        os.path.join(DATA_INTERMEDIATE, 'CHL', 'existing_network', 'Fiber Optic Backbone'),
         # os.path.join(DATA_INTERMEDIATE, 'Fixed Broadband'),
 
     ]
@@ -60,15 +60,7 @@ def grep_folder():
     file_extensions_excluded = set()
     not_in_inclusions = set()
 
-    # exclusions = [
-    #     # 'MMOO',
-    #     # '138',
-    #     # 'CHILE Division Regional',
-    #     # 'Enlaces_MMOO_2019_kmz',
-    #     # 'Nodos_oficio_138_emailv2',
-    # ]
-
-    inclusions = [
+    inclusions_fiber = [
         "Celeo Redes.gdb",
         "Troncales CLARO_2 LD3T -A.shp",
         "Trazado_FO_CMET_2018.shp",
@@ -156,21 +148,30 @@ def grep_folder():
         "Yafun_mapa_foa.shp",
     ]
 
+    inclusions_mobile = [
+        'ELEMENTOS_AUTORIZATORIOS_EN_SERVICIO.shp',
+        'CELLID_2021_03.shp',
+
+    ]
+
+    inclusions = inclusions_mobile #+ inclusions_fiber
+
     for path in Path(directory).rglob('*'):
 
         if 'mobile' in str(path).lower():
-            folder = 'Mobile Broadband'
+            folder = os.path.join(DATA_INTERMEDIATE, 'CHL',
+                'existing_network','Mobile Broadband')
         elif 'fiber' in str(path).lower():
-            folder = 'Fiber Optic Backbone'
+            folder = os.path.join(DATA_INTERMEDIATE, 'CHL',
+                'existing_network', 'Fiber Optic Backbone')
         elif 'Fiber 2' in str(path).lower():
-            folder = 'Fiber Optic Backbone'
+            folder = os.path.join(DATA_INTERMEDIATE, 'CHL',
+                'existing_network', 'Fiber Optic Backbone')
         else:
-            folder = 'unknown'
+            folder = os.path.join(DATA_INTERMEDIATE, 'CHL',
+                'existing_network', 'unknown')
 
         file_extension = os.path.splitext(path)[1].lower()
-
-        # if not file_extension == '.kmz':
-        #     continue
 
         file_name = os.path.basename(path)
 
@@ -180,9 +181,6 @@ def grep_folder():
         if not file_name in inclusions:
             not_in_inclusions.add(file_name)
             continue
-
-        # if any(excp in file_name for excp in exclusions):
-        #         continue
 
         #extract .kml from .kmz before processing
         if file_extension == '.kmz':
@@ -198,7 +196,7 @@ def grep_folder():
                     os.path.basename(os.path.splitext(path)[0]),
                     layer
                 )
-                path_out = os.path.join(DATA_INTERMEDIATE, folder, filename + '.shp')
+                path_out = os.path.join(folder, filename + '.shp')
                 gdf.to_file(path_out, crs='epsg:4326')
                 files_included.add(file_name)
                 continue
@@ -213,12 +211,12 @@ def grep_folder():
 
             if 'Point' in [i for i in gdf['geometry'].geom_type]:
                 points = gdf.loc[gdf['geometry'].geom_type == 'Point']
-                path_out = os.path.join(DATA_INTERMEDIATE, folder, file_name + '_points' + '.shp')
+                path_out = os.path.join(folder, file_name + '_points' + '.shp')
                 points.to_file(path_out, crs='epsg:4326')
                 files_included.add(file_name)
             elif 'LineString' in [i for i in gdf['geometry'].geom_type]:
                 linestrings = gdf.loc[gdf['geometry'].geom_type == 'LineString']
-                path_out = os.path.join(DATA_INTERMEDIATE, folder, file_name + '_lines' + '.shp')
+                path_out = os.path.join(folder, file_name + '_lines' + '.shp')
                 linestrings.to_file(path_out, crs='epsg:4326')
                 files_included.add(file_name)
             else:
@@ -231,7 +229,7 @@ def grep_folder():
             except:
                 files_not_included.add(file_name)
                 continue
-            path_out = os.path.join(DATA_INTERMEDIATE, folder,  filename + '.shp')
+            path_out = os.path.join(folder,  filename + '.shp')
             gdf.to_file(path_out, crs='epsg:4326')
             files_included.add(file_name)
 
@@ -260,4 +258,4 @@ if __name__ == "__main__":
     #automated search and extract
     grep_folder()
 
-    get_electricity_data()
+    # get_electricity_data()

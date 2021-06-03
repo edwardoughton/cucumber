@@ -107,3 +107,6 @@ venv.bak/
 /data
 vis/figures/*
 results/*
+reports/countries/*
+reports/images/*
+reports/templates/*
