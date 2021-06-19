@@ -19,6 +19,29 @@ Some packages will be required:
 
     conda install geopandas rasterio rasterstats
 
+Getting Started
+============
+
+To begin running the code, we first need to collect the data:
+
+    python scripts/collect_data.py
+
+And then process the demand inputs:
+
+    python scripts/demand.py
+
+Next, we can preprocess other required data:
+
+    python scripts/preprocess.py
+
+Before identifying local sites:
+
+    python scripts/supply.py
+
+The energy layers also need processing:
+
+    python scripts/energy.py
+
 
 Contributors
 ============

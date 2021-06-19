@@ -18,7 +18,7 @@ import pyproj
 from shapely.geometry import Point, LineString, Polygon, MultiPolygon, shape, mapping, box
 from shapely.ops import unary_union, nearest_points, transform
 import rasterio
-# import networkx as nx
+import networkx as nx
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 from rasterio.mask import mask
 from rasterstats import zonal_stats, gen_zonal_stats
@@ -31,96 +31,6 @@ BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
-
-
-def process_country_shapes(country):
-    """
-    Creates a single national boundary for the desired country.
-    Parameters
-    ----------
-    country : dict
-        Contains all country-specific information for modeling.
-    """
-    iso3 = country['iso3']
-
-    path = os.path.join(DATA_INTERMEDIATE, iso3)
-
-    if os.path.exists(os.path.join(path, 'national_outline.shp')):
-        return 'Already completed national outline processing'
-
-    if not os.path.exists(path):
-        #Creating new directory
-        os.makedirs(path)
-
-    shape_path = os.path.join(path, 'national_outline.shp')
-
-    #Loading all country shapes
-    path = os.path.join(DATA_RAW, 'gadm36_levels_shp', 'gadm36_0.shp')
-    countries = gpd.read_file(path)
-
-    #Getting specific country shape
-    single_country = countries[countries.GID_0 == iso3]
-
-    #Excluding small shapes
-    single_country['geometry'] = single_country.apply(
-        exclude_small_shapes, axis=1)
-
-    #Adding ISO country code and other global information
-    glob_info_path = os.path.join(DATA_RAW, 'global_information.csv')
-    load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
-    single_country = single_country.merge(
-        load_glob_info,left_on='GID_0', right_on='ISO_3digit')
-
-    #Exporting processed country shape
-    single_country.to_file(shape_path, driver='ESRI Shapefile')
-
-    return
-
-
-def process_regions(country):
-    """
-    Function for processing the lowest desired subnational regions for the
-    chosen country.
-    Parameters
-    ----------
-    country : dict
-        Contains all country-specific information for modeling.
-    """
-    regions = []
-
-    iso3 = country['iso3']
-    level = country['regional_level']
-
-    for regional_level in range(1, level + 1):
-
-        filename = 'regions_{}_{}.shp'.format(regional_level, iso3)
-        folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
-        path_processed = os.path.join(folder, filename)
-
-        if os.path.exists(path_processed):
-            continue
-
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-
-        filename = 'gadm36_{}.shp'.format(regional_level)
-        path_regions = os.path.join(DATA_RAW, 'gadm36_levels_shp', filename)
-        regions = gpd.read_file(path_regions)
-
-        #Subsetting regions
-        regions = regions[regions.GID_0 == iso3]
-
-        #Excluding small shapes
-        regions['geometry'] = regions.apply(exclude_small_shapes, axis=1)
-
-        try:
-            #Writing global_regions.shp to file
-            regions.to_file(path_processed, driver='ESRI Shapefile')
-        except:
-            print('Unable to write {}'.format(filename))
-            pass
-
-    return
 
 
 def process_settlement_layer(country):
@@ -1150,12 +1060,6 @@ if __name__ == '__main__':
 
         print('Working on {}'.format(country['iso3']))
 
-        ### Processing country boundary ready to export
-        process_country_shapes(country)
-
-        ### Processing regions ready to export
-        process_regions(country)
-
         ### Processing country population raster ready to export
         process_settlement_layer(country)
 
@@ -1165,19 +1069,19 @@ if __name__ == '__main__':
         ### Find largest settlement in each region ready to export
         find_largest_regional_settlement(country)
 
-        # ### Get settlement routing paths
-        # get_settlement_routing_paths(country)
+        ### Get settlement routing paths
+        get_settlement_routing_paths(country)
 
-        # ### Create regions to model
-        # create_regions_to_model(country)
+        ### Create regions to model
+        create_regions_to_model(country)
 
-        # ### Create routing buffer zone
-        # create_routing_buffer_zone(country)
+        ### Create routing buffer zone
+        create_routing_buffer_zone(country)
 
-        # ### Generate raster tile lookup
-        # create_raster_tile_lookup(country)
+        ### Generate raster tile lookup
+        create_raster_tile_lookup(country)
 
-        # ### Create population and terrain regional lookup
-        # create_pop_and_terrain_regional_lookup(country)
+        ### Create population and terrain regional lookup
+        create_pop_and_terrain_regional_lookup(country)
 
     print('Preprocessing complete')
