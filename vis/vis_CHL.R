@@ -191,6 +191,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
 
 path = file.path(folder, 'figures', 'social_costs_by_sharing_strategy.png')
 ggsave(path, units="in", width=8, height=7, dpi=300)
+dir.create(file.path(folder, '..', 'reports', 'images', 'CHL'), showWarnings = FALSE)
 path = file.path(folder, '..', 'reports', 'images', 'CHL', 'social_costs_by_sharing_strategy.png')
 ggsave(path, units="in", width=8, height=7, dpi=300)
 dev.off()
