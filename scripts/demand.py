@@ -38,8 +38,8 @@ def process_country_shapes(iso3):
     """
     path = os.path.join(DATA_INTERMEDIATE, iso3)
 
-    if os.path.exists(os.path.join(path, 'national_outline.shp')):
-        return 'Already completed national outline processing'
+    # if os.path.exists(os.path.join(path, 'national_outline.shp')):
+    #     return 'Already completed national outline processing'
 
     if not os.path.exists(path):
         #Creating new directory
@@ -59,6 +59,23 @@ def process_country_shapes(iso3):
     load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
     single_country = single_country.merge(
         load_glob_info,left_on='GID_0', right_on='ISO_3digit')
+
+    single_country = single_country.to_crs('epsg:3857')
+
+    geoms = []
+
+    for idx, item in single_country.iterrows():
+        for poly in item['geometry']:
+            if poly.representative_point().coords[0][0] > -8500000:
+            # if poly.area > 200000000: #(200 km^2)
+                geoms.append({
+                    'type': 'Polygon',
+                    'geometry': poly,
+                    'properties': {}
+                })
+
+    single_country = gpd.GeoDataFrame.from_features(geoms, crs='epsg:3857')
+    single_country = single_country.to_crs('epsg:4326')
 
     #Exporting processed country shape
     single_country.to_file(shape_path, driver='ESRI Shapefile')
@@ -1068,24 +1085,24 @@ if __name__ == "__main__":
     iso3 = 'CHL'
     level = 3
 
-    # process_country_shapes(iso3)
+    process_country_shapes(iso3)
 
-    # process_regions(iso3, level)
+    process_regions(iso3, level)
 
-    # load_entidades_data()
+    load_entidades_data()
 
-    # load_metropolitana_data()
+    load_metropolitana_data()
 
-    # combine_census_data()
+    combine_census_data()
 
-    # subset_census_units_by_region(iso3, level)
+    subset_census_units_by_region(iso3, level)
 
-    # process_night_lights(iso3, level)
+    process_night_lights(iso3, level)
 
-    # process_settlement_layer(iso3, level)
+    process_settlement_layer(iso3, level)
 
     get_regional_data(iso3, level)
 
-    # forecast_subscriptions(country)
+    forecast_subscriptions(country)
 
-    # forecast_smartphones(country, level)
+    forecast_smartphones(country, level)
