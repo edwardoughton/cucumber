@@ -62,10 +62,7 @@ def cut_grid_finder_targets():
 
         geo_df = gpd.GeoDataFrame(geometry=gpd.GeoSeries(region['geometry']))
 
-        # geo_df.set_crs('epsg:4326')
         bbox = geo_df.envelope
-        # print(bbox)
-        # bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
 
         geo = gpd.GeoDataFrame(
             {'geometry': bbox}, index=[0], crs='epsg:4326')
@@ -86,9 +83,6 @@ def cut_grid_finder_targets():
 
         with rasterio.open(path_out, "w", **out_meta) as dest:
                 dest.write(out_img)
-
-        # folder = os.path.join(DATA_INTERMEDIATE, iso3, 'elec_network')
-        # path = os.path.join(folder, 'gridfinder_targets.tif')
 
         with rasterio.open(path_out) as src:
             data = src.read()
