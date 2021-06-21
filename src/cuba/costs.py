@@ -82,10 +82,10 @@ def find_network_cost(region, option, costs, global_parameters,
     counter = collections.Counter()
     for d in regional_asset_cost:
         counter.update(d)
-    test = dict(counter)
+    my_counter = dict(counter)
 
     network_cost = 0
-    for k, v in test.items():
+    for k, v in my_counter.items():
         region[k] = v
         network_cost += v
 
@@ -371,7 +371,6 @@ def calc_costs(region, strategy, cost_structure, backhaul_quantity,
     """
 
     """
-    # generation = strategy.split('_')[0]
     core = strategy.split('_')[1]
     backhaul = strategy.split('_')[2]
 
