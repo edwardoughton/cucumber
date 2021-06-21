@@ -17,6 +17,7 @@ from options import OPTIONS, GLOBAL_PARAMETERS, COSTS
 from cuba.demand import estimate_demand
 from cuba.supply import estimate_supply
 from cuba.assess import assess
+from cuba.energy import assess_energy
 from write import define_deciles, write_demand, write_results, write_inputs
 from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
 from percentages import generate_percentages
@@ -365,7 +366,7 @@ if __name__ == '__main__':
 
         options = OPTIONS[decision_option]
 
-        for country in COUNTRY_LIST:#[:1]:
+        for country in COUNTRY_LIST[:1]:
 
             regional_annual_demand = []
             regional_results = []
@@ -401,7 +402,7 @@ if __name__ == '__main__':
             print('Working on {} in {}'.format(decision_option, iso3))
             print(' ')
 
-            for option in options:
+            for option in options[:1]:
 
                 print('Working on {} and {}'.format(option['scenario'], option['strategy']))
 
@@ -423,7 +424,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)#[:1]
+                    data_initial = load_regions(country, path, sites_lut)[:1]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -448,6 +449,15 @@ if __name__ == '__main__':
                     )
 
                     data_assess = assess(
+                        country,
+                        data_supply,
+                        option,
+                        GLOBAL_PARAMETERS,
+                        country_parameters,
+                        TIMESTEPS
+                    )
+
+                    data_energy = assess_energy(
                         country,
                         data_supply,
                         option,

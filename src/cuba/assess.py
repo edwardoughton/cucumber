@@ -331,6 +331,7 @@ def calculate_total_market_costs(regions, option, country_parameters):
         region['total_phones'] = calc(region, 'phones_on_network', ms)
         region['total_smartphones'] = calc(region, 'smartphones_on_network', ms)
         region['total_market_revenue'] = calc(region, 'total_mno_revenue', ms)
+        region['total_sites'] = calc(region, 'existing_mno_sites', ms)
         region['total_upgraded_sites'] = calc(region, 'upgraded_mno_sites', ms)
         region['total_new_sites'] = calc(region, 'new_mno_sites', ms)
         region['total_ran'] = calc(region, 'ran', ms)
