@@ -250,3 +250,86 @@ def setup_empty_core_lut():
             'MWI.1.1.1_1_existing': 0
         },
     }
+
+@fixture(scope='function')
+def setup_infra_sharing_assets():
+    return {
+    'baseline': [],
+    'passive': [
+        'site_build',
+        'installation',
+        'site_rental',
+        'backhaul',
+    ],
+    'active': [
+        'equipment',
+        'site_build',
+        'installation',
+        'site_rental',
+        'operation_and_maintenance',
+        'power',
+        'backhaul',
+    ],
+    'srn': [
+        'equipment',
+        'site_build',
+        'installation',
+        'site_rental',
+        'operation_and_maintenance',
+        'power',
+        'backhaul',
+        # 'regional_edge',
+        # 'regional_node',
+        # 'core_edge',
+        # 'core_node',
+    ],
+}
+
+
+@fixture(scope='function')
+def setup_cost_types():
+    return {
+    'equipment': 'capex',
+    'site_build': 'capex',
+    'installation': 'capex',
+    'site_rental': 'opex',
+    'operation_and_maintenance': 'opex',
+    'power': 'opex',
+    'backhaul': 'capex_and_opex',
+    'regional_node': 'capex_and_opex',
+    'regional_edge': 'capex_and_opex',
+    'core_node': 'capex_and_opex',
+    'core_edge': 'capex_and_opex',
+}
+
+
+@fixture(scope='function')
+def setup_assets():
+    return [
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'equipment', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        },
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'site_build', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        },
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'installation', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        }
+    ]
+
+
+@fixture(scope='function')
+def setup_assets_dict():
+    return {
+        'wireless_small': 10000,
+        'core_node': 10000,
+        'site_rental_rural': 10000,
+        'equipment': 10000,
+        'installation': 10000,
+        'site_build': 10000,
+        'core_edge': 10000,
+        'operation_and_maintenance': 10000
+    }
