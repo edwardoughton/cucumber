@@ -13,12 +13,14 @@ import pandas as pd
 import geopandas
 from collections import OrderedDict
 
-from options import OPTIONS, GLOBAL_PARAMETERS, COSTS
+from options import (OPTIONS, GLOBAL_PARAMETERS, COSTS, INFRA_SHARING_ASSETS,
+    COST_TYPES, ENERGY_DEMAND, TECH_LUT)
 from cuba.demand import estimate_demand
 from cuba.supply import estimate_supply
 from cuba.assess import assess
 from cuba.energy import assess_energy
-from write import define_deciles, write_demand, write_results, write_inputs
+from write import (define_deciles, write_demand, write_results, write_inputs,
+    write_assets, write_energy)
 from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
 from percentages import generate_percentages
 
@@ -61,12 +63,12 @@ def load_regions(country, path, sites_lut):
                     # 'population_over_10yrs_km2': item['population_over_10yrs_km2'],
                     'mean_luminosity_km2': item['mean_luminosity_km2'],
                     'geotype': item['geotype'],
-
                     'sites_4G': value['sites_4G'],
                     'total_estimated_sites': value['total_estimated_sites'],
                     'backhaul_wireless': value['backhaul_wireless'],
                     'backhaul_fiber': value['backhaul_fiber'],
-
+                    'on_grid_perc': value['on_grid_perc'],
+                    'off_grid_perc': value['off_grid_perc'],
                 })
 
     return data_initial
@@ -257,7 +259,7 @@ def load_smartphones(scenario, path):
     return output
 
 
-def load_sites(country, path):
+def load_sites(country, sites1, sites2):
     """
     Load sites lookup table.
 
@@ -266,20 +268,24 @@ def load_sites(country, path):
 
     GID_id = 'GID_{}'.format(country['regional_level'])
 
-    with open(path, 'r') as source:
-        reader = csv.DictReader(source)
-        for row in reader:
-            output[row[GID_id]] = {
-                'GID_0': row['GID_0'],
-                # 'sites_2G': int(row['sites_2G']),
-                # 'sites_3G': int(row['sites_3G']),
-                'sites_4G': int(row['sites_4G']),
-                'total_estimated_sites': int(row['total_estimated_sites']),
-                'backhaul_wireless': float(row['backhaul_wireless']),
-                'backhaul_fiber':  float(row['backhaul_fiber']),
-                # 'on_grid': float(row['on_grid']),
-                # 'off_grid': float(row['off_grid']),
-            }
+    sites1 = pd.read_csv(sites1)
+    sites2 = pd.read_csv(sites2)
+
+    for idx, site1 in sites1.iterrows():
+        for idx, site2 in sites2.iterrows():
+            if site1['GID_3'] == site2['GID_id']:
+                output[site1[GID_id]] = {
+                    'GID_0': site1['GID_0'],
+                    # 'sites_2G': int(site1['sites_2G']),
+                    # 'sites_3G': int(site1['sites_3G']),
+                    'sites_4G': int(site1['sites_4G']),
+                    'total_estimated_sites': int(site1['total_estimated_sites']),
+                    'backhaul_wireless': float(site1['backhaul_wireless']),
+                    'backhaul_fiber':  float(site1['backhaul_fiber']),
+                    'on_grid_perc': float(site2['on_grid_perc']),
+                    'off_grid_perc': float(site2['off_grid_perc']),
+                    'total_sites': site2['total_sites'],
+                }
 
     return output
 
@@ -289,9 +295,6 @@ def load_core_lut(path):
     """
     interim = []
 
-    # if not os.path.exists(path):
-    #     print('CAUTION: COULD NOT FIND CORE LUT')
-    # else:
     with open(path, 'r') as source:
         reader = csv.DictReader(source)
         for row in reader:
@@ -371,6 +374,8 @@ if __name__ == '__main__':
             regional_annual_demand = []
             regional_results = []
             regional_cost_structure = []
+            all_assets = []
+            regional_energy_demand = []
 
             iso3 = country['iso3']
 
@@ -391,8 +396,9 @@ if __name__ == '__main__':
             # country['cluster'] = load_cluster(os.path.join(folder, filename), iso3)
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites')
-            filename = 'sites.csv'
-            sites_lut = load_sites(country, os.path.join(folder, filename))
+            sites1 = os.path.join(folder, 'sites.csv')
+            sites2 = os.path.join(folder, 'site_power', 'site_power.csv')
+            sites_lut = load_sites(country, sites1, sites2)
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
             filename = 'core_lut.csv'
@@ -402,7 +408,7 @@ if __name__ == '__main__':
             print('Working on {} in {}'.format(decision_option, iso3))
             print(' ')
 
-            for option in options[:1]:
+            for option in options:#[:1]:
 
                 print('Working on {} and {}'.format(option['scenario'], option['strategy']))
 
@@ -424,7 +430,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)[:1]
+                    data_initial = load_regions(country, path, sites_lut)#[:10]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -436,7 +442,7 @@ if __name__ == '__main__':
                         smartphone_lut
                     )
 
-                    data_supply = estimate_supply(
+                    data_supply, assets = estimate_supply(
                         country,
                         data_demand,
                         capacity_lut,
@@ -445,7 +451,9 @@ if __name__ == '__main__':
                         country_parameters,
                         COSTS,
                         core_lut,
-                        ci
+                        ci,
+                        INFRA_SHARING_ASSETS,
+                        COST_TYPES
                     )
 
                     data_assess = assess(
@@ -459,26 +467,36 @@ if __name__ == '__main__':
 
                     data_energy = assess_energy(
                         country,
-                        data_supply,
+                        data_assess,
+                        assets,
                         option,
                         GLOBAL_PARAMETERS,
                         country_parameters,
-                        TIMESTEPS
+                        TIMESTEPS,
+                        ENERGY_DEMAND,
+                        TECH_LUT
                     )
 
                     final_results = allocate_deciles(data_assess)
 
                     regional_annual_demand = regional_annual_demand + annual_demand
                     regional_results = regional_results + final_results
+                    all_assets = all_assets + assets
+                    regional_energy_demand = regional_energy_demand + data_energy
+
+            all_results = all_results + regional_results
 
             write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            all_results = all_results + regional_results
+            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+
+            write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
             write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
             write_inputs(OUTPUT_COUNTRY, country, country_parameters,
                             GLOBAL_PARAMETERS, COSTS, decision_option)
+
 
         generate_percentages(iso3, decision_option)
 
