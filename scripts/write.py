@@ -389,3 +389,27 @@ def write_inputs(folder, country, country_parameters, global_parameters,
     filename = 'parameters_{}_{}.csv'.format(decision_option, timenow)
     path = os.path.join(folder, filename)
     parameters.to_csv(path, index=False)
+
+
+def write_energy(data_energy, folder, metric):
+    """
+    Write all energy consumption.
+
+    """
+    print('Writing energy')
+    data_energy = pd.DataFrame(data_energy)
+
+    path = os.path.join(folder,'energy_{}.csv'.format(metric))
+    data_energy.to_csv(path, index=True)
+
+
+def write_assets(all_assets, folder, metric):
+    """
+    Write all planned assets.
+
+    """
+    print('Writing assets')
+    all_assets = pd.DataFrame(all_assets)
+
+    path = os.path.join(folder,'assets_{}.csv'.format(metric))
+    all_assets.to_csv(path, index=True)
