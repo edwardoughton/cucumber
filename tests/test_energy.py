@@ -3,7 +3,7 @@ from cuba.energy import assess_energy
 
 
 def test_assess_energy(setup_region, setup_option, setup_global_parameters,
-    setup_country_parameters, setup_timesteps):
+    setup_country_parameters, setup_timesteps, setup_tech_lut):
 
     setup_region[0]['new_sites'] = 1
 
@@ -16,6 +16,8 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
             'total_sites': 10,
             'total_upgraded_sites': 5,
             'total_new_sites': 5,
+            'on_grid_perc': 50,
+            'off_grid_perc': 50,
         },
     ]
 
@@ -54,7 +56,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
 
     results = assess_energy('CHL', regions, assets, setup_option,
         setup_global_parameters, setup_country_parameters,
-        setup_timesteps, energy_demand)
+        setup_timesteps, energy_demand, setup_tech_lut)
 
     assert results[0]['equipment_annual_demand_kWh'] == 4380
     assert results[0]['regional_nodes_annual_demand_kwh'] == 4380

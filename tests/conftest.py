@@ -333,3 +333,51 @@ def setup_assets_dict():
         'core_edge': 10000,
         'operation_and_maintenance': 10000
     }
+
+
+@fixture(scope='function')
+def setup_tech_lut():
+    return {
+        'oil': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'gas': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'coal': {
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
+        },
+        'nuclear': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'hydro': {
+            'carbon_per_kWh': 0.01, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
+        },
+        'diesel': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'renewables': {
+            'carbon_per_kWh': 0.1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+        }
+    }
