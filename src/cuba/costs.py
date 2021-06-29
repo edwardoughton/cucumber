@@ -1,18 +1,16 @@
 """
 Cost module
 Author: Edward Oughton
-Date: April 2019
-
-Based off the repo pytal:
-https://github.com/edwardoughton/pytal
+Date: June 2021
 
 """
 import math
 from itertools import tee
 import collections, functools, operator
 
-def find_network_cost(region, option, costs, global_parameters,
-    country_parameters, core_lut):
+
+def find_cost(region, assets, option, costs, global_parameters,
+    country_parameters, infra_sharing_assets, cost_types):
     """
     Calculates the annual total cost using capex and opex.
 
@@ -20,16 +18,21 @@ def find_network_cost(region, option, costs, global_parameters,
     ----------
     region : dict
         The region being assessed and all associated parameters.
-    strategy : str
-        Infrastructure sharing strategy.
+    assets : list of dicts
+        Contains all assets.
+    option : str
+        Infrastructure options covering the scenario and strategy.
     costs : dict
         Contains the costs of each necessary equipment item.
     global_parameters : dict
-        Contains all global_parameters.
-    country_parameters :
-        ???
-    backhaul_lut : dict
-        Backhaul distance by region.
+        Contains all global parameters.
+    country_parameters : dict
+        Contains all country parameters.
+    infra_sharing_assets : dict
+        Shared infra assets lookup by strategy (e.g. passive,
+        active or srn).
+    cost_types : dict
+        Cost types lookup (e.g. capex, opex or both).
 
     Returns
     -------
@@ -38,54 +41,16 @@ def find_network_cost(region, option, costs, global_parameters,
         opex costs.
 
     """
-    strategy = option['strategy']
+    regional_asset_cost = calc_sharing(assets, region, option,
+        country_parameters, infra_sharing_assets)
 
-    new_sites = region['new_mno_sites']
-    upgraded_sites = region['upgraded_mno_sites']
-    all_sites = new_sites + upgraded_sites
+    regional_asset_cost = calc_npv(regional_asset_cost, cost_types, global_parameters,
+        country_parameters)
 
-    new_backhaul = region['backhaul_new']
-
-    regional_cost = []
-    regional_asset_cost = []
-
-    for i in range(1, int(all_sites) + 1):
-
-        if i <= upgraded_sites:
-
-            cost_structure = upgrade_existing_site(region,strategy, costs,
-                global_parameters, core_lut, country_parameters)
-
-            backhaul_quant = backhaul_quantity(i, new_backhaul)
-
-            total_cost, cost_by_asset = calc_costs(region, strategy, cost_structure,
-                backhaul_quant, global_parameters, country_parameters)
-
-            regional_cost.append(total_cost)
-            regional_asset_cost.append(cost_by_asset)
-
-
-        if i > upgraded_sites:
-
-            cost_structure = greenfield_site(region, strategy, costs,
-                global_parameters, core_lut, country_parameters)
-
-            backhaul_quant = backhaul_quantity(i, new_backhaul)
-
-            total_cost, cost_by_asset = calc_costs(region, strategy, cost_structure,
-                backhaul_quant, global_parameters, country_parameters)
-
-            regional_cost.append(total_cost)
-            regional_asset_cost.append(cost_by_asset)
-
-
-    counter = collections.Counter()
-    for d in regional_asset_cost:
-        counter.update(d)
-    my_counter = dict(counter)
+    aggregated_cost = aggregate_costs(regional_asset_cost)
 
     network_cost = 0
-    for k, v in my_counter.items():
+    for k, v in aggregated_cost.items():
         region[k] = v
         network_cost += v
 
@@ -94,46 +59,31 @@ def find_network_cost(region, option, costs, global_parameters,
     return region
 
 
-def backhaul_quantity(i, new_backhaul):
-    if i <= new_backhaul:
-        return 1
-    else:
-        return 0
-
-
-def upgrade_existing_site(region, strategy, costs, global_parameters,
-    core_lut, country_parameters):
+def calc_sharing(assets, region, option, country_parameters, infra_sharing_assets):
     """
     Reflects the baseline scenario of needing to build a single dedicated
     network.
 
     """
-    backhaul = '{}_backhaul'.format(strategy.split('_')[2])
-    sharing = strategy.split('_')[3]
+    sharing = option['strategy'].split('_')[3]
     geotype = region['geotype'].split(' ')[0]
-
-    # generation_core_backhaul_sharing_networks_spectrum_tax
-    # network_strategy = strategy.split('_')[4]
     networks = country_parameters['networks']['baseline' + '_' + geotype]
 
-    shared_assets = INFRA_SHARING_ASSETS[sharing]
+    shared_assets = infra_sharing_assets[sharing]
 
-    assets = {
-        'equipment': costs['equipment'],
-        'installation': costs['installation'],
-        'site_rental': costs['site_rental_{}'.format(geotype)],
-        'operation_and_maintenance': costs['operation_and_maintenance'],
-        'power': costs['power'],
-        'backhaul': get_backhaul_costs(region, backhaul, costs, core_lut),
-        'core_edge': core_costs(region, 'core_edge', costs, core_lut, strategy, country_parameters),
-        'core_node': core_costs(region, 'core_node', costs, core_lut, strategy, country_parameters),
-        'regional_edge': regional_net_costs(region, 'regional_edge', costs, core_lut, strategy, country_parameters),
-        'regional_node': regional_net_costs(region, 'regional_node', costs, core_lut, strategy, country_parameters),
-    }
+    all_keys = set()
+
+    for item in assets:
+        all_keys.add(item['asset'])
 
     cost_structure = {}
 
-    for key, value in assets.items():
+    for key in list(all_keys):
+        value = 0
+        for item in assets:
+            if key == item['asset']:
+                value += item['total_cost']
+
         if not key in shared_assets:
             cost_structure[key] = value
         else:
@@ -148,262 +98,23 @@ def upgrade_existing_site(region, strategy, costs, global_parameters,
     return cost_structure
 
 
-def greenfield_site(region, strategy, costs, global_parameters,
-    core_lut, country_parameters):
+def calc_npv(assets, cost_types, global_parameters, country_parameters):
     """
-    Build a greenfield asset.
-
-    """
-    backhaul = '{}_backhaul'.format(strategy.split('_')[2])
-    sharing = strategy.split('_')[3]
-    geotype = region['geotype'].split(' ')[0]
-
-    # generation_core_backhaul_sharing_networks_spectrum_tax
-    # network_strategy = strategy.split('_')[4]
-    networks = country_parameters['networks']['baseline' + '_' + geotype]
-
-    shared_assets = INFRA_SHARING_ASSETS[sharing]
-
-    assets = {
-        'equipment': costs['equipment'],
-        'site_build': costs['site_build'],
-        'installation': costs['installation'],
-        'site_rental': costs['site_rental_{}'.format(geotype)],
-        'operation_and_maintenance': costs['operation_and_maintenance'],
-        'power': costs['power'],
-        'backhaul': get_backhaul_costs(region, backhaul, costs, core_lut),
-        'core_edge': core_costs(region, 'core_edge', costs, core_lut, strategy, country_parameters),
-        'core_node': core_costs(region, 'core_node', costs, core_lut, strategy, country_parameters),
-        'regional_edge': regional_net_costs(region, 'regional_edge', costs, core_lut, strategy, country_parameters),
-        'regional_node': regional_net_costs(region, 'regional_node', costs, core_lut, strategy, country_parameters),
-    }
-
-    cost_structure = {}
-
-    for key, value in assets.items():
-        if not key in shared_assets:
-            cost_structure[key] = value
-        else:
-            if sharing == 'srn':
-                if geotype == 'urban' or geotype == 'suburban':
-                    cost_structure[key] = value
-                else:
-                    cost_structure[key] = value / networks
-            else:
-                cost_structure[key] = value / networks
-
-    return cost_structure
-
-
-def get_backhaul_costs(region, backhaul, costs, core_lut):
-    """
-    Calculate backhaul costs.
-    # backhaul_fiber backhaul_copper backhaul_wireless	backhaul_satellite
+    Add the time dimension and get the Net Present Value (NPV).
 
     """
-    backhaul_tech = backhaul.split('_')[0]
-    geotype = region['geotype'].split(' ')[0]
-
-    nodes = 0
-    for asset_type in ['core_node', 'regional_node']:
-        for age in ['new', 'existing']:
-            combined_key = '{}_{}'.format(region['GID_id'], age)
-            if 'core_node' in core_lut:
-                # if combined_key in core_lut[asset_type]:
-                nodes += core_lut[asset_type][combined_key]
-
-    node_density_km2 = nodes / region['area_km2']
-    if node_density_km2 > 0:
-        ave_distance_to_a_node_m = (math.sqrt(1/node_density_km2) / 2) * 1000
-    else:
-        ave_distance_to_a_node_m = round(math.sqrt(region['area_km2']) * 1000)
-
-    if backhaul_tech == 'wireless':
-        if ave_distance_to_a_node_m < 15000:
-            tech = '{}_{}'.format(backhaul_tech, 'small')
-            cost = costs[tech]
-        elif 15000 < ave_distance_to_a_node_m < 30000:
-            tech = '{}_{}'.format(backhaul_tech, 'medium')
-            cost = costs[tech]
-        else:
-            tech = '{}_{}'.format(backhaul_tech, 'large')
-            cost = costs[tech] * (ave_distance_to_a_node_m / 30000)
-
-    elif backhaul_tech == 'fiber':
-        tech = '{}_{}_m'.format(backhaul_tech, geotype)
-        cost_per_meter = costs[tech]
-        cost = cost_per_meter * ave_distance_to_a_node_m
-
-    else:
-        print('Did not recognise the backhaul technology {}'.format(backhaul_tech))
-        cost = 0
-
-    return cost
-
-
-def regional_net_costs(region, asset_type, costs, core_lut, strategy,
-    country_parameters):
-    """
-    Return regional asset costs for only the 'new' assets
-    that have been planned.
-
-    """
-    geotype = region['geotype'].split(' ')[0]
-
-    networks = country_parameters['networks']['baseline' + '_' + geotype]
-
-    if asset_type in core_lut.keys():
-
-        combined_key = '{}_{}'.format(region['GID_id'], 'new')
-
-        if combined_key in core_lut[asset_type]:
-
-            if asset_type == 'regional_edge':
-
-                distance_m = core_lut[asset_type][combined_key]
-                cost_m = costs['regional_edge']
-                cost = int(distance_m * cost_m)
-
-                sites = ((region['upgraded_mno_sites'] +
-                    region['new_mno_sites']) / networks)
-
-                if sites == 0:
-                    return 0
-                elif sites <= 1:
-                    return cost * sites
-                else:
-                    return cost / sites
-
-            if asset_type == 'regional_node':
-
-                regional_nodes = core_lut[asset_type][combined_key]
-
-                cost_each = costs['regional_node']
-
-                regional_node_cost = int(regional_nodes * cost_each)
-
-                sites = ((region['upgraded_mno_sites'] +
-                    region['new_mno_sites']) / networks)
-
-                if sites == 0:
-                    return 0
-                elif sites <= 1:
-                    return regional_node_cost
-                else:
-                    return regional_node_cost / sites
-        else:
-            return 0
-
-    return 'Asset name not in lut'
-
-
-def core_costs(region, asset_type, costs, core_lut, strategy,
-    country_parameters):
-    """
-    Return core asset costs for only the 'new' assets that have been planned.
-
-    """
-    geotype = region['geotype'].split(' ')[0]
-    networks = country_parameters['networks']['baseline' + '_' + geotype]
-
-    if asset_type == 'core_edge':
-
-        if asset_type in core_lut.keys():
-
-            total_cost = []
-
-            #only grab the new edges that need to be built
-            combined_key = '{}_{}'.format(region['GID_id'], 'new')
-
-            if combined_key in core_lut[asset_type].keys():
-                distance_m = core_lut[asset_type][combined_key]
-
-                cost = int(distance_m * costs['core_edge'])
-                total_cost.append(cost)
-
-                sites = ((region['upgraded_mno_sites'] +
-                    region['new_mno_sites']) / networks)
-
-                if sites == 0:
-                    return 0
-                elif sites < 1:
-                    return sum(total_cost)
-                else:
-                    return sum(total_cost) / sites
-        else:
-            return 0
-
-    elif asset_type == 'core_node':
-
-        if asset_type in core_lut.keys():
-
-            total_cost = []
-
-            #only grab the new nodes that need to be built
-            combined_key = '{}_{}'.format(region['GID_id'], 'new')
-
-            nodes = core_lut[asset_type][combined_key]
-
-            cost = int(nodes * costs['core_node'])
-            total_cost.append(cost)
-
-            sites = ((region['upgraded_mno_sites'] +
-                region['new_mno_sites']) / networks)
-
-            if sites == 0:
-                return 0
-            elif sites < 1:
-                return sum(total_cost)
-            else:
-                return sum(total_cost) / sites
-
-        else:
-            return 0
-
-    else:
-        print('Did not recognise core asset type {}'.format(asset_type))
-
-    return 0
-
-
-def calc_costs(region, strategy, cost_structure, backhaul_quantity,
-    global_parameters, country_parameters):
-    """
-
-    """
-    core = strategy.split('_')[1]
-    backhaul = strategy.split('_')[2]
-
-    all_sites = region['upgraded_mno_sites'] + region['new_mno_sites']
-
-    total_cost = 0
     cost_by_asset = []
 
-    for asset_name1, cost in cost_structure.items():
-        for asset_name2, type_of_cost in COST_TYPE.items():
+    total_cost = 0
+
+    for asset_name1, cost in assets.items():
+        for asset_name2, type_of_cost in cost_types.items():
             if asset_name1 == asset_name2:
-
-                if asset_name1 == 'backhaul' and backhaul_quantity == 0:
-                    continue
-
-                if asset_name1 == 'regional_node' and backhaul == 'wireless':
-                    continue
-
-                if asset_name1 == 'regional_edge' and backhaul == 'wireless':
-                    continue
 
                 if type_of_cost == 'capex_and_opex':
 
                     cost = discount_capex_and_opex(cost, global_parameters,
                         country_parameters)
-
-                    if asset_name1 in [
-                        'core_edge',
-                        'core_node',
-                        'regional_edge',
-                        'regional_node',
-                        ]:
-                        cost = cost / all_sites
 
                 elif type_of_cost == 'capex':
 
@@ -425,6 +136,14 @@ def calc_costs(region, strategy, cost_structure, backhaul_quantity,
 
     cost_by_asset = {item['asset']: item['cost'] for item in cost_by_asset}
 
+    return cost_by_asset
+
+
+def aggregate_costs(cost_by_asset):
+    """
+    Aggregate the costs.
+
+    """
     ran = [
         'equipment',
         'site_rental',
@@ -463,14 +182,14 @@ def calc_costs(region, strategy, cost_structure, backhaul_quantity,
         if key in core:
             core_cost += value
 
-    cost_by_asset = {
+    aggregated_cost = {
         'ran': ran_cost,
         'backhaul_fronthaul': backhaul_fronthaul_cost,
         'civils': civils_cost,
         'core_network': core_cost,
     }
 
-    return total_cost, cost_by_asset
+    return aggregated_cost
 
 
 def discount_capex_and_opex(capex, global_parameters, country_parameters):
@@ -483,6 +202,7 @@ def discount_capex_and_opex(capex, global_parameters, country_parameters):
         Financial cost.
     global_parameters : dict
         All global model parameters.
+
     Returns
     -------
     discounted_cost : float
@@ -535,50 +255,3 @@ def discount_opex(opex, global_parameters, country_parameters):
     discounted_cost = discounted_cost * (1 + (wacc/100))
 
     return discounted_cost
-
-
-INFRA_SHARING_ASSETS = {
-    'baseline': [],
-    'passive': [
-        'site_build',
-        'installation',
-        'site_rental',
-        'backhaul',
-    ],
-    'active': [
-        'equipment',
-        'site_build',
-        'installation',
-        'site_rental',
-        'operation_and_maintenance',
-        'power',
-        'backhaul',
-    ],
-    'srn': [
-        'equipment',
-        'site_build',
-        'installation',
-        'site_rental',
-        'operation_and_maintenance',
-        'power',
-        'backhaul',
-        # 'regional_edge',
-        # 'regional_node',
-        # 'core_edge',
-        # 'core_node',
-    ],
-}
-
-COST_TYPE = {
-    'equipment': 'capex',
-    'site_build': 'capex',
-    'installation': 'capex',
-    'site_rental': 'opex',
-    'operation_and_maintenance': 'opex',
-    'power': 'opex',
-    'backhaul': 'capex_and_opex',
-    'regional_node': 'capex_and_opex',
-    'regional_edge': 'capex_and_opex',
-    'core_node': 'capex_and_opex',
-    'core_edge': 'capex_and_opex',
-}
