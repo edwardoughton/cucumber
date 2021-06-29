@@ -250,3 +250,134 @@ def setup_empty_core_lut():
             'MWI.1.1.1_1_existing': 0
         },
     }
+
+@fixture(scope='function')
+def setup_infra_sharing_assets():
+    return {
+    'baseline': [],
+    'passive': [
+        'site_build',
+        'installation',
+        'site_rental',
+        'backhaul',
+    ],
+    'active': [
+        'equipment',
+        'site_build',
+        'installation',
+        'site_rental',
+        'operation_and_maintenance',
+        'power',
+        'backhaul',
+    ],
+    'srn': [
+        'equipment',
+        'site_build',
+        'installation',
+        'site_rental',
+        'operation_and_maintenance',
+        'power',
+        'backhaul',
+        # 'regional_edge',
+        # 'regional_node',
+        # 'core_edge',
+        # 'core_node',
+    ],
+}
+
+
+@fixture(scope='function')
+def setup_cost_types():
+    return {
+    'equipment': 'capex',
+    'site_build': 'capex',
+    'installation': 'capex',
+    'site_rental': 'opex',
+    'operation_and_maintenance': 'opex',
+    'power': 'opex',
+    'backhaul': 'capex_and_opex',
+    'regional_node': 'capex_and_opex',
+    'regional_edge': 'capex_and_opex',
+    'core_node': 'capex_and_opex',
+    'core_edge': 'capex_and_opex',
+}
+
+
+@fixture(scope='function')
+def setup_assets():
+    return [
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'equipment', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        },
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'site_build', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        },
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'installation', 'quantity': 1,
+            'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
+        }
+    ]
+
+
+@fixture(scope='function')
+def setup_assets_dict():
+    return {
+        'wireless_small': 10000,
+        'core_node': 10000,
+        'site_rental_rural': 10000,
+        'equipment': 10000,
+        'installation': 10000,
+        'site_build': 10000,
+        'core_edge': 10000,
+        'operation_and_maintenance': 10000
+    }
+
+
+@fixture(scope='function')
+def setup_tech_lut():
+    return {
+        'oil': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'gas': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'coal': {
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
+        },
+        'nuclear': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'hydro': {
+            'carbon_per_kWh': 0.01, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
+        },
+        'diesel': {
+            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        },
+        'renewables': {
+            'carbon_per_kWh': 0.1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+        }
+    }

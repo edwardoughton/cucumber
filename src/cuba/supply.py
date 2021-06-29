@@ -10,11 +10,13 @@ import math
 from itertools import tee
 from operator import itemgetter
 
-from cuba.costs import find_network_cost
+from cuba.assets import estimate_assets
+from cuba.costs import find_cost
 
 
 def estimate_supply(country, regions, capacity_lut, option,
-    global_parameters, country_parameters, costs, core_lut, ci):
+    global_parameters, country_parameters, costs, core_lut, ci,
+    infra_sharing_options, cost_types):
     """
     For each region, find the least-cost design and estimate
     the required investment for for the single network being modeled.
@@ -45,6 +47,11 @@ def estimate_supply(country, regions, capacity_lut, option,
         Contains the number of existing and required, core and regional assets.
     ci : int
         Confidence interval.
+    infra_sharing_assets : dict
+        Shared infra assets lookup by strategy (e.g. passive,
+        active or srn).
+    cost_types : dict
+        Cost types lookup (e.g. capex, opex or both).
 
     Returns
     -------
@@ -55,6 +62,10 @@ def estimate_supply(country, regions, capacity_lut, option,
     output_regions = []
 
     for region in regions:
+
+        region['scenario'] = option['scenario']
+        region['strategy'] = option['strategy']
+        region['confidence'] = ci
 
         region['mno_site_density'] = find_site_density(region, option,
             global_parameters, country_parameters, capacity_lut, ci)
@@ -71,22 +82,29 @@ def estimate_supply(country, regions, capacity_lut, option,
 
         region = estimate_backhaul_upgrades(region, option['strategy'], country_parameters)
 
-        region = find_network_cost(
+        assets = estimate_assets(
             region,
             option,
             costs,
             global_parameters,
             country_parameters,
-            core_lut,
+            core_lut
         )
 
-        region['scenario'] = option['scenario']
-        region['strategy'] = option['strategy']
-        region['confidence'] = ci
+        region = find_cost(
+            region,
+            assets,
+            option,
+            costs,
+            global_parameters,
+            country_parameters,
+            infra_sharing_options,
+            cost_types
+        )
 
         output_regions.append(region)
 
-    return output_regions
+    return output_regions, assets
 
 
 def find_site_density(region, option, global_parameters, country_parameters,

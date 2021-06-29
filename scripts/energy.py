@@ -166,6 +166,59 @@ def estimate_site_power_source():
         output.to_file(path_out, crs='epsg:4326')
 
 
+def write_site_lut():
+    """
+
+    """
+    iso3 = 'CHL'
+    level = 3
+
+    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
+
+    filename = 'regions_3_CHL.shp'
+    path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
+    regions = gpd.read_file(path, crs='epsg:4326')[:1]
+    regions = regions.to_crs('epsg:3857')
+
+    output = []
+
+    for idx, region in regions.iterrows():
+
+        GID_level = 'GID_{}'.format(level)
+        GID_id = region[GID_level]
+
+        path = os.path.join(folder, GID_id + '.shp')
+
+        sites = gpd.read_file(path, crs='epsg:4326')
+
+        distances = []
+        on_grid = 0
+        off_grid = 0
+        total = 0
+
+        for idx, site in sites.iterrows():
+            distances.append(site['closest_el'])
+            if site['closest_el'] < 1000:
+                on_grid += 1
+                total += 1
+            else:
+                off_grid += 1
+                total += 1
+
+        output.append({
+            'GID_id': GID_id,
+            'GID_level': level,
+            'dist_mean': (sum(distances) / total),
+            'on_grid_perc': (on_grid / total) * 100,
+            'off_grid_perc': (off_grid / total) * 100,
+            'total_sites': total,
+        })
+
+    output = pd.DataFrame(output)
+    path = os.path.join(folder, 'site_power.csv')
+    output.to_csv(path, index=False)
+
+
 def process_solar_atlas():
     """
     Chop solar atlas into single files.
@@ -229,8 +282,10 @@ def process_solar_atlas():
 
 if __name__ == '__main__':
 
-    # cut_grid_finder_targets()
+    cut_grid_finder_targets()
 
     estimate_site_power_source()
 
-    # process_solar_atlas()
+    write_site_lut()
+
+    process_solar_atlas()

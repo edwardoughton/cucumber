@@ -13,7 +13,9 @@ def test_find_site_density(
     setup_penetration_lut,
     setup_costs,
     setup_lookup,
-    setup_ci
+    setup_ci,
+    setup_infra_sharing_assets,
+    setup_cost_types
     ):
 
     #test demand being larger than max capacity
@@ -24,7 +26,7 @@ def test_find_site_density(
         setup_global_parameters,
         setup_country_parameters,
         setup_lookup,
-        setup_ci
+        setup_ci,
     )
 
     assert answer == 2
@@ -177,7 +179,9 @@ def test_estimate_supply(
     setup_country_parameters,
     setup_costs,
     setup_core_lut,
-    setup_ci
+    setup_ci,
+    setup_infra_sharing_assets,
+    setup_cost_types,
     ):
 
     #total sites across all operators
@@ -196,10 +200,12 @@ def test_estimate_supply(
         setup_country_parameters,
         setup_costs,
         setup_core_lut,
-        setup_ci
+        setup_ci,
+        setup_infra_sharing_assets,
+        setup_cost_types,
     )
 
-    assert round(answer[0]['mno_site_density'], 1) == 0.9
+    assert round(answer[0][0]['mno_site_density'], 1) == 0.9
 
 
 def test_estimate_backhaul_upgrades(
