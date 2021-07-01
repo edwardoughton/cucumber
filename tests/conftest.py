@@ -339,45 +339,92 @@ def setup_assets_dict():
 def setup_tech_lut():
     return {
         'oil': {
-            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'gas': {
-            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'coal': {
             'carbon_per_kWh': 1, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'nuclear': {
-            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'hydro': {
-            'carbon_per_kWh': 0.01, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'diesel': {
-            'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'renewables': {
-            'carbon_per_kWh': 0.1, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+            'carbon_per_kWh': 1, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 1, #kgs of PM10 per kWh
         }
     }
+
+
+@fixture(scope='function')
+def setup_on_grid_mix():
+    return {
+        'hydro': 100,
+        'oil': 100,
+        'gas': 100,
+        'coal': 100,
+        'renewables': 100,
+    }
+
+
+@fixture(scope='function')
+def setup_data_energy():
+    return [
+        {
+            'GID_id': 'CHL.1.1.1_1',
+            'scenario': 'low_20_20_20',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
+            'confidence': [50],
+            'total_sites': 131,
+            'total_upgraded_sites': 131,
+            'total_new_sites': 231,
+            'grid_type_perc': 8.142493638676845,
+            'grid_type': 'on_grid',
+            'total_annual_energy_demand_kwh': 30,
+            'equipment_annual_demand_kWh': 10,
+            'regional_nodes_annual_demand_kwh': 10,
+            'core_nodes_annual_demand_kwh': 10
+        },
+        {
+            'GID_id': 'CHL.1.1.1_1',
+            'scenario': 'low_20_20_20',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
+            'confidence': [50],
+            'total_sites': 131,
+            'total_upgraded_sites': 131,
+            'total_new_sites': 231,
+            'grid_type_perc': 91.85750636132316,
+            'grid_type': 'off_grid',
+            'total_annual_energy_demand_kwh': 30,
+            'equipment_annual_demand_kWh': 10,
+            'regional_nodes_annual_demand_kwh': 10,
+            'core_nodes_annual_demand_kwh': 10
+        }
+    ]

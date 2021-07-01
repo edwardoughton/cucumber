@@ -413,3 +413,15 @@ def write_assets(all_assets, folder, metric):
 
     path = os.path.join(folder,'assets_{}.csv'.format(metric))
     all_assets.to_csv(path, index=True)
+
+
+def write_emissions(emissions, folder, metric):
+    """
+    Write all emissions.
+
+    """
+    print('Writing emissions')
+    emissions = pd.DataFrame(emissions)
+
+    path = os.path.join(folder,'emissions_{}.csv'.format(metric))
+    emissions.to_csv(path, index=True)

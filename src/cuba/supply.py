@@ -60,6 +60,7 @@ def estimate_supply(country, regions, capacity_lut, option,
 
     """
     output_regions = []
+    output_assets = []
 
     for region in regions:
 
@@ -80,7 +81,11 @@ def estimate_supply(country, regions, capacity_lut, option,
             country_parameters
         )
 
-        region = estimate_backhaul_upgrades(region, option['strategy'], country_parameters)
+        region = estimate_backhaul_upgrades(
+            region,
+            option['strategy'],
+            country_parameters
+        )
 
         assets = estimate_assets(
             region,
@@ -103,8 +108,9 @@ def estimate_supply(country, regions, capacity_lut, option,
         )
 
         output_regions.append(region)
+        output_assets = output_assets + assets
 
-    return output_regions, assets
+    return output_regions, output_assets
 
 
 def find_site_density(region, option, global_parameters, country_parameters,

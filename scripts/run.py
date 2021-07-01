@@ -19,8 +19,9 @@ from cuba.demand import estimate_demand
 from cuba.supply import estimate_supply
 from cuba.assess import assess
 from cuba.energy import assess_energy
+from cuba.emissions import assess_emissions
 from write import (define_deciles, write_demand, write_results, write_inputs,
-    write_assets, write_energy)
+    write_assets, write_energy, write_emissions)
 from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
 from percentages import generate_percentages
 
@@ -325,6 +326,19 @@ def load_core_lut(path):
     return output
 
 
+def load_on_grid_mix():
+
+    on_grid_mix = {
+        'hydro': 31,
+        'oil': 22,
+        'gas': 17,
+        'coal': 18,
+        'renewables': 12,
+    }
+
+    return on_grid_mix
+
+
 def allocate_deciles(data):
     """
     Convert to pandas df, define deciles, and then return as a list of dicts.
@@ -361,9 +375,9 @@ if __name__ == '__main__':
         # 'mixed_options',
     ]
 
-    all_results = []
+    # all_results = []
 
-    for decision_option in decision_options:
+    for decision_option in decision_options:#[:1]:
 
         print('Working on {}'.format(decision_option))
 
@@ -376,6 +390,7 @@ if __name__ == '__main__':
             regional_cost_structure = []
             all_assets = []
             regional_energy_demand = []
+            regional_emissions = []
 
             iso3 = country['iso3']
 
@@ -404,6 +419,10 @@ if __name__ == '__main__':
             filename = 'core_lut.csv'
             core_lut = load_core_lut(os.path.join(folder, filename))
 
+            # folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
+            # filename = 'core_lut.csv'
+            on_grid_mix = load_on_grid_mix()
+
             print('-----')
             print('Working on {} in {}'.format(decision_option, iso3))
             print(' ')
@@ -430,7 +449,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)#[:10]
+                    data_initial = load_regions(country, path, sites_lut)#[:5]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -474,32 +493,41 @@ if __name__ == '__main__':
                         country_parameters,
                         TIMESTEPS,
                         ENERGY_DEMAND,
-                        TECH_LUT
+                        # TECH_LUT,
+                        # on_grid_mix
+                    )
+
+                    data_emissions = assess_emissions(
+                        data_energy,
+                        TECH_LUT,
+                        on_grid_mix
                     )
 
                     final_results = allocate_deciles(data_assess)
 
                     regional_annual_demand = regional_annual_demand + annual_demand
                     regional_results = regional_results + final_results
-                    all_assets = all_assets + assets
+                    # all_assets = all_assets + assets
                     regional_energy_demand = regional_energy_demand + data_energy
+                    regional_emissions = regional_emissions + data_emissions
 
-            all_results = all_results + regional_results
+            # all_results = all_results + regional_results
 
             write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+            # write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
 
             write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
+
+            write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
             write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
             write_inputs(OUTPUT_COUNTRY, country, country_parameters,
                             GLOBAL_PARAMETERS, COSTS, decision_option)
 
-
         generate_percentages(iso3, decision_option)
 
-    write_results(all_results, OUTPUT, 'all_options_all_countries')
+    # write_results(all_results, OUTPUT, 'all_options_all_countries')
 
     print('Completed model run')
