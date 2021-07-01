@@ -38,16 +38,16 @@ COUNTRY_PARAMETERS = {
             'medium': 1,
         },
         'arpu': {
-            'high': 8,
-            'medium': 6,
-            'low': 4,
+            'high': 15,
+            'medium': 10,
+            'low': 7,
         },
         'networks': {
-            'baseline_urban': 3,
-            'baseline_suburban': 3,
-            'baseline_rural': 3,
-            'shared_urban': 3,
-            'shared_suburban': 3,
+            'baseline_urban': 4,
+            'baseline_suburban': 4,
+            'baseline_rural': 4,
+            'shared_urban': 4,
+            'shared_suburban': 4,
             'shared_rural': 1,
         },
         'frequencies': {
@@ -55,48 +55,42 @@ COUNTRY_PARAMETERS = {
                 {
                     'frequency': 850,
                     'bandwidth': '2x10',
-                    # 'status': 'active',
                 },
                 {
                     'frequency': 2100,
                     'bandwidth': '2x10',
-                    # 'status': 'inactive',
                 },
             ],
             '4G': [
                 {
                     'frequency': 1800,
                     'bandwidth': '2x10',
-                    # 'status': 'active',
                 },
                 {
                     'frequency': 2600,
                     'bandwidth': '2x10',
-                    # 'status': 'inactive',
                 },
             ],
             '5G': [
                 {
                     'frequency': 700,
                     'bandwidth': '2x10',
-                    # 'status': 'inactive',
                 },
                 {
                     'frequency': 3500,
                     'bandwidth': '1x50',
-                    # 'status': 'inactive',
                 },
             ]
         },
         'financials': {
-            'wacc': 9.5, #http://www.waccexpert.com/
+            'wacc': 8, #http://www.waccexpert.com/
             'profit_margin': 20,
-            'spectrum_coverage_baseline_usd_mhz_pop': 0.3,
-            'spectrum_capacity_baseline_usd_mhz_pop': 0.2,
+            'spectrum_coverage_baseline_usd_mhz_pop': 0.2,
+            'spectrum_capacity_baseline_usd_mhz_pop': 0.1,
             'spectrum_cost_low': 25,
             'spectrum_cost_high': 200,
             'tax_low': 10,
-            'tax_baseline': 30,
+            'tax_baseline': 27, #source: https://www.sii.cl/ayudas/aprenda_sobre/3072-1-3080.html
             'tax_high': 45,
             'administration_percentage_of_network_cost': 20,
             },

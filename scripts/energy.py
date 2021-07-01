@@ -122,6 +122,8 @@ def estimate_site_power_source():
         GID_level = 'GID_{}'.format(level)
         GID_id = region[GID_level]
 
+        print('Working on {}'.format(GID_id))
+
         filename = 'CELLID_2021_03_' + GID_id + '.shp'
         path = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region', filename)
 
@@ -177,7 +179,7 @@ def write_site_lut():
 
     filename = 'regions_3_CHL.shp'
     path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
-    regions = gpd.read_file(path, crs='epsg:4326')[:1]
+    regions = gpd.read_file(path, crs='epsg:4326')#[:1]
     regions = regions.to_crs('epsg:3857')
 
     output = []
@@ -189,30 +191,32 @@ def write_site_lut():
 
         path = os.path.join(folder, GID_id + '.shp')
 
-        sites = gpd.read_file(path, crs='epsg:4326')
+        if os.path.exists(path):
 
-        distances = []
-        on_grid = 0
-        off_grid = 0
-        total = 0
+            sites = gpd.read_file(path, crs='epsg:4326')
 
-        for idx, site in sites.iterrows():
-            distances.append(site['closest_el'])
-            if site['closest_el'] < 1000:
-                on_grid += 1
-                total += 1
-            else:
-                off_grid += 1
-                total += 1
+            distances = []
+            on_grid = 0
+            off_grid = 0
+            total = 0
 
-        output.append({
-            'GID_id': GID_id,
-            'GID_level': level,
-            'dist_mean': (sum(distances) / total),
-            'on_grid_perc': (on_grid / total) * 100,
-            'off_grid_perc': (off_grid / total) * 100,
-            'total_sites': total,
-        })
+            for idx, site in sites.iterrows():
+                distances.append(site['closest_el'])
+                if site['closest_el'] < 1000:
+                    on_grid += 1
+                    total += 1
+                else:
+                    off_grid += 1
+                    total += 1
+
+            output.append({
+                'GID_id': GID_id,
+                'GID_level': level,
+                'dist_mean': (sum(distances) / total),
+                'on_grid_perc': (on_grid / total) * 100,
+                'off_grid_perc': (off_grid / total) * 100,
+                'total_sites': total,
+            })
 
     output = pd.DataFrame(output)
     path = os.path.join(folder, 'site_power.csv')
@@ -277,7 +281,6 @@ def process_solar_atlas():
 
         with rasterio.open(path_out, "w", **out_meta) as dest:
                 dest.write(out_img)
-
 
 
 if __name__ == '__main__':
