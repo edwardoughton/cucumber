@@ -33,6 +33,7 @@ def generate_report(country):
     tech_percs = get_tech_percentages(iso3)
     share_percs = get_sharing_data(iso3)
     policy_percs = get_policy_data(iso3)
+    energy_percs = get_emissions_data(iso3)
 
     policy_inputs = get_policy_inputs(iso3)
 
@@ -46,30 +47,30 @@ def generate_report(country):
         "prefered_name" : country['prefered_name'],
         "country": iso3,
         "figure_1": os.path.join(IMAGES, iso3, 'social_costs_by_strategy.png'),
-        "upgraded_sites_baseline_10mbps_3g_w": sites['baseline_10mbps_3g_w']['total_upgraded_sites'],
-        "new_sites_baseline_10mbps_3g_w": sites['baseline_10mbps_3g_w']['total_new_sites'],
+        # "upgraded_sites_baseline_10mbps_3g_w": sites['baseline_10mbps_3g_w']['total_upgraded_sites'],
+        # "new_sites_baseline_10mbps_3g_w": sites['baseline_10mbps_3g_w']['total_new_sites'],
         "upgraded_sites_baseline_10mbps_4g_w": sites['baseline_10mbps_4g_w']['total_upgraded_sites'],
         "new_sites_baseline_10mbps_4g_w": sites['baseline_10mbps_4g_w']['total_new_sites'],
         "upgraded_sites_baseline_10mbps_5g_w": sites['baseline_10mbps_5g_w']['total_upgraded_sites'],
         "new_sites_baseline_10mbps_5g_w": sites['baseline_10mbps_5g_w']['total_new_sites'],
-        "baseline_10mbps_3g_w": tech_percs['baseline_10mbps_3g_w']['social_cost_bn'],
+        # "baseline_10mbps_3g_w": tech_percs['baseline_10mbps_3g_w']['social_cost_bn'],
         "baseline_10mbps_4g_w": tech_percs['baseline_10mbps_4g_w']['social_cost_bn'],
         "baseline_10mbps_5g_w": tech_percs['baseline_10mbps_5g_w']['social_cost_bn'],
-        "w_over_fb_3g_10mbps": round(abs(tech_percs['baseline_10mbps_3g_w']['w_over_fb'])),
+        # "w_over_fb_3g_10mbps": round(abs(tech_percs['baseline_10mbps_3g_w']['w_over_fb'])),
         "w_over_fb_4g_10mbps": round(abs(tech_percs['baseline_10mbps_4g_w']['w_over_fb'])),
         "w_over_fb_5g_10mbps": round(abs(tech_percs['baseline_10mbps_5g_w']['w_over_fb'])),
-        "perc_saving_vs_3g_4g_10mbps": round(abs(tech_percs['baseline_10mbps_4g_w']['perc_saving_vs_3g'])),
-        "perc_saving_vs_3g_5g_10mbps": round(abs(tech_percs['baseline_10mbps_5g_w']['perc_saving_vs_3g'])),
-        "low_10mbps_3g_w": tech_percs['low_10mbps_3g_w']['social_cost_bn'],
+        # "perc_saving_vs_3g_4g_10mbps": round(abs(tech_percs['baseline_10mbps_4g_w']['perc_saving_vs_3g'])),
+        # "perc_saving_vs_3g_5g_10mbps": round(abs(tech_percs['baseline_10mbps_5g_w']['perc_saving_vs_3g'])),
+        # "low_10mbps_3g_w": tech_percs['low_10mbps_3g_w']['social_cost_bn'],
         "low_10mbps_4g_w": tech_percs['low_10mbps_4g_w']['social_cost_bn'],
         "low_10mbps_5g_w": tech_percs['low_10mbps_5g_w']['social_cost_bn'],
-        "high_10mbps_3g_w": tech_percs['high_10mbps_3g_w']['social_cost_bn'],
+        # "high_10mbps_3g_w": tech_percs['high_10mbps_3g_w']['social_cost_bn'],
         "high_10mbps_4g_w": tech_percs['high_10mbps_4g_w']['social_cost_bn'],
         "high_10mbps_5g_w": tech_percs['high_10mbps_5g_w']['social_cost_bn'],
-        "baseline_5mbps_3g_w": tech_percs['baseline_5mbps_3g_w']['social_cost_bn'],
+        # "baseline_5mbps_3g_w": tech_percs['baseline_5mbps_3g_w']['social_cost_bn'],
         "baseline_5mbps_4g_w": tech_percs['baseline_5mbps_4g_w']['social_cost_bn'],
         "baseline_5mbps_5g_w": tech_percs['baseline_5mbps_5g_w']['social_cost_bn'],
-        "baseline_20mbps_3g_w": tech_percs['baseline_20mbps_3g_w']['social_cost_bn'],
+        # "baseline_20mbps_3g_w": tech_percs['baseline_20mbps_3g_w']['social_cost_bn'],
         "baseline_20mbps_4g_w": tech_percs['baseline_20mbps_4g_w']['social_cost_bn'],
         "baseline_20mbps_5g_w": tech_percs['baseline_20mbps_5g_w']['social_cost_bn'],
         "figure_2": os.path.join(IMAGES, iso3, 'social_costs_by_sharing_strategy.png'),
@@ -97,11 +98,145 @@ def generate_report(country):
         "perc_highspectrum": policy_percs['baseline_10mbps_highspectrumfees']['perc_against_baseline'],
         "lowspectrum_cost_4g_10mbps": policy_percs['baseline_10mbps_lowspectrumfees']['social_cost_bn'],
         "highspectrum_cost_4g_10mbps": policy_percs['baseline_10mbps_highspectrumfees']['social_cost_bn'],
+
+        "figure_4": os.path.join(IMAGES, iso3, 'energy_emissions.png'),
+        "figure_5": os.path.join(IMAGES, iso3, 'health_emissions.png'),
+
+        "energy_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['total_annual_energy_demand_kwh']/1e6)),
+        "energy_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['total_annual_energy_demand_kwh']/1e6)),
+
+        "carbon_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
+
+        "nitrogen_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['nitrogen_oxide_per_kwh']/1e3)),
+        "nitrogen_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['nitrogen_oxide_per_kwh']/1e3)),
+
+        "sulpher_baseline_5mbps_4g_w": round(energy_percs['baseline_5mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_5mbps_4g_fb": round(energy_percs['baseline_5mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_5mbps_5g_w": round(energy_percs['baseline_5mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_5mbps_5g_fb": round(energy_percs['baseline_5mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_10mbps_4g_w": round(energy_percs['baseline_10mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_10mbps_4g_fb": round(energy_percs['baseline_10mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_10mbps_5g_w": round(energy_percs['baseline_10mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_10mbps_5g_fb": round(energy_percs['baseline_10mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_20mbps_4g_w": round(energy_percs['baseline_20mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_20mbps_4g_fb": round(energy_percs['baseline_20mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_20mbps_5g_w": round(energy_percs['baseline_20mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_20mbps_5g_fb": round(energy_percs['baseline_20mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+
+        "pm10_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['pm10_per_kwh']/1e3)),
+
+        "perc_energy_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_5mbps_5g_w": energy_percs['baseline_5mbps_5g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_5mbps_5g_fb": energy_percs['baseline_5mbps_5g_fb']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_10mbps_4g_w": energy_percs['baseline_10mbps_4g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_10mbps_4g_fb": energy_percs['baseline_10mbps_4g_fb']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_10mbps_5g_w": energy_percs['baseline_10mbps_5g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_10mbps_5g_fb": energy_percs['baseline_10mbps_5g_fb']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_20mbps_4g_w": energy_percs['baseline_20mbps_4g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_20mbps_4g_fb": energy_percs['baseline_20mbps_4g_fb']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_20mbps_5g_w": energy_percs['baseline_20mbps_5g_w']['perc_energy_dif_vs_4G'],
+        "perc_energy_baseline_20mbps_5g_fb": energy_percs['baseline_20mbps_5g_fb']['perc_energy_dif_vs_4G'],
+
+        "perc_carbon_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_5mbps_5g_w": energy_percs['baseline_5mbps_5g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_5mbps_5g_fb": energy_percs['baseline_5mbps_5g_fb']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_10mbps_4g_w": energy_percs['baseline_10mbps_4g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_10mbps_4g_fb": energy_percs['baseline_10mbps_4g_fb']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_10mbps_5g_w": energy_percs['baseline_10mbps_5g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_10mbps_5g_fb": energy_percs['baseline_10mbps_5g_fb']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_20mbps_4g_w": energy_percs['baseline_20mbps_4g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_20mbps_4g_fb": energy_percs['baseline_20mbps_4g_fb']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_20mbps_5g_w": energy_percs['baseline_20mbps_5g_w']['perc_carbon_dif_vs_4G'],
+        "perc_carbon_baseline_20mbps_5g_fb": energy_percs['baseline_20mbps_5g_fb']['perc_carbon_dif_vs_4G'],
+
+        "perc_nitrogen_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_5mbps_5g_w": energy_percs['baseline_5mbps_5g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_5mbps_5g_fb": energy_percs['baseline_5mbps_5g_fb']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_10mbps_4g_w": energy_percs['baseline_10mbps_4g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_10mbps_4g_fb": energy_percs['baseline_10mbps_4g_fb']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_10mbps_5g_w": energy_percs['baseline_10mbps_5g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_10mbps_5g_fb": energy_percs['baseline_10mbps_5g_fb']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_20mbps_4g_w": energy_percs['baseline_20mbps_4g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_20mbps_4g_fb": energy_percs['baseline_20mbps_4g_fb']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_20mbps_5g_w": energy_percs['baseline_20mbps_5g_w']['perc_nitrogen_dif_vs_4G'],
+        "perc_nitrogen_baseline_20mbps_5g_fb": energy_percs['baseline_20mbps_5g_fb']['perc_nitrogen_dif_vs_4G'],
+
+        "perc_sulpher_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_5mbps_5g_w": energy_percs['baseline_5mbps_5g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_5mbps_5g_fb": energy_percs['baseline_5mbps_5g_fb']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_10mbps_4g_w": energy_percs['baseline_10mbps_4g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_10mbps_4g_fb": energy_percs['baseline_10mbps_4g_fb']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_10mbps_5g_w": energy_percs['baseline_10mbps_5g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_10mbps_5g_fb": energy_percs['baseline_10mbps_5g_fb']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_20mbps_4g_w": energy_percs['baseline_20mbps_4g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_20mbps_4g_fb": energy_percs['baseline_20mbps_4g_fb']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_20mbps_5g_w": energy_percs['baseline_20mbps_5g_w']['perc_sulpher_dif_vs_4G'],
+        "perc_sulpher_baseline_20mbps_5g_fb": energy_percs['baseline_20mbps_5g_fb']['perc_sulpher_dif_vs_4G'],
+
+        "perc_pm10_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_5mbps_5g_w": energy_percs['baseline_5mbps_5g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_5mbps_5g_fb": energy_percs['baseline_5mbps_5g_fb']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_10mbps_4g_w": energy_percs['baseline_10mbps_4g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_10mbps_4g_fb": energy_percs['baseline_10mbps_4g_fb']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_10mbps_5g_w": energy_percs['baseline_10mbps_5g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_10mbps_5g_fb": energy_percs['baseline_10mbps_5g_fb']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_20mbps_4g_w": energy_percs['baseline_20mbps_4g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_20mbps_4g_fb": energy_percs['baseline_20mbps_4g_fb']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_20mbps_5g_w": energy_percs['baseline_20mbps_5g_w']['perc_pm10_dif_vs_4G'],
+        "perc_pm10_baseline_20mbps_5g_fb": energy_percs['baseline_20mbps_5g_fb']['perc_pm10_dif_vs_4G'],
+
     }
 
     html_out = template.render(template_vars)
 
-    filename = 'Oughton, E.J. (2021) Assessment of 5G Infrastructure Strategies for {}.pdf'.format(
+    filename = 'Oughton, E.J. (2021) Assessment of 4G and 5G Universal Broadband Infrastructure Strategies for {}.pdf'.format(
         country['prefered_name'])
     path = os.path.join(OUTPUT, filename)
 
@@ -229,6 +364,67 @@ def get_policy_data(iso3):
         output[key] = {
             'social_cost_bn': round(row['social_cost_x'] / 1e9, 2),
             'perc_against_baseline': round(row['saving_against_baseline'], 1),
+        }
+
+    return output
+
+
+def get_emissions_data(iso3):
+    """
+    Load data.
+
+    """
+    output = {}
+
+    filename = 'percentages_emissions_{}.csv'.format(iso3)
+    path = os.path.join(RESULTS, 'percentages', filename)
+    data = pd.read_csv(path)
+
+    for idx, row in data.iterrows():
+
+        key = '{}_{}_{}_{}'.format(
+            row['scenario'].lower(),
+            row['capacity'].lower().replace(' ', ''),
+            row['generation'].lower(),
+            row['backhaul'].lower().replace('(','').replace(')',''),
+        )
+
+        if row['perc_energy_dif_vs_4G'] == 'nan':
+            perc_energy_dif_vs_4G = 0
+        else:
+            perc_energy_dif_vs_4G = row['perc_energy_dif_vs_4G']
+
+        if row['perc_carbon_dif_vs_4G'] == 'nan':
+            perc_carbon_dif_vs_4G = 0
+        else:
+            perc_carbon_dif_vs_4G = row['perc_carbon_dif_vs_4G']
+
+        if row['perc_nitrogen_dif_vs_4G'] == 'nan':
+            perc_nitrogen_dif_vs_4G = 0
+        else:
+            perc_nitrogen_dif_vs_4G = row['perc_nitrogen_dif_vs_4G']
+
+        if row['perc_sulpher_dif_vs_4G'] == 'nan':
+            perc_sulpher_dif_vs_4G = 0
+        else:
+            perc_sulpher_dif_vs_4G = row['perc_sulpher_dif_vs_4G']
+
+        if row['perc_pm10_dif_vs_4G'] == 'nan':
+            perc_pm10_dif_vs_4G = 0
+        else:
+            perc_pm10_dif_vs_4G = row['perc_pm10_dif_vs_4G']
+
+        output[key] = {
+            'total_annual_energy_demand_kwh': round(row['total_annual_energy_demand_kwh']),
+            'demand_carbon_per_kwh': round(row['demand_carbon_per_kwh']),
+            'nitrogen_oxide_per_kwh': round(row['nitrogen_oxide_per_kwh']),
+            'sulpher_dioxide_per_kwh': round(row['sulpher_dioxide_per_kwh']),
+            'pm10_per_kwh': round(row['pm10_per_kwh']),
+            'perc_energy_dif_vs_4G': perc_energy_dif_vs_4G,
+            'perc_carbon_dif_vs_4G': perc_carbon_dif_vs_4G,
+            'perc_nitrogen_dif_vs_4G': perc_nitrogen_dif_vs_4G,
+            'perc_sulpher_dif_vs_4G': perc_sulpher_dif_vs_4G,
+            'perc_pm10_dif_vs_4G': perc_pm10_dif_vs_4G,
         }
 
     return output

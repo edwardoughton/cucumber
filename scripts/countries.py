@@ -63,7 +63,7 @@ COUNTRY_PARAMETERS = {
             ],
             '4G': [
                 {
-                    'frequency': 1800,
+                    'frequency': 700,
                     'bandwidth': '2x10',
                 },
                 {

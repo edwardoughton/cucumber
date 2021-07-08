@@ -273,6 +273,9 @@ ENERGY_DEMAND = {
     'equipment_kwh': 5,
     'core_node_kwh': 20,
     'regional_node_kwh': 10,
+    'wireless_small_kwh': 15,
+    'wireless_medium_kwh': 30,
+    'wireless_large_kwh': 45,
 }
 
 TECH_LUT = {

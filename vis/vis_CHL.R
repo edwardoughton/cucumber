@@ -87,10 +87,10 @@ data$value = round(data$value/1e9, 3)
 
 ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
-  geom_text(aes(strategy_short, social_cost, label = social_cost, fill = NULL),
-            size = 2.5, data = totals, vjust=-1) +
-  # coord_flip +
-  scale_fill_manual(values=c("#D41159","#1A85FF"), name=NULL) +
+  geom_text(y=0, aes(strategy_short, social_cost, label = social_cost, 
+                     fill = NULL, color="#FF0000FF"), show.legend = FALSE,
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Technology in Chile", 
@@ -189,13 +189,12 @@ data$Cost_Type = factor(data$Cost_Type,
 
 data$value = round(data$value/1e9, 3)
 
-
 ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
-  geom_text(aes(strategy, social_cost, label = social_cost, fill = NULL),
-            size = 2.5, data = totals, vjust=-1) +
-  # coord_flip() +
-  scale_fill_manual(values=c("#D41159","#1A85FF"), name=NULL) +
+  geom_text(y=0, aes(strategy, social_cost, label = social_cost, 
+                     fill = NULL, color="#FF0000FF"), show.legend = FALSE,
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Infrastructure Sharing Strategy in Chile", 
@@ -206,6 +205,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   theme(panel.spacing = unit(0.6, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
+
 
 path = file.path(folder, 'figures', 'social_costs_by_sharing_strategy.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
@@ -301,10 +301,10 @@ data$value = round(data$value/1e9, 2)
 
 ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
-  geom_text(aes(strategy, social_cost, label = social_cost, fill = NULL),
-            size = 2.5, data = totals, vjust=-1) +
-  # coord_flip() +
-  scale_fill_manual(values=c("#D41159","#1A85FF"), name=NULL) +
+  geom_text(y=0, aes(strategy, social_cost, label = social_cost, 
+                     fill = NULL, color="#FF0000FF"), show.legend = FALSE,
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Policy Strategy in Chile", 

@@ -366,24 +366,21 @@ if __name__ == '__main__':
     path = os.path.join(DATA_RAW, 'pysim5g', 'capacity_lut_by_frequency.csv')
     capacity_lut = read_capacity_lut(path)
 
-    # countries, country_regional_levels = find_country_list(['Africa', 'South America'])
-
     decision_options = [
         'technology_options',
         'business_model_options',
         'policy_options',
-        # 'mixed_options',
     ]
 
     # all_results = []
 
-    for decision_option in decision_options:#[:1]:
+    for decision_option in decision_options:
 
         print('Working on {}'.format(decision_option))
 
         options = OPTIONS[decision_option]
 
-        for country in COUNTRY_LIST[:1]:
+        for country in COUNTRY_LIST:#[:1]:
 
             regional_annual_demand = []
             regional_results = []
