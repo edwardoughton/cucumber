@@ -9,10 +9,14 @@ data <- read.csv(file.path(folder, '..', 'results', 'model_results', 'CHL', file
 
 names(data)[names(data) == 'GID_0'] <- 'country'
 
-data$scenario_adopt[grep("high", data$scenario)] = 'High (6% Adoption Growth)'
-data$scenario_adopt[grep("baseline", data$scenario)] = 'Baseline (4% Adoption Growth)'
-data$scenario_adopt[grep("low", data$scenario)] = 'Low (2% Adoption Growth)'
-data <- data[(data$scenario_adopt == 'Baseline (4% Adoption Growth)'),]
+# data$scenario_adopt[grep("high", data$scenario)] = 'High (6% Adoption Growth)'
+# data$scenario_adopt[grep("baseline", data$scenario)] = 'Baseline (4% Adoption Growth)'
+# data$scenario_adopt[grep("low", data$scenario)] = 'Low (2% Adoption Growth)'
+# data <- data[(data$scenario_adopt == 'Baseline (4% Adoption Growth)'),]
+data$scenario_adopt[grep("high", data$scenario)] = 'high'
+data$scenario_adopt[grep("baseline", data$scenario)] = 'baseline'
+data$scenario_adopt[grep("low", data$scenario)] = 'low'
+# data <- data[(data$scenario_adopt == 'Baseline (4% Adoption Growth)'),]
 
 data$scenario_capacity[grep("5_5_5", data$scenario)] = '~5 Mbps Per User'
 data$scenario_capacity[grep("10_10_10", data$scenario)] = '~10 Mbps Per User'
@@ -20,18 +24,18 @@ data$scenario_capacity[grep("20_20_20", data$scenario)] = '~20 Mbps Per User'
 # data <- data[(data$scenario_capacity == '~10 Mbps Per User'),]
 
 data$strategy_short = ''
-data$strategy_short[grep("3G_umts_fiber", data$strategy)] = '3G (F)'
-data$strategy_short[grep("3G_umts_wireless", data$strategy)] = '3G (W)'
+# data$strategy_short[grep("3G_umts_fiber", data$strategy)] = '3G (F)'
+# data$strategy_short[grep("3G_umts_wireless", data$strategy)] = '3G (W)'
 data$strategy_short[grep("4G_epc_fiber", data$strategy)] = '4G (F)'
 data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
 data$strategy_short[grep("5G_nsa_fiber", data$strategy)] = '5G (F)'
 data$strategy_short[grep("5G_nsa_wireless", data$strategy)] = '5G (W)'
 
 data$strategy_short = factor(data$strategy_short, levels=c(
-                                     "3G (F)",
+                                     # "3G (F)",
                                      "4G (F)",
                                      '5G (F)',
-                                     "3G (W)",
+                                     # "3G (W)",
                                      "4G (W)",
                                      '5G (W)'
                                      ))
@@ -44,112 +48,244 @@ data$scenario_capacity = factor(data$scenario_capacity,
 
 data = data[complete.cases(data),]
 
-data$scenario_adopt = factor(data$scenario_adopt, 
-                             levels=c("Low (2% Adoption Growth)",
-                                      "Baseline (4% Adoption Growth)",
-                                      "High (6% Adoption Growth)"))
+# data$scenario_adopt = factor(data$scenario_adopt, 
+#                              levels=c("Low (2% Adoption Growth)",
+#                                       "Baseline (4% Adoption Growth)",
+#                                       "High (6% Adoption Growth)"))
 
-data$grid_type = factor(data$grid_type, 
-                        levels=c("off_grid",
-                                      "on_grid"),
-                        labels=c("Diesel",
-                                       "Renewables"))
+# data$grid_type = factor(data$grid_type, 
+#                         levels=c("off_grid",
+#                                       "on_grid"),
+#                         labels=c("Diesel",
+#                                        "Renewables"))
 
 data <- select(data, 
-               scenario_adopt, scenario_capacity, strategy_short, grid_type,
+               scenario_adopt, scenario_capacity, strategy_short, #grid_type,
                total_annual_energy_demand_kwh,
                demand_carbon_per_kwh, 
                nitrogen_oxide_per_kwh,
                sulpher_dioxide_per_kwh,
                pm10_per_kwh)
 
+# data <- data %>%
+#   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+#   summarize(
+#     total_annual_energy_demand_kwh = round(sum(total_annual_energy_demand_kwh)),
+#     demand_carbon_per_kwh = round(sum(demand_carbon_per_kwh)),
+#     nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
+#     sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
+#     pm10_per_kwh = round(sum(pm10_per_kwh)),
+#   )
+
 ############
-min_value = min(round(data$total_annual_energy_demand_kwh/ 1e6))
-max_value = max(round(data$total_annual_energy_demand_kwh/ 1e6))
+sample <- data %>%
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+  summarize(
+    value = round(sum(total_annual_energy_demand_kwh)),
+    # demand_carbon_per_kwh = round(sum(demand_carbon_per_kwh)),
+    # nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
+    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
+    # pm10_per_kwh = round(sum(pm10_per_kwh)),
+  )
+
+sample$value = sample$value / 1e6
+
+min_value = min(round(sample$value))
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
-energy = ggplot(data, 
- aes(x=strategy_short, y=(total_annual_energy_demand_kwh/1e6), 
-     fill=grid_type)) + 
-  geom_boxplot(outlier.shape = NA) +
-  theme(legend.position = "right",
+sample = spread(sample, scenario_adopt, value)
+
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value2 = round(
+    (baseline), 0))
+
+energy = 
+  ggplot(sample, 
+  aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+                position = position_dodge(width = .9), lwd = 0.5, 
+                show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband Energy Demand by Technology",
+  labs(title = "Universal Broadband Energy Demand for Chile 2020-2030",
        fill=NULL,
-       subtitle = "Reported for all scenarios and capacity per user targets",
-       x = NULL, y = "Million kWh") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value-48)) +
+       subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
+       x = NULL, y = "Gigawatt hours (GWh)") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
 ############
-min_value = min(round(data$demand_carbon_per_kwh/ 1e6))
-max_value = max(round(data$demand_carbon_per_kwh/ 1e6))
+sample <- data %>%
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+  summarize(
+    # value = round(sum(total_annual_energy_demand_kwh)),
+    value = round(sum(demand_carbon_per_kwh)),
+    # nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
+    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
+    # pm10_per_kwh = round(sum(pm10_per_kwh)),
+  )
+
+sample$value = sample$value / 1e6
+
+min_value = min(round(sample$value))
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
-carbon_dioxide = ggplot(data, 
-                aes(x=strategy_short, y=(demand_carbon_per_kwh/1e6), 
-                    fill=grid_type)) + 
-  geom_boxplot(outlier.shape = NA) +
-  theme(legend.position = "right",
+sample = spread(sample, scenario_adopt, value)
+
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value2 = round(
+    (baseline), 0))
+
+carbon_dioxide = ggplot(sample, 
+                aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+                position = position_dodge(width = .9), lwd = 0.5, 
+                show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband Carbon Emissions by Technology",
+  labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", CO[2], ")")),
        fill=NULL,
-       subtitle = "Reported for all scenarios and capacity per user targets",
-       x = NULL, y = "Kilotonnes of Carbon") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value-24)) +
+       subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
+       x=NULL, y=expression(paste("Kilotonnes of ", CO[2])),sep="") + 
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
 ############
-min_value = min(round(data$nitrogen_oxide_per_kwh/1e3))
-max_value = max(round(data$nitrogen_oxide_per_kwh/1e3))
+sample <- data %>%
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+  summarize(
+    # value = round(sum(total_annual_energy_demand_kwh)),
+    # value = round(sum(demand_carbon_per_kwh)),
+    value = round(sum(nitrogen_oxide_per_kwh)),
+    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
+    # pm10_per_kwh = round(sum(pm10_per_kwh)),
+  )
+
+sample$value = sample$value / 1e3
+
+min_value = min(round(sample$value))
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
-nitrogen_dioxide = ggplot(data, aes(x=strategy_short, y=(nitrogen_oxide_per_kwh/1e3), 
-       fill=grid_type)) + 
-  geom_boxplot(outlier.shape = NA) +
-  theme(legend.position = "right",
+sample = spread(sample, scenario_adopt, value)
+
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value2 = round(baseline, 0))
+
+nitrogen_dioxide = ggplot(sample, 
+                        aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+                position = position_dodge(width = .9), lwd = 0.5, 
+                show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband Nitrogen Dioxide Emissions by Technology",
+  labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", NO[x], ")")),
+    # title = "Universal Broadband Emissions for Chile 2020-2030 (Nitrogen Oxides)",
        fill=NULL,
-       subtitle = "Reported for all scenarios and capacity per user targets",
-       x = NULL, y = "Tonnes of Nitrogen Dioxide") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value-3.8)) +
+       subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
+       x = NULL, y=expression(paste("Tonnes of ", NO[x])), sep="")  +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
 ############
-min_value = min(round(data$sulpher_dioxide_per_kwh/1e3))
-max_value = max(round(data$sulpher_dioxide_per_kwh/1e3))
+sample <- data %>%
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+  summarize(
+    # value = round(sum(total_annual_energy_demand_kwh)),
+    # value = round(sum(demand_carbon_per_kwh)),
+    # value = round(sum(nitrogen_oxide_per_kwh)),
+    value = round(sum(sulpher_dioxide_per_kwh)),
+    # pm10_per_kwh = round(sum(pm10_per_kwh)),
+  )
+
+sample$value = sample$value / 1e6
+
+min_value = min(round(sample$value))
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
-suplher_dioxide = ggplot(data, 
-                 aes(x=strategy_short, y=(sulpher_dioxide_per_kwh/1e3), 
-                 fill=grid_type)) + 
-  geom_boxplot(outlier.shape = NA) +
-  theme(legend.position = "right",
+sample = spread(sample, scenario_adopt, value)
+
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value2 = round(baseline, 1))
+
+suplher_dioxide = ggplot(sample, 
+                          aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+                position = position_dodge(width = .9), lwd = 0.5, 
+                show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband Sulphur Dioxide Emissions by Technology",
+  labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", SO[x], ")")),
+    # title = "Universal Broadband Emissions for Chile 2020-2030 (Sulphur Oxides)",
        fill=NULL,
-       subtitle = "Reported for all scenarios and capacity per user targets",
-       x = NULL, y = "Tonnes of Sulphur Dioxide") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value-335)) +
+       subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
+       x = NULL, y=expression(paste("Tonnes of ", SO[x])), sep="") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
 ############
-min_value = min(round(data$pm10_per_kwh/1e3))
-max_value = max(round(data$pm10_per_kwh/1e3))
+
+sample <- data %>%
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
+  summarize(
+    # value = round(sum(total_annual_energy_demand_kwh)),
+    # value = round(sum(demand_carbon_per_kwh)),
+    # value = round(sum(nitrogen_oxide_per_kwh)),
+    # value = round(sum(sulpher_dioxide_per_kwh)),
+    value = round(sum(pm10_per_kwh)),
+  )
+
+sample$value = sample$value / 1e3
+
+min_value = min(round(sample$value))
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
-pm10 = ggplot(data, 
-                         aes(x=strategy_short, y=(pm10_per_kwh/1e3), 
-                             fill=grid_type)) + 
-  geom_boxplot(outlier.shape = NA) +
-  theme(legend.position = "right",
+sample = spread(sample, scenario_adopt, value)
+
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value2 = round(baseline, 0))
+
+pm10 = ggplot(sample, 
+                         aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+                position = position_dodge(width = .9), lwd = 0.5, 
+                show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
+            size = 3, data = totals, vjust=-1, hjust=.5) +
+  theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband PM10 Emissions by Technology",
+  labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", PM[10], ")")),
        fill=NULL,
-       subtitle = "Reported for all scenarios and capacity per user targets",
-       x = NULL, y = "Tonnes of PM10") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value-97)) +
+       subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
+       x = NULL, y=expression(paste("Tonnes of ", PM[10])), sep="") + #y ="Tonnes of PM10") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
 ############
@@ -161,10 +297,10 @@ ggarrange(
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'energy_emissions.png')
-ggsave(path, units="in", width=8, height=8, dpi=300)
+ggsave(path, units="in", width=8, height=7, dpi=300)
 dir.create(file.path(folder, '..', 'reports', 'images', 'CHL'), showWarnings = FALSE)
 path = file.path(folder, '..', 'reports', 'images', 'CHL', 'energy_emissions.png')
-ggsave(path, units="in", width=8, height=8, dpi=300)
+ggsave(path, units="in", width=8, height=7, dpi=300)
 dev.off()
 
 ggarrange(

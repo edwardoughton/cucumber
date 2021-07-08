@@ -41,6 +41,9 @@ def assess_energy(country, regions, assets, option, global_parameters,
         equipment_quantity = 0
         regional_nodes = 0
         core_nodes = 0
+        wireless_small = 0
+        wireless_medium = 0
+        wireless_large = 0
 
         for asset in assets:
             if asset['GID_id'] == region['GID_id']:
@@ -51,19 +54,34 @@ def assess_energy(country, regions, assets, option, global_parameters,
                     regional_nodes += asset['quantity']
                 if 'core_node' in asset.values():
                     core_nodes += asset['quantity']
-        # print(equipment_quantity, regional_nodes, core_nodes)
+                if 'wireless_small' in asset.values():
+                    wireless_small += asset['quantity']
+                if 'wireless_medium' in asset.values():
+                    wireless_medium += asset['quantity']
+                if 'wireless_large' in asset.values():
+                    wireless_large += asset['quantity']
+
         equipment_hourly_demand_kwh = equipment_quantity * energy_demand['equipment_kwh']
         regional_nodes_hourly_demand_kwh = regional_nodes * energy_demand['regional_node_kwh']
         core_nodes_hourly_demand_kwh = core_nodes * energy_demand['core_node_kwh']
+        wireless_small_hourly_demand_kwh = wireless_small * energy_demand['wireless_small_kwh']
+        wireless_medium_hourly_demand_kwh = wireless_medium * energy_demand['wireless_medium_kwh']
+        wireless_large_hourly_demand_kwh = wireless_large * energy_demand['wireless_large_kwh']
 
         equipment_annual_demand_kwh = equipment_hourly_demand_kwh * 12 * 365
         regional_nodes_annual_demand_kwh = regional_nodes_hourly_demand_kwh * 12 * 365
         core_nodes_annual_demand_kwh = core_nodes_hourly_demand_kwh * 12 * 365
+        wireless_small_annual_demand_kwh = wireless_small_hourly_demand_kwh * 12 * 365
+        wireless_medium_annual_demand_kwh = wireless_medium_hourly_demand_kwh * 12 * 365
+        wireless_large_annual_demand_kwh = wireless_large_hourly_demand_kwh * 12 * 365
 
         total_annual_energy_demand_kwh = (
             equipment_annual_demand_kwh +
             regional_nodes_annual_demand_kwh +
-            core_nodes_annual_demand_kwh
+            core_nodes_annual_demand_kwh +
+            wireless_small_annual_demand_kwh +
+            wireless_medium_annual_demand_kwh +
+            wireless_large_annual_demand_kwh
         )
 
         grid_types = [
@@ -80,6 +98,12 @@ def assess_energy(country, regions, assets, option, global_parameters,
             regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
             core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
 
+            wireless_backhaul_demand = (
+                wireless_small_annual_demand_kwh +
+                wireless_medium_annual_demand_kwh +
+                wireless_large_annual_demand_kwh
+                ) * (region[grid_type_handle] / 100)
+
             output.append({
                 'GID_id': region['GID_id'],
                 'scenario': option['scenario'],
@@ -94,6 +118,7 @@ def assess_energy(country, regions, assets, option, global_parameters,
                 'equipment_annual_demand_kWh': equip_demand,
                 'regional_nodes_annual_demand_kwh': regional_nodes_demand,
                 'core_nodes_annual_demand_kwh': core_nodes_demand,
+                'wireless_backhaul_demand_kwh': wireless_backhaul_demand,
             })
 
     return output
