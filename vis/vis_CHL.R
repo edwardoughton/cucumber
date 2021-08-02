@@ -95,7 +95,7 @@ ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) +
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Technology in Chile", 
        colour=NULL,
-       subtitle = "Reported for all adoption scenarios and capacity per user targets",
+       subtitle = "Reported for all adoption scenarios and capacity per user targets (2020-2030)",
        x = NULL, y = "Social Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value+8)) +
   theme(panel.spacing = unit(0.5, "lines")) +
@@ -199,7 +199,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Infrastructure Sharing Strategy in Chile", 
        colour=NULL,
-       subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets",
+       subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
        x = NULL, y = "Social Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(-min_value, max_value+10)) +
   theme(panel.spacing = unit(0.6, "lines")) +
@@ -309,7 +309,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Social Cost of Universal Broadband by Policy Strategy in Chile", 
        colour=NULL,
-       subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets",
+       subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
        x = NULL, y = "Social Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(-0, max_value+10)) +
   theme(panel.spacing = unit(0.6, "lines")) +

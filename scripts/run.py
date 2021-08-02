@@ -69,7 +69,7 @@ def load_regions(country, path, sites_lut):
                     'backhaul_wireless': value['backhaul_wireless'],
                     'backhaul_fiber': value['backhaul_fiber'],
                     'on_grid_perc': value['on_grid_perc'],
-                    'off_grid_perc': value['off_grid_perc'],
+                    'grid_other_perc': value['grid_other_perc'],
                 })
 
     return data_initial
@@ -284,7 +284,7 @@ def load_sites(country, sites1, sites2):
                     'backhaul_wireless': float(site1['backhaul_wireless']),
                     'backhaul_fiber':  float(site1['backhaul_fiber']),
                     'on_grid_perc': float(site2['on_grid_perc']),
-                    'off_grid_perc': float(site2['off_grid_perc']),
+                    'grid_other_perc': float(site2['grid_other_perc']),
                     'total_sites': site2['total_sites'],
                 }
 
@@ -326,15 +326,20 @@ def load_core_lut(path):
     return output
 
 
-def load_on_grid_mix():
+def load_on_grid_mix(path):
 
-    on_grid_mix = {
-        'hydro': 31,
-        'oil': 22,
-        'gas': 17,
-        'coal': 18,
-        'renewables': 12,
-    }
+    on_grid_mix = {}
+
+    data = pd.read_csv(path)
+    years = data['year'].unique()
+
+    for year in years:
+        year_data = {}
+        for idx, item in data.iterrows():
+            if year == item['year']:
+                year_data[item['type']] = item['share']
+
+        on_grid_mix[year] = year_data
 
     return on_grid_mix
 
@@ -370,6 +375,7 @@ if __name__ == '__main__':
         'technology_options',
         'business_model_options',
         'policy_options',
+        'power_options',
     ]
 
     # all_results = []
@@ -403,28 +409,24 @@ if __name__ == '__main__':
 
             country_parameters = COUNTRY_PARAMETERS[iso3]
 
-            # folder = os.path.join(DATA_RAW, 'clustering')
-            # filename = 'data_clustering_results.csv'
-            # country['cluster'] = load_cluster(os.path.join(folder, filename), iso3)
-
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites')
             sites1 = os.path.join(folder, 'sites.csv')
-            sites2 = os.path.join(folder, 'site_power', 'site_power.csv')
+            sites2 = os.path.join(folder, 'site_power', 'b_site_power_lut.csv')
             sites_lut = load_sites(country, sites1, sites2)
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
             filename = 'core_lut.csv'
             core_lut = load_core_lut(os.path.join(folder, filename))
 
-            # folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
-            # filename = 'core_lut.csv'
-            on_grid_mix = load_on_grid_mix()
+            folder = os.path.join(DATA_RAW, 'energy_forecast')
+            filename = 'energy_forecast.csv'
+            on_grid_mix = load_on_grid_mix(os.path.join(folder, filename))
 
             print('-----')
             print('Working on {} in {}'.format(decision_option, iso3))
             print(' ')
 
-            for option in options:#[:1]:
+            for option in options:
 
                 print('Working on {} and {}'.format(option['scenario'], option['strategy']))
 
@@ -446,7 +448,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)#[:5]
+                    data_initial = load_regions(country, path, sites_lut)#[:1]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -490,14 +492,14 @@ if __name__ == '__main__':
                         country_parameters,
                         TIMESTEPS,
                         ENERGY_DEMAND,
-                        # TECH_LUT,
-                        # on_grid_mix
                     )
 
                     data_emissions = assess_emissions(
                         data_energy,
                         TECH_LUT,
-                        on_grid_mix
+                        on_grid_mix,
+                        TIMESTEPS,
+                        option
                     )
 
                     final_results = allocate_deciles(data_assess)
@@ -523,7 +525,7 @@ if __name__ == '__main__':
             write_inputs(OUTPUT_COUNTRY, country, country_parameters,
                             GLOBAL_PARAMETERS, COSTS, decision_option)
 
-        generate_percentages(iso3, decision_option)
+            generate_percentages(iso3, decision_option)
 
     # write_results(all_results, OUTPUT, 'all_options_all_countries')
 

@@ -17,6 +17,7 @@ from rasterio.mask import mask
 # from rasterstats import zonal_stats
 from shapely.geometry import box
 
+from countries import COUNTRY_PARAMETERS
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
@@ -155,6 +156,7 @@ def estimate_site_power_source():
                             'closest_elec_target_m': shortest_dist,
                         }
                     })
+
         if len(output) == 0:
             continue
 
@@ -168,7 +170,7 @@ def estimate_site_power_source():
         output.to_file(path_out, crs='epsg:4326')
 
 
-def write_site_lut():
+def write_all_sites_lut():
     """
 
     """
@@ -195,31 +197,97 @@ def write_site_lut():
 
             sites = gpd.read_file(path, crs='epsg:4326')
 
-            distances = []
-            on_grid = 0
-            off_grid = 0
-            total = 0
-
             for idx, site in sites.iterrows():
-                distances.append(site['closest_el'])
-                if site['closest_el'] < 1000:
+                output.append({
+                    'GID_id': GID_id,
+                    'GID_level': level,
+                    #distance to the closest electricity point
+                    'distance': site['closest_el'],
+                })
+
+    output = pd.DataFrame(output)
+    path = os.path.join(folder, 'a_all_sites.csv')
+    output.to_csv(path, index=False)
+
+
+def write_site_lut():
+    """
+
+    """
+    iso3 = 'CHL'
+    level = 3
+
+    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
+    filename = 'a_all_sites.csv'
+    path = os.path.join(folder, filename)
+    sites = pd.read_csv(path)#[:500]
+    sites = sites.sort_values('distance')
+
+    perc_ongrid = COUNTRY_PARAMETERS['energy']['perc_ongrid']
+    # perc_other = COUNTRY_PARAMETERS['energy']['perc_other']
+
+    quantity_ongrid = len(sites) * (perc_ongrid / 100)
+    # quantity_other = len(sites) * (perc_other / 100)
+
+    interim = []
+    count = 1
+
+    for idx, site in sites.iterrows():
+
+        if count == round(quantity_ongrid):
+            print('Break distance is {}'.format(round(site['distance'])))
+
+        if count <= quantity_ongrid:
+            grid_type = 'on_grid'
+        else:
+            grid_type = 'grid_other'
+
+        interim.append({
+            'GID_id': site['GID_id'],
+            'GID_level': site['GID_level'],
+            'distance': site['distance'],
+            'grid_type': grid_type,
+        })
+
+        count += 1
+
+    filename = 'regions_3_CHL.shp'
+    path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
+    regions = gpd.read_file(path, crs='epsg:4326')#[:5]
+    unique_regions = regions['GID_3'].unique()
+
+    output = []
+
+    for region in unique_regions:
+
+        distances = []
+        on_grid = 0
+        grid_other = 0
+        total = 0
+
+        for site in interim:
+            if region == site['GID_id']:
+                distances.append(site['distance'])
+                if site['grid_type'] == 'on_grid':
                     on_grid += 1
                     total += 1
                 else:
-                    off_grid += 1
+                    grid_other += 1
                     total += 1
+        if total == 0:
+            continue
 
-            output.append({
-                'GID_id': GID_id,
-                'GID_level': level,
-                'dist_mean': (sum(distances) / total),
-                'on_grid_perc': (on_grid / total) * 100,
-                'off_grid_perc': (off_grid / total) * 100,
-                'total_sites': total,
-            })
+        output.append({
+            'GID_id': region,
+            'GID_level': level,
+            'dist_mean': (sum(distances) / total),#dist_mean,
+            'on_grid_perc': (on_grid / total) * 100,
+            'grid_other_perc': (grid_other / total) * 100,
+            'total_sites': total,
+        })
 
     output = pd.DataFrame(output)
-    path = os.path.join(folder, 'site_power.csv')
+    path = os.path.join(folder, 'b_site_power_lut.csv')
     output.to_csv(path, index=False)
 
 
@@ -283,12 +351,68 @@ def process_solar_atlas():
                 dest.write(out_img)
 
 
+# def energy_forcast():
+#     """
+#     Forcast the energy mix over the next n years.
+
+#     """
+#     output = []
+
+#     iso3 = 'CHL'
+
+#     on_grid_mix = {
+#         'hydro': 31,
+#         'oil': 22,
+#         'gas': 17,
+#         'coal': 18,
+#         'renewables': 12,
+#     }
+
+#     growth_rate = {
+#         'hydro': 2,
+#         'oil': -2,
+#         'gas': 1,
+#         'coal': -2,
+#         'renewables': 4,
+#     }
+
+#     timesteps = [t for t in range(2020, 2030 + 1, 1)]
+
+#     for key1, value1 in on_grid_mix.items():
+
+#         share = value1
+
+#         for timestep in timesteps:
+
+#             for key2, value2 in on_grid_mix.items():
+#                 if key1 == key2:
+#                     if timestep == 2020:
+#                         share = share
+#                     else:
+#                         share = share + growth_rate[key1]
+
+#                     output.append({
+#                         'type': key1,
+#                         'share': share,
+#                         'year': timestep,
+#                     })
+
+#     output = pd.DataFrame(output)
+#     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'energy_forecast')
+#     path = os.path.join(folder, 'energy_forecast.csv')
+#     output.to_csv(path, index=False)
+
+
 if __name__ == '__main__':
 
     cut_grid_finder_targets()
 
     estimate_site_power_source()
 
+    write_all_sites_lut()
+
     write_site_lut()
 
     process_solar_atlas()
+
+    # energy_forcast()

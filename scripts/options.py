@@ -36,6 +36,7 @@ def generate_tech_options():
     networks_types = ['baseline']
     spectrum_types = ['baseline']
     tax_types = ['baseline']
+    power_types = ['baseline']
 
     for scenario in scenarios:
         for generation_core_type in generation_core_types:
@@ -44,18 +45,20 @@ def generate_tech_options():
                         for network in networks_types:
                             for spectrum in spectrum_types:
                                 for tax in tax_types:
-                                    strategy = '{}_{}_{}_{}_{}_{}'.format(
-                                        generation_core_type,
-                                        backhaul,
-                                        sharing,
-                                        network,
-                                        spectrum,
-                                        tax
-                                    )
-                                    output.append({
-                                        'scenario': scenario,
-                                        'strategy': strategy
-                                    })
+                                    for power in power_types:
+                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
+                                            generation_core_type,
+                                            backhaul,
+                                            sharing,
+                                            network,
+                                            spectrum,
+                                            tax,
+                                            power
+                                        )
+                                        output.append({
+                                            'scenario': scenario,
+                                            'strategy': strategy
+                                        })
 
     return output
 
@@ -76,6 +79,7 @@ def generate_business_model_options():
     networks_types = ['baseline']
     spectrum_types = ['baseline']
     tax_types = ['baseline']
+    power_types = ['baseline']
 
     for scenario in scenarios:
         for generation_core_type in generation_core_types:
@@ -84,18 +88,20 @@ def generate_business_model_options():
                         for network in networks_types:
                             for spectrum in spectrum_types:
                                 for tax in tax_types:
-                                    strategy = '{}_{}_{}_{}_{}_{}'.format(
-                                        generation_core_type,
-                                        backhaul,
-                                        sharing,
-                                        network,
-                                        spectrum,
-                                        tax
-                                    )
-                                    output.append({
-                                        'scenario': scenario,
-                                        'strategy': strategy
-                                    })
+                                    for power in power_types:
+                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
+                                            generation_core_type,
+                                            backhaul,
+                                            sharing,
+                                            network,
+                                            spectrum,
+                                            tax,
+                                            power
+                                        )
+                                        output.append({
+                                            'scenario': scenario,
+                                            'strategy': strategy
+                                        })
 
     return output
 
@@ -116,6 +122,7 @@ def generate_policy_options():
     networks_types = ['baseline']
     spectrum_types = ['baseline', 'low', 'high']
     tax_types = ['baseline', 'low', 'high']
+    power_types = ['baseline']
 
     for scenario in scenarios:
         for generation_core_type in generation_core_types:
@@ -124,18 +131,20 @@ def generate_policy_options():
                         for network in networks_types:
                             for spectrum in spectrum_types:
                                 for tax in tax_types:
-                                    strategy = '{}_{}_{}_{}_{}_{}'.format(
-                                        generation_core_type,
-                                        backhaul,
-                                        sharing,
-                                        network,
-                                        spectrum,
-                                        tax
-                                    )
-                                    output.append({
-                                        'scenario': scenario,
-                                        'strategy': strategy
-                                    })
+                                    for power in power_types:
+                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
+                                            generation_core_type,
+                                            backhaul,
+                                            sharing,
+                                            network,
+                                            spectrum,
+                                            tax,
+                                            power
+                                        )
+                                        output.append({
+                                            'scenario': scenario,
+                                            'strategy': strategy
+                                        })
 
     return output
 
@@ -156,6 +165,7 @@ def generate_mixed_options():
     networks_types = ['baseline']
     spectrum_types = ['baseline', 'low']
     tax_types = ['baseline', 'low']
+    power_types = ['baseline']
 
     for scenario in scenarios:
         for generation_core_type in generation_core_types:
@@ -164,18 +174,63 @@ def generate_mixed_options():
                         for network in networks_types:
                             for spectrum in spectrum_types:
                                 for tax in tax_types:
-                                    strategy = '{}_{}_{}_{}_{}_{}'.format(
-                                        generation_core_type,
-                                        backhaul,
-                                        sharing,
-                                        network,
-                                        spectrum,
-                                        tax
-                                    )
-                                    output.append({
-                                        'scenario': scenario,
-                                        'strategy': strategy
-                                    })
+                                    for power in power_types:
+                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
+                                            generation_core_type,
+                                            backhaul,
+                                            sharing,
+                                            network,
+                                            spectrum,
+                                            tax,
+                                            power
+                                        )
+                                        output.append({
+                                            'scenario': scenario,
+                                            'strategy': strategy
+                                        })
+
+    return output
+
+
+def generate_power_options():
+    """
+    Generate energy strategy options.
+
+    """
+    output = []
+
+    scenarios = ['low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
+                'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10',
+                'low_5_5_5', 'baseline_5_5_5', 'high_5_5_5']
+    generation_core_types = ['4G_epc', '5G_nsa'] #'3G_umts',
+    backhaul_types = ['wireless', 'fiber']
+    sharing_types = ['baseline']
+    networks_types = ['baseline']
+    spectrum_types = ['baseline']
+    tax_types = ['baseline']
+    power_types = ['baseline', 'renewable']
+
+    for scenario in scenarios:
+        for generation_core_type in generation_core_types:
+                for backhaul in backhaul_types:
+                    for sharing in sharing_types:
+                        for network in networks_types:
+                            for spectrum in spectrum_types:
+                                for tax in tax_types:
+                                    for power in power_types:
+                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
+                                            generation_core_type,
+                                            backhaul,
+                                            sharing,
+                                            network,
+                                            spectrum,
+                                            tax,
+                                            power
+                                        )
+                                        output.append({
+                                            'scenario': scenario,
+                                            'strategy': strategy
+                                        })
 
     return output
 
@@ -185,6 +240,7 @@ OPTIONS = {
     'business_model_options': generate_business_model_options(),
     'policy_options': generate_policy_options(),
     'mixed_options': generate_mixed_options(),
+    'power_options': generate_power_options(),
 }
 
 

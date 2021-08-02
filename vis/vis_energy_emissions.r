@@ -48,50 +48,35 @@ data$scenario_capacity = factor(data$scenario_capacity,
 
 data = data[complete.cases(data),]
 
-# data$scenario_adopt = factor(data$scenario_adopt, 
-#                              levels=c("Low (2% Adoption Growth)",
-#                                       "Baseline (4% Adoption Growth)",
-#                                       "High (6% Adoption Growth)"))
-
-# data$grid_type = factor(data$grid_type, 
-#                         levels=c("off_grid",
-#                                       "on_grid"),
-#                         labels=c("Diesel",
-#                                        "Renewables"))
-
 data <- select(data, 
                scenario_adopt, scenario_capacity, strategy_short, #grid_type,
-               total_annual_energy_demand_kwh,
+               total_energy_annual_demand_kwh,
                demand_carbon_per_kwh, 
                nitrogen_oxide_per_kwh,
                sulpher_dioxide_per_kwh,
                pm10_per_kwh)
 
-# data <- data %>%
-#   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
-#   summarize(
-#     total_annual_energy_demand_kwh = round(sum(total_annual_energy_demand_kwh)),
-#     demand_carbon_per_kwh = round(sum(demand_carbon_per_kwh)),
-#     nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
-#     sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
-#     pm10_per_kwh = round(sum(pm10_per_kwh)),
-#   )
+data = data %>% 
+  group_by(scenario_adopt, scenario_capacity, strategy_short) %>% 
+  summarise(
+    total_energy_annual_demand_kwh = sum(total_energy_annual_demand_kwh),
+    demand_carbon_per_kwh = sum(demand_carbon_per_kwh),
+    nitrogen_oxide_per_kwh = sum(nitrogen_oxide_per_kwh),
+    sulpher_dioxide_per_kwh = sum(sulpher_dioxide_per_kwh),
+    pm10_per_kwh = sum(pm10_per_kwh)
+    )
 
 ############
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
   summarize(
-    value = round(sum(total_annual_energy_demand_kwh)),
-    # demand_carbon_per_kwh = round(sum(demand_carbon_per_kwh)),
-    # nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
-    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
-    # pm10_per_kwh = round(sum(pm10_per_kwh)),
+    value = round(sum(total_energy_annual_demand_kwh)),
   )
 
-sample$value = sample$value / 1e6
+sample$value = sample$value / 1e9
 
 min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + 1
+max_value = max(round(sample$value)) #+ 1
 min_value[min_value > 0] = 0
 
 sample = spread(sample, scenario_adopt, value)
@@ -99,7 +84,7 @@ sample = spread(sample, scenario_adopt, value)
 totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
   summarize(value2 = round(
-    (baseline), 0))
+    (baseline), 1))
 
 energy = 
   ggplot(sample, 
@@ -109,13 +94,13 @@ energy =
                 position = position_dodge(width = .9), lwd = 0.5, 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Universal Broadband Energy Demand for Chile 2020-2030",
+  labs(title = "Total Universal Broadband Energy Demand for Chile over 2020-2030",
        fill=NULL,
        subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
-       x = NULL, y = "Gigawatt hours (GWh)") +
+       x = NULL, y = "Terawatt hours (TWh)") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
@@ -124,11 +109,7 @@ energy =
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
   summarize(
-    # value = round(sum(total_annual_energy_demand_kwh)),
     value = round(sum(demand_carbon_per_kwh)),
-    # nitrogen_oxide_per_kwh = round(sum(nitrogen_oxide_per_kwh)),
-    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
-    # pm10_per_kwh = round(sum(pm10_per_kwh)),
   )
 
 sample$value = sample$value / 1e6
@@ -151,7 +132,7 @@ carbon_dioxide = ggplot(sample,
                 position = position_dodge(width = .9), lwd = 0.5, 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", CO[2], ")")),
@@ -166,11 +147,7 @@ carbon_dioxide = ggplot(sample,
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
   summarize(
-    # value = round(sum(total_annual_energy_demand_kwh)),
-    # value = round(sum(demand_carbon_per_kwh)),
     value = round(sum(nitrogen_oxide_per_kwh)),
-    # sulpher_dioxide_per_kwh = round(sum(sulpher_dioxide_per_kwh)),
-    # pm10_per_kwh = round(sum(pm10_per_kwh)),
   )
 
 sample$value = sample$value / 1e3
@@ -192,7 +169,7 @@ nitrogen_dioxide = ggplot(sample,
                 position = position_dodge(width = .9), lwd = 0.5, 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", NO[x], ")")),
@@ -208,11 +185,7 @@ nitrogen_dioxide = ggplot(sample,
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
   summarize(
-    # value = round(sum(total_annual_energy_demand_kwh)),
-    # value = round(sum(demand_carbon_per_kwh)),
-    # value = round(sum(nitrogen_oxide_per_kwh)),
     value = round(sum(sulpher_dioxide_per_kwh)),
-    # pm10_per_kwh = round(sum(pm10_per_kwh)),
   )
 
 sample$value = sample$value / 1e6
@@ -234,7 +207,7 @@ suplher_dioxide = ggplot(sample,
                 position = position_dodge(width = .9), lwd = 0.5, 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", SO[x], ")")),
@@ -251,14 +224,10 @@ suplher_dioxide = ggplot(sample,
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
   summarize(
-    # value = round(sum(total_annual_energy_demand_kwh)),
-    # value = round(sum(demand_carbon_per_kwh)),
-    # value = round(sum(nitrogen_oxide_per_kwh)),
-    # value = round(sum(sulpher_dioxide_per_kwh)),
     value = round(sum(pm10_per_kwh)),
   )
 
-sample$value = sample$value / 1e3
+sample$value = sample$value / 1e6
 
 min_value = min(round(sample$value))
 max_value = max(round(sample$value)) + 1
@@ -268,7 +237,7 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
-  summarize(value2 = round(baseline, 0))
+  summarize(value2 = round(baseline, 1))
 
 pm10 = ggplot(sample, 
                          aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
@@ -277,13 +246,13 @@ pm10 = ggplot(sample,
                 position = position_dodge(width = .9), lwd = 0.5, 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Universal Broadband Emissions for Chile 2020-2030 (", PM[10], ")")),
        fill=NULL,
        subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
-       x = NULL, y=expression(paste("Tonnes of ", PM[10])), sep="") + #y ="Tonnes of PM10") +
+       x = NULL, y=expression(paste("Kilotonnes of ", PM[10])), sep="") + #y ="Tonnes of PM10") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)

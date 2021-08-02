@@ -75,7 +75,7 @@ def assess_energy(country, regions, assets, option, global_parameters,
         wireless_medium_annual_demand_kwh = wireless_medium_hourly_demand_kwh * 12 * 365
         wireless_large_annual_demand_kwh = wireless_large_hourly_demand_kwh * 12 * 365
 
-        total_annual_energy_demand_kwh = (
+        total_demand_kwh = (
             equipment_annual_demand_kwh +
             regional_nodes_annual_demand_kwh +
             core_nodes_annual_demand_kwh +
@@ -84,41 +84,44 @@ def assess_energy(country, regions, assets, option, global_parameters,
             wireless_large_annual_demand_kwh
         )
 
-        grid_types = [
-            'on_grid',
-            'off_grid'
-        ]
+        for timestep in timesteps:
 
-        for grid_type in grid_types:
+            grid_types = [
+                'on_grid',
+                'grid_other'
+            ]
 
-            grid_type_handle = grid_type + '_perc'
+            for grid_type in grid_types:
 
-            elec_demand = total_annual_energy_demand_kwh * (region[grid_type_handle] / 100)
-            equip_demand = equipment_annual_demand_kwh * (region[grid_type_handle] / 100)
-            regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
-            core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
+                grid_type_handle = grid_type + '_perc'
 
-            wireless_backhaul_demand = (
-                wireless_small_annual_demand_kwh +
-                wireless_medium_annual_demand_kwh +
-                wireless_large_annual_demand_kwh
-                ) * (region[grid_type_handle] / 100)
+                elec_demand = total_demand_kwh * (region[grid_type_handle] / 100)
+                equip_demand = equipment_annual_demand_kwh * (region[grid_type_handle] / 100)
+                regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
+                core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
 
-            output.append({
-                'GID_id': region['GID_id'],
-                'scenario': option['scenario'],
-                'strategy': option['strategy'],
-                'confidence': global_parameters['confidence'],
-                'total_sites': region['total_sites'],
-                'total_upgraded_sites': region['total_upgraded_sites'],
-                'total_new_sites': region['total_new_sites'],
-                'grid_type_perc': region[grid_type_handle],
-                'grid_type': grid_type,
-                'total_annual_energy_demand_kwh': elec_demand,
-                'equipment_annual_demand_kWh': equip_demand,
-                'regional_nodes_annual_demand_kwh': regional_nodes_demand,
-                'core_nodes_annual_demand_kwh': core_nodes_demand,
-                'wireless_backhaul_demand_kwh': wireless_backhaul_demand,
-            })
+                wireless_backhaul_demand = (
+                    wireless_small_annual_demand_kwh +
+                    wireless_medium_annual_demand_kwh +
+                    wireless_large_annual_demand_kwh
+                    ) * (region[grid_type_handle] / 100)
+
+                output.append({
+                    'year': timestep,
+                    'GID_id': region['GID_id'],
+                    'scenario': option['scenario'],
+                    'strategy': option['strategy'],
+                    'confidence': global_parameters['confidence'],
+                    'total_sites': region['total_sites'],
+                    'total_upgraded_sites': region['total_upgraded_sites'],
+                    'total_new_sites': region['total_new_sites'],
+                    'grid_type_perc': region[grid_type_handle],
+                    'grid_type': grid_type,
+                    'total_energy_annual_demand_kwh': elec_demand,
+                    'equipment_annual_demand_kWh': equip_demand,
+                    'regional_nodes_annual_demand_kwh': regional_nodes_demand,
+                    'core_nodes_annual_demand_kwh': core_nodes_demand,
+                    'wireless_backhaul_annual_demand_kwh': wireless_backhaul_demand,
+                })
 
     return output

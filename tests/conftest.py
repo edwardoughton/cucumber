@@ -40,7 +40,6 @@ def setup_option():
         'strategy': '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
     }
 
-
 @fixture(scope='function')
 def setup_option_high():
     return {
@@ -369,10 +368,10 @@ def setup_tech_lut():
             'pm10_per_kWh': 1, #kgs of PM10 per kWh
         },
         'diesel': {
-            'carbon_per_kWh': 1, #kgs of carbon per kWh
-            'nitrogen_oxide_per_kWh': 1, #kgs of nitrogen oxide (NOx) per kWh
-            'sulpher_dioxide_per_kWh': 1, #kgs of sulpher dioxide (SO2) per kWh
-            'pm10_per_kWh': 1, #kgs of PM10 per kWh
+            'carbon_per_kWh': 2, #kgs of carbon per kWh
+            'nitrogen_oxide_per_kWh': 2, #kgs of nitrogen oxide (NOx) per kWh
+            'sulpher_dioxide_per_kWh': 2, #kgs of sulpher dioxide (SO2) per kWh
+            'pm10_per_kWh': 2, #kgs of PM10 per kWh
         },
         'renewables': {
             'carbon_per_kWh': 1, #kgs of carbon per kWh
@@ -386,11 +385,20 @@ def setup_tech_lut():
 @fixture(scope='function')
 def setup_on_grid_mix():
     return {
-        'hydro': 100,
-        'oil': 100,
-        'gas': 100,
-        'coal': 100,
-        'renewables': 100,
+        2020: {
+            'hydro': 100,
+            'oil': 100,
+            'gas': 100,
+            'coal': 100,
+            'renewables': 100,
+        },
+        2021: {
+            'hydro': 100,
+            'oil': 100,
+            'gas': 100,
+            'coal': 100,
+            'renewables': 100,
+        }
     }
 
 
@@ -398,31 +406,65 @@ def setup_on_grid_mix():
 def setup_data_energy():
     return [
         {
+            'year': 2020,
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
-            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],
             'total_sites': 131,
             'total_upgraded_sites': 131,
             'total_new_sites': 231,
             'grid_type_perc': 8.142493638676845,
             'grid_type': 'on_grid',
-            'total_annual_energy_demand_kwh': 30,
+            'total_energy_annual_demand_kwh': 30,
             'equipment_annual_demand_kWh': 10,
             'regional_nodes_annual_demand_kwh': 10,
             'core_nodes_annual_demand_kwh': 10
         },
         {
+            'year': 2020,
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
-            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],
             'total_sites': 131,
             'total_upgraded_sites': 131,
             'total_new_sites': 231,
             'grid_type_perc': 91.85750636132316,
-            'grid_type': 'off_grid',
-            'total_annual_energy_demand_kwh': 30,
+            'grid_type': 'grid_other',
+            'total_energy_annual_demand_kwh': 30,
+            'equipment_annual_demand_kWh': 10,
+            'regional_nodes_annual_demand_kwh': 10,
+            'core_nodes_annual_demand_kwh': 10
+        },
+        {
+            'year': 2021,
+            'GID_id': 'CHL.1.1.1_1',
+            'scenario': 'low_20_20_20',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
+            'confidence': [50],
+            'total_sites': 131,
+            'total_upgraded_sites': 131,
+            'total_new_sites': 231,
+            'grid_type_perc': 8.142493638676845,
+            'grid_type': 'on_grid',
+            'total_energy_annual_demand_kwh': 30,
+            'equipment_annual_demand_kWh': 10,
+            'regional_nodes_annual_demand_kwh': 10,
+            'core_nodes_annual_demand_kwh': 10
+        },
+        {
+            'year': 2021,
+            'GID_id': 'CHL.1.1.1_1',
+            'scenario': 'low_20_20_20',
+            'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
+            'confidence': [50],
+            'total_sites': 131,
+            'total_upgraded_sites': 131,
+            'total_new_sites': 231,
+            'grid_type_perc': 91.85750636132316,
+            'grid_type': 'grid_other',
+            'total_energy_annual_demand_kwh': 30,
             'equipment_annual_demand_kWh': 10,
             'regional_nodes_annual_demand_kwh': 10,
             'core_nodes_annual_demand_kwh': 10

@@ -420,5 +420,6 @@ if __name__ == "__main__":
     print('Gathering mobile infrastructure assets')
     subset_mobile_assets_by_region(iso3, level)
 
+    print('Processing sites')
     cells_per_site = 3
     process_sites(iso3, level, cells_per_site)

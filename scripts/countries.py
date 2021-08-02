@@ -95,4 +95,8 @@ COUNTRY_PARAMETERS = {
             'administration_percentage_of_network_cost': 20,
             },
         },
+        'energy': {
+            'perc_ongrid': 67,
+            'perc_other': 33, #both offgrid and badgrid
+        }
     }
