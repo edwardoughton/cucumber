@@ -373,9 +373,9 @@ if __name__ == '__main__':
     capacity_lut = read_capacity_lut(path)
 
     decision_options = [
-        # 'technology_options',
-        # 'business_model_options',
-        # 'policy_options',
+        'technology_options',
+        'business_model_options',
+        'policy_options',
         'power_options',
     ]
 

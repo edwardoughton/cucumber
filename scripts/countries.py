@@ -40,7 +40,7 @@ COUNTRY_PARAMETERS = {
         'arpu': {
             'high': 15,
             'medium': 10,
-            'low': 7,
+            'low': 5,
         },
         'networks': {
             'baseline_urban': 4,
@@ -85,8 +85,8 @@ COUNTRY_PARAMETERS = {
         'financials': {
             'wacc': 8, #http://www.waccexpert.com/
             'profit_margin': 20,
-            'spectrum_coverage_baseline_usd_mhz_pop': 0.2,
-            'spectrum_capacity_baseline_usd_mhz_pop': 0.1,
+            'spectrum_coverage_baseline_usd_mhz_pop': 0.25,
+            'spectrum_capacity_baseline_usd_mhz_pop': 0.15,
             'spectrum_cost_low': 25,
             'spectrum_cost_high': 200,
             'tax_low': 10,

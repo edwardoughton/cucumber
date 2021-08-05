@@ -332,7 +332,7 @@ def get_tech_percentages(iso3):
         )
 
         output[key] = {
-            'social_cost_bn': round(row['social_cost'] / 1e9, 2),
+            'social_cost_bn': round(row['social_cost'] / 1e9),
             'perc_saving_vs_3g': round(row['perc_saving_vs_3G'], 1),
             'w_over_fb': round(row['w_over_fb'], 1),
         }
@@ -359,7 +359,7 @@ def get_sharing_data(iso3):
         )
 
         output[key] = {
-            'social_cost_bn': round(row['social_cost_x'] / 1e9, 2),
+            'social_cost_bn': round(row['social_cost_x'] / 1e9),
             'saving_against_baseline': round(row['saving_against_baseline'], 1),
         }
 
