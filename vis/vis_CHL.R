@@ -164,7 +164,7 @@ data <- select(data, scenario_adopt, scenario_capacity, strategy,
 totals <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy) %>%
   summarize(social_cost = round(
-    (societal_cost)/1e9, 1))
+    (societal_cost)/1e9))
 
 min_value = min(round(data$societal_cost/ 1e9))
 max_value = max(round(data$societal_cost/ 1e9))
