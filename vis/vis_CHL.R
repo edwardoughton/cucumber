@@ -133,10 +133,10 @@ data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
 data = data %>% filter(data$strategy_short == '4G (W)')
 
 data$strategy = factor(data$strategy, levels=c(
-  "4G_epc_wireless_baseline_baseline_baseline_baseline",
-  "4G_epc_wireless_passive_baseline_baseline_baseline",
-  "4G_epc_wireless_srn_baseline_baseline_baseline",
-  "4G_epc_wireless_active_baseline_baseline_baseline"
+  "4G_epc_wireless_baseline_baseline_baseline_baseline_baseline",
+  "4G_epc_wireless_passive_baseline_baseline_baseline_baseline",
+  "4G_epc_wireless_srn_baseline_baseline_baseline_baseline",
+  "4G_epc_wireless_active_baseline_baseline_baseline_baseline"
 ),
 labels=c(
   "Baseline",
@@ -206,7 +206,6 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
 
-
 path = file.path(folder, 'figures', 'social_costs_by_sharing_strategy.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 dir.create(file.path(folder, '..', 'reports', 'images', 'CHL'), showWarnings = FALSE)
@@ -237,11 +236,11 @@ data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
 data = data %>% filter(data$strategy_short == '4G (W)')
 
 data$strategy = factor(data$strategy, levels=c(
-  "4G_epc_wireless_baseline_baseline_baseline_baseline",
-  "4G_epc_wireless_baseline_baseline_baseline_low",
-  "4G_epc_wireless_baseline_baseline_baseline_high",
-  "4G_epc_wireless_baseline_baseline_low_baseline",
-  "4G_epc_wireless_baseline_baseline_high_baseline"
+  "4G_epc_wireless_baseline_baseline_baseline_baseline_baseline",
+  "4G_epc_wireless_baseline_baseline_baseline_low_baseline",
+  "4G_epc_wireless_baseline_baseline_baseline_high_baseline",
+  "4G_epc_wireless_baseline_baseline_low_baseline_baseline",
+  "4G_epc_wireless_baseline_baseline_high_baseline_baseline"
   ),
 labels=c(
   "Baseline",

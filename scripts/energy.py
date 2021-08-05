@@ -125,7 +125,7 @@ def estimate_site_power_source():
 
         print('Working on {}'.format(GID_id))
 
-        filename = 'CELLID_2021_03_' + GID_id + '.shp'
+        filename = GID_id + '.shp'
         path = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region', filename)
 
         output = []
@@ -405,7 +405,7 @@ def process_solar_atlas():
 
 if __name__ == '__main__':
 
-    cut_grid_finder_targets()
+    # cut_grid_finder_targets()
 
     estimate_site_power_source()
 
@@ -413,6 +413,6 @@ if __name__ == '__main__':
 
     write_site_lut()
 
-    process_solar_atlas()
+    # process_solar_atlas()
 
     # energy_forcast()

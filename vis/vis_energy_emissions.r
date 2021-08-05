@@ -76,7 +76,7 @@ sample <- data %>%
 sample$value = sample$value / 1e9
 
 min_value = min(round(sample$value))
-max_value = max(round(sample$value)) #+ 1
+max_value = max(round(sample$value)) + 1
 min_value[min_value > 0] = 0
 
 sample = spread(sample, scenario_adopt, value)
