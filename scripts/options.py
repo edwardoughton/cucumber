@@ -327,11 +327,11 @@ COST_TYPES = {
 ENERGY_DEMAND = {
     #all costs in $USD
     'equipment_kwh': 5,
-    'core_node_kwh': 20,
-    'regional_node_kwh': 10,
-    'wireless_small_kwh': 15,
-    'wireless_medium_kwh': 30,
-    'wireless_large_kwh': 45,
+    'core_node_kwh': 10,
+    'regional_node_kwh': 5,
+    'wireless_small_kwh': 5, #Faruk et al. 2019
+    'wireless_medium_kwh': 10,
+    'wireless_large_kwh': 15,
 }
 
 TECH_LUT = {

@@ -407,6 +407,7 @@ def setup_data_energy():
     return [
         {
             'year': 2020,
+            'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
@@ -423,6 +424,7 @@ def setup_data_energy():
         },
         {
             'year': 2020,
+            'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
@@ -439,6 +441,7 @@ def setup_data_energy():
         },
         {
             'year': 2021,
+            'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',
@@ -455,6 +458,7 @@ def setup_data_energy():
         },
         {
             'year': 2021,
+            'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline_baseline',

@@ -68,12 +68,12 @@ def assess_energy(country, regions, assets, option, global_parameters,
         wireless_medium_hourly_demand_kwh = wireless_medium * energy_demand['wireless_medium_kwh']
         wireless_large_hourly_demand_kwh = wireless_large * energy_demand['wireless_large_kwh']
 
-        equipment_annual_demand_kwh = equipment_hourly_demand_kwh * 12 * 365
-        regional_nodes_annual_demand_kwh = regional_nodes_hourly_demand_kwh * 12 * 365
-        core_nodes_annual_demand_kwh = core_nodes_hourly_demand_kwh * 12 * 365
-        wireless_small_annual_demand_kwh = wireless_small_hourly_demand_kwh * 12 * 365
-        wireless_medium_annual_demand_kwh = wireless_medium_hourly_demand_kwh * 12 * 365
-        wireless_large_annual_demand_kwh = wireless_large_hourly_demand_kwh * 12 * 365
+        equipment_annual_demand_kwh = equipment_hourly_demand_kwh * 24 * 365
+        regional_nodes_annual_demand_kwh = regional_nodes_hourly_demand_kwh * 24 * 365
+        core_nodes_annual_demand_kwh = core_nodes_hourly_demand_kwh * 24 * 365
+        wireless_small_annual_demand_kwh = wireless_small_hourly_demand_kwh * 24 * 365
+        wireless_medium_annual_demand_kwh = wireless_medium_hourly_demand_kwh * 24 * 365
+        wireless_large_annual_demand_kwh = wireless_large_hourly_demand_kwh * 24 * 365
 
         total_demand_kwh = (
             equipment_annual_demand_kwh +
@@ -108,10 +108,11 @@ def assess_energy(country, regions, assets, option, global_parameters,
 
                 output.append({
                     'year': timestep,
+                    'GID_0': region['GID_0'],
                     'GID_id': region['GID_id'],
                     'scenario': option['scenario'],
                     'strategy': option['strategy'],
-                    'confidence': global_parameters['confidence'],
+                    'confidence': global_parameters['confidence'][0],
                     'total_sites': region['total_sites'],
                     'total_upgraded_sites': region['total_upgraded_sites'],
                     'total_new_sites': region['total_new_sites'],

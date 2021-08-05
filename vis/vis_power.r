@@ -4,11 +4,12 @@ library(ggpubr)
 
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
-filename = 'emissions_power_options.csv'
+filename = 'power_emissions_power_options.csv'
 data <- read.csv(file.path(folder, '..', 'results', 'model_results', 'CHL', filename))
 
 names(data)[names(data) == 'GID_0'] <- 'country'
 
+data$scenario_adopt = ''
 data$scenario_adopt[grep("high", data$scenario)] = 'high'
 data$scenario_adopt[grep("baseline", data$scenario)] = 'baseline'
 data$scenario_adopt[grep("low", data$scenario)] = 'low'

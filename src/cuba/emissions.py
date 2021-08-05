@@ -79,6 +79,7 @@ def assess_emissions(data_energy, tech_lut, on_grid_mix, timesteps, option):
 
                 output.append({
                     'year': timestep,
+                    'GID_0': item['GID_0'],
                     'GID_id': item['GID_id'],
                     'scenario': item['scenario'],
                     'strategy': item['strategy'],

@@ -9,6 +9,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
 
     regions = [
         {
+            'GID_0': 'CHL',
             'GID_id': 'a',
             'geotype': 'urban',
             'population_total': 1000,
@@ -85,16 +86,18 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
 
-    assert results[0]['equipment_annual_demand_kWh'] == (4380 * 0.5)
-    assert results[0]['regional_nodes_annual_demand_kwh'] == (4380 * 0.5)
-    assert results[0]['core_nodes_annual_demand_kwh'] == (4380 * 0.5)
-    assert results[0]['wireless_backhaul_annual_demand_kwh'] == ((4380 * 3) * 0.5)
+    ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
+    assert results[0]['equipment_annual_demand_kWh'] == (1 * 24 * 365) * 0.5
+    assert results[0]['regional_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
+    assert results[0]['core_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
+    assert results[0]['wireless_backhaul_annual_demand_kwh'] == (3 * 24 * 365) * 0.5
     assert results[0]['total_energy_annual_demand_kwh'] == (
-        ((4380 * 0.5) * 3) + ((4380 * 3) * 0.5)
+        (((1 * 24 * 365) * 0.5) * 3) + (((3 * 24 * 365)) * 0.5)
     )
 
     regions = [
         {
+            'GID_0': 'CHL',
             'GID_id': 'a',
             'geotype': 'urban',
             'population_total': 1000,
@@ -106,6 +109,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
             'grid_other_perc': 0,
         },
         {
+            'GID_0': 'CHL',
             'GID_id': 'a',
             'geotype': 'urban',
             'population_total': 1000,
@@ -125,10 +129,9 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
     for region in results:
 
         if region['grid_type_perc'] == 100 and region['grid_type'] == 'on_grid':
-            assert region['total_energy_annual_demand_kwh'] == ((4380 * 6) * 1)
+            assert region['total_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 6) * 1)
         if region['grid_type_perc'] == 100 and region['grid_type'] == 'off_grid':
-            assert region['total_energy_annual_demand_kwh'] == ((4380 * 6) * 1)
-
+            assert region['total_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 6) * 1)
 
     setup_timesteps = [
         2020,
@@ -145,4 +148,4 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
     for region in results:
         total_energy += region['total_energy_annual_demand_kwh']
 
-    assert total_energy == ((4380 * 6) * 1) * 4
+    assert total_energy == (((1 * 24 * 365) * 6) * 1) * 4

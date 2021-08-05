@@ -21,7 +21,8 @@ from cuba.assess import assess
 from cuba.energy import assess_energy
 from cuba.emissions import assess_emissions
 from write import (define_deciles, write_demand, write_results, write_inputs,
-    write_assets, write_energy, write_emissions)
+    write_assets, write_energy, write_emissions, write_emissions_aggregated,
+    write_power_emissions)
 from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
 from percentages import generate_percentages
 
@@ -372,9 +373,9 @@ if __name__ == '__main__':
     capacity_lut = read_capacity_lut(path)
 
     decision_options = [
-        'technology_options',
-        'business_model_options',
-        'policy_options',
+        # 'technology_options',
+        # 'business_model_options',
+        # 'policy_options',
         'power_options',
     ]
 
@@ -448,7 +449,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)#[:1]
+                    data_initial = load_regions(country, path, sites_lut)#[:20]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -519,6 +520,12 @@ if __name__ == '__main__':
             write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
             write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+
+            write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
+
+            write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
 
             write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 

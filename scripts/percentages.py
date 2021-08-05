@@ -92,7 +92,7 @@ def generate_percentages(iso3, decision_option):
             data.to_csv(path, index=False)
 
     if decision_option == 'power_options':
-        filename = 'emissions_power_options.csv'
+        filename = 'power_emissions_power_options.csv'
         path = os.path.join(RESULTS, iso3, filename)
 
         if os.path.exists(path):

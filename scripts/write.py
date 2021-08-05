@@ -425,3 +425,50 @@ def write_emissions(emissions, folder, metric):
 
     path = os.path.join(folder,'emissions_{}.csv'.format(metric))
     emissions.to_csv(path, index=True)
+
+
+def write_emissions_aggregated(emissions, folder, metric):
+    """
+    Write all emissions.
+
+    """
+    print('Writing emissions aggregated')
+
+    df = pd.DataFrame(emissions)
+    df = df[[
+        'GID_0', 'scenario', 'strategy', 'confidence',
+        'total_energy_annual_demand_kwh',
+        'demand_carbon_per_kwh',
+        'nitrogen_oxide_per_kwh',
+        'sulpher_dioxide_per_kwh',
+        'pm10_per_kwh'
+    ]]
+    df = pd.DataFrame(df)
+    df = df.drop_duplicates()
+    df = df.groupby([
+        'GID_0', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
+    path = os.path.join(folder,'emissions_national_{}.csv'.format(metric))
+    df.to_csv(path, index=True)
+
+
+def write_power_emissions(emissions, folder, metric):
+    """
+    Write all emissions.
+
+    """
+    print('Writing emissions aggregated')
+    df = pd.DataFrame(emissions)
+    df = df[[
+        'GID_0', 'scenario', 'strategy', 'confidence', 'grid_type',
+        'total_energy_annual_demand_kwh',
+        'demand_carbon_per_kwh',
+        'nitrogen_oxide_per_kwh',
+        'sulpher_dioxide_per_kwh',
+        'pm10_per_kwh'
+    ]]
+    df = pd.DataFrame(df)
+    df = df.drop_duplicates()
+    df = df.groupby([
+        'GID_0', 'scenario', 'strategy', 'confidence', 'grid_type'], as_index=True).sum()
+    path = os.path.join(folder,'power_emissions_{}.csv'.format(metric))
+    df.to_csv(path, index=True)

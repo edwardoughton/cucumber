@@ -231,39 +231,134 @@ def subset_mobile_assets_by_region(iso3, level):
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    filenames = [
-        'CELLID_2021_03.shp',
-        'ELEMENTOS_AUTORIZATORIOS_EN_SERVICIO.shp'
-    ]
+    path_in = os.path.join(DATA_INTERMEDIATE, iso3, 'existing_network',
+        'Mobile Broadband', 'CELLID_2021_03.shp')
+    assets = gpd.read_file(path_in, crs='epsg:4326')#[:2000]
 
-    for filename in filenames:
+    for idx, region in tqdm(regions.iterrows(), total=regions.shape[0]):
 
-        path_in = os.path.join(DATA_INTERMEDIATE, iso3, 'existing_network',
-            'Mobile Broadband', filename)
-        assets = gpd.read_file(path_in, crs='epsg:4326')#[:1]
+        GID_id = region["GID_{}".format(level)]
 
-        for idx, region in tqdm(regions.iterrows(), total=regions.shape[0]):
+        combined_filename = GID_id + '.shp'
+        path_out = os.path.join(DATA_INTERMEDIATE, iso3, #'existing_network',
+            'sites', 'by_region', combined_filename)
 
-            GID_id = region["GID_{}".format(level)]
+        if os.path.exists(path_out):
+            continue
 
-            combined_filename = filename[:-4] + '_' + GID_id + '.shp'
-            path_out = os.path.join(DATA_INTERMEDIATE, iso3, 'existing_network',
-                'sites', combined_filename)
+        combined_filename =  'unbuffered' + '_' + GID_id + '.shp'
+        path_unbuffered = os.path.join(DATA_INTERMEDIATE, iso3,
+            'sites', 'by_region', combined_filename)
 
-            if os.path.exists(path_out):
-                continue
-
+        if os.path.exists(path_unbuffered):
+            subsetted_assets = gpd.read_file(path_unbuffered, crs='epsg:4326')#[:2000]
+        else:
             geo_region = gpd.GeoDataFrame(geometry=gpd.GeoSeries(region['geometry']),
                 crs='epsg:4326')
-
             subsetted_assets = gpd.overlay(assets, geo_region, how='intersection')
-
             if len(subsetted_assets) > 0:
+                unbuffered = subsetted_assets
+                unbuffered = unbuffered.to_crs('epsg:4326')
+                unbuffered.to_file(path_unbuffered, crs='epsg:4326')
 
-                subsetted_assets.to_file(path_out, crs='epsg:4326')
+        subsetted_assets = subsetted_assets.to_crs('epsg:3857')
+
+        interim = []
+
+        for idx, asset in subsetted_assets.iterrows():
+
+            asset['geometry'] = asset['geometry'].buffer(5)
+
+            coords = asset['geometry'].representative_point()
+
+            cell_id = '{}_{}_{}_{}_{}'.format(
+                asset['TITE_COD'],
+                asset['NOMBRE_EMP'],
+                coords.x,
+                coords.y,
+                asset['CBSA_CELL_'],
+            )
+
+            interim.append({
+                'type': 'Polygon',
+                'geometry': asset['geometry'],
+                'coords': coords,
+                'properties': {
+                    'technology': asset['TITE_COD'],
+                    'cell_id': cell_id,
+                },
+            })
+
+        output = []
+        seen = set()
+
+        for asset1 in interim:
+
+            polys = []
+            cells_2G = 0
+            cells_3G = 0
+            cells_4G = 0
+
+            cell_id = asset1['properties']['cell_id']
+
+            if cell_id in seen:
+                continue
+            else:
+                seen.add(cell_id)
+                polys.append(asset1['coords'])
+                if asset1['properties']['technology'] == '2G':
+                    cells_2G += 1
+                if asset1['properties']['technology'] == '3G':
+                    cells_3G += 1
+                if asset1['properties']['technology'] == '4G':
+                    cells_4G += 1
+
+            for asset2 in interim:
+
+                cell_id = asset2['properties']['cell_id']
+
+                if cell_id in seen:
+                    continue
+
+                if asset1['geometry'].intersects(asset2['geometry']):
+                    polys.append(asset2['coords'])
+                    seen.add(cell_id)
+                    if asset2['properties']['technology'] == '2G':
+                        cells_2G += 1
+                    if asset2['properties']['technology'] == '3G':
+                        cells_3G += 1
+                    if asset2['properties']['technology'] == '4G':
+                        cells_4G += 1
+
+            output.append({
+                'type': 'Point',
+                'geometry': MultiPoint(polys).representative_point(),
+                'properties': {
+                    # 'technology': asset1['properties']['technology'],
+                    'cells_2G': cells_2G,
+                    'cells_3G': cells_3G,
+                    'cells_4G': cells_4G,
+                },
+            })
+
+        if len(output) > 0:
+
+            output = gpd.GeoDataFrame.from_features(output, crs='epsg:3857')
+
+            # geoms = output['geometry'].unary_union
+
+            # output = gpd.GeoDataFrame(geometry=[geoms], crs='epsg:3857')
+
+            # output = output.explode().reset_index(drop=True)
+
+            # output['geometry'] = output['geometry'].representative_point()
+
+            output = output.to_crs('epsg:4326')
+
+            output.to_file(path_out, crs='epsg:4326')
 
 
-def process_sites(iso3, level, cells_per_site):
+def process_sites(iso3, level):
     """
     Create sites LUT.
 
@@ -283,12 +378,17 @@ def process_sites(iso3, level, cells_per_site):
         GID_level = 'GID_{}'.format(level)
         GID_id = region[GID_level]
 
+        cells_2G = 0
+        cells_3G = 0
+        cells_4G = 0
+
         sites_2G = 0
         sites_3G = 0
         sites_4G = 0
+
         total_sites = 0
 
-        filename = 'CELLID_2021_03_' + GID_id + '.shp'
+        filename = GID_id + '.shp'
         path = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region', filename)
 
         if os.path.exists(path):
@@ -299,23 +399,30 @@ def process_sites(iso3, level, cells_per_site):
 
                 if point['geometry'].intersects(region['geometry']):
 
-                    if '2G' in point['TITE_COD']:
-                        sites_2G += 1
-                    if '3G' in point['TITE_COD']:
-                        sites_3G += 1
-                    if '4G' in point['TITE_COD']:
-                        sites_4G += 1
+                    cells_2G += point['cells_2G']
+                    cells_3G += point['cells_3G']
+                    cells_4G += point['cells_4G']
 
-            sites_2G = round(sites_2G / cells_per_site)
-            sites_3G = round(sites_3G / cells_per_site)
-            sites_4G = round(sites_4G / cells_per_site)
-            total_sites = sites_2G + sites_3G + sites_4G
+                    if point['cells_4G'] > 0:
+                        sites_4G += 1
+                    elif point['cells_3G'] > 0:
+                        sites_3G += 1
+                    elif point['cells_2G'] > 0:
+                        sites_2G += 1
+
+            # sites_2G = round(sites_2G / cells_per_site)
+            # sites_3G = round(sites_3G / cells_per_site)
+            # sites_4G = round(sites_4G / cells_per_site)
+            total_sites = round(sites_2G + sites_3G + sites_4G)
 
         backhaul_estimates = estimate_backhaul(total_sites, backhaul_lut)
 
         output.append({
             'GID_0': region['GID_0'],
             GID_level: GID_id,
+            'cells_2G': cells_2G,
+            'cells_3G': cells_3G,
+            'cells_4G': cells_4G,
             'sites_2G': sites_2G,
             'sites_3G': sites_3G,
             'sites_4G': sites_4G,
@@ -402,24 +509,22 @@ def estimate_backhaul(total_sites, backhaul_lut):
 
     return output
 
-
 if __name__ == "__main__":
 
     iso3 = 'CHL'
     level = 3
 
-    print('Subsetting road network by region')
-    subset_road_network_by_region(iso3, level)
+    # print('Subsetting road network by region')
+    # subset_road_network_by_region(iso3, level)
 
-    print('Processing fiber')
-    process_fiber()
+    # print('Processing fiber')
+    # process_fiber()
 
-    print('Subsetting fiber network by region')
-    subset_fiber_by_region(iso3, level)
+    # print('Subsetting fiber network by region')
+    # subset_fiber_by_region(iso3, level)
 
-    print('Gathering mobile infrastructure assets')
-    subset_mobile_assets_by_region(iso3, level)
+    # print('Gathering mobile infrastructure assets')
+    # subset_mobile_assets_by_region(iso3, level)
 
     print('Processing sites')
-    cells_per_site = 3
-    process_sites(iso3, level, cells_per_site)
+    process_sites(iso3, level)
