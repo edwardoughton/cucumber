@@ -143,6 +143,14 @@ carbon_dioxide = ggplot(sample,
   scale_fill_viridis_d() + 
   facet_grid(~scenario_capacity)
 
+dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
+path = file.path(folder, 'figures', 'carbon.png')
+ggsave(path, units="in", width=8, height=4, dpi=300)
+dir.create(file.path(folder, '..', 'reports', 'images', 'CHL'), showWarnings = FALSE)
+path = file.path(folder, '..', 'reports', 'images', 'CHL', 'carbon.png')
+ggsave(path, units="in", width=8, height=4, dpi=300)
+dev.off()
+
 ############
 sample <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>% #, grid_type
