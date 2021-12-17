@@ -98,7 +98,7 @@ COUNTRY_PARAMETERS = {
         'energy': {
             ##based on GSMA there are 9,152 ongrid towers, 554 using renewables, 121 diesel
             ##Check the GSMA spreadsheet in raw/gsma
-            'perc_ongrid': 98.75,
-            'perc_other': 1.25, #offgrid diesel
+            'perc_ongrid': 98, #98.75,
+            'perc_other': 2, #1.25, #offgrid diesel
         }
     }

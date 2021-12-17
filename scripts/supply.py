@@ -224,7 +224,7 @@ def subset_mobile_assets_by_region(iso3, level):
     filename = 'regions_{}_{}.shp'.format(level, iso3)
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
     path = os.path.join(folder, filename)
-    regions = gpd.read_file(path, crs='epsg:4326')#[:1]
+    regions = gpd.read_file(path, crs='epsg:4326')#[:2]
     regions = regions.loc[regions.is_valid]
 
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region')
@@ -235,6 +235,8 @@ def subset_mobile_assets_by_region(iso3, level):
         'Mobile Broadband', 'CELLID_2021_03.shp')
     assets = gpd.read_file(path_in, crs='epsg:4326')#[:2000]
 
+    total_sites = []
+
     for idx, region in tqdm(regions.iterrows(), total=regions.shape[0]):
 
         GID_id = region["GID_{}".format(level)]
@@ -243,8 +245,8 @@ def subset_mobile_assets_by_region(iso3, level):
         path_out = os.path.join(DATA_INTERMEDIATE, iso3, #'existing_network',
             'sites', 'by_region', combined_filename)
 
-        if os.path.exists(path_out):
-            continue
+        # if os.path.exists(path_out):
+        #     continue
 
         combined_filename =  'unbuffered' + '_' + GID_id + '.shp'
         path_unbuffered = os.path.join(DATA_INTERMEDIATE, iso3,
@@ -288,6 +290,8 @@ def subset_mobile_assets_by_region(iso3, level):
                     'cell_id': cell_id,
                 },
             })
+
+        # total_sites = total_sites + interim
 
         output = []
         seen = set()
@@ -341,6 +345,12 @@ def subset_mobile_assets_by_region(iso3, level):
                 },
             })
 
+            total_sites.append({
+                'cells_2G': cells_2G,
+                'cells_3G': cells_3G,
+                'cells_4G': cells_4G,
+            })
+
         if len(output) > 0:
 
             output = gpd.GeoDataFrame.from_features(output, crs='epsg:3857')
@@ -356,6 +366,10 @@ def subset_mobile_assets_by_region(iso3, level):
             output = output.to_crs('epsg:4326')
 
             output.to_file(path_out, crs='epsg:4326')
+
+    total_sites = pd.DataFrame(total_sites)
+    fold = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region')
+    total_sites.to_csv(os.path.join(fold, 'total_sites.csv'))
 
 
 def process_sites(iso3, level):

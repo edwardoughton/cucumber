@@ -414,6 +414,7 @@ if __name__ == '__main__':
             sites1 = os.path.join(folder, 'sites.csv')
             sites2 = os.path.join(folder, 'site_power', 'b_site_power_lut.csv')
             sites_lut = load_sites(country, sites1, sites2)
+            # sites_lut_to_write = pd.DataFrame(sites_lut)
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
             filename = 'core_lut.csv'
