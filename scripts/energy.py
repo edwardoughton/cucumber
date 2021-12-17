@@ -256,6 +256,10 @@ def write_site_lut():
     regions = gpd.read_file(path, crs='epsg:4326')#[:5]
     unique_regions = regions['GID_3'].unique()
 
+    interim_df = pd.DataFrame(interim)
+    path = os.path.join(folder, 'interim_df.csv')
+    interim_df.to_csv(path, index=False)
+
     output = []
 
     for region in unique_regions:
