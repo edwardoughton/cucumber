@@ -550,9 +550,11 @@ if __name__ == '__main__':
     if not os.path.exists(os.path.join(OUTPUT)):
         os.makedirs(os.path.join(OUTPUT))
 
-    country = {
-        'iso3': 'CHL',
-        'prefered_name': 'Chile',
-    }
+    countries = [
+        # {'iso3': 'CHL','prefered_name': 'Chile'},
+        {'iso3': 'COL','prefered_name': 'Colombia'},
+    ]
 
-    generate_report(country)
+    for country in countries:
+
+        generate_report(country)

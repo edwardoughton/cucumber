@@ -56,7 +56,7 @@ def load_regions(country, path, sites_lut):
                     'GID_0': item['GID_0'],
                     'GID_id': item['GID_id'],
                     'GID_level': item['GID_level'],
-                    'population_total': item['population_total'],
+                    'population_total': item['population'],
                     # 'population_over_10': item['population_over_10'],
                     # 'population_f_over_10': item['population_f_over_10'],
                     # 'population_m_over_10': item['population_m_over_10'],
@@ -275,7 +275,7 @@ def load_sites(country, sites1, sites2):
 
     for idx, site1 in sites1.iterrows():
         for idx, site2 in sites2.iterrows():
-            if site1['GID_3'] == site2['GID_id']:
+            if site1[GID_id] == site2['GID_id']:
                 output[site1[GID_id]] = {
                     'GID_0': site1['GID_0'],
                     # 'sites_2G': int(site1['sites_2G']),
@@ -403,8 +403,8 @@ if __name__ == '__main__':
             if not os.path.exists(OUTPUT_COUNTRY):
                 os.makedirs(OUTPUT_COUNTRY)
 
-            # if not iso3 == 'CRI':
-            #     continue
+            if not iso3 == 'COL':
+                continue
 
             print('Working on {}'.format(iso3))
 
