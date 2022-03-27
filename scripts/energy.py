@@ -10,12 +10,14 @@ import os
 import configparser
 import json
 import csv
+import math
 import pandas as pd
 import geopandas as gpd
 import rasterio
 from rasterio.mask import mask
 # from rasterstats import zonal_stats
 from shapely.geometry import box
+from random import uniform
 
 from countries import COUNTRY_PARAMETERS
 
@@ -28,40 +30,99 @@ DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 
-def cut_grid_finder_targets():
+def find_country_list(continent_list):
     """
-    Take the global grid finder targets layer and cut out Chile.
+    This function produces country information by continent.
+
+    Parameters
+    ----------
+    continent_list : list
+        Contains the name of the desired continent, e.g. ['Africa']
+
+    Returns
+    -------
+    countries : list of dicts
+        Contains all desired country information for countries in
+        the stated continent.
 
     """
-    iso3 = 'CHL'
-    level = 3
+    glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
 
-    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets', 'tifs')
+    countries = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
 
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    if len(continent_list) > 0:
+        subset = countries.loc[countries['continent'].isin(continent_list)]
+    else:
+        subset = countries
+
+    countries = []
+
+    for index, country in subset.iterrows():
+
+        countries.append({
+            'country_name': country['country'],
+            'iso3': country['ISO_3digit'],
+            'iso2': country['ISO_2digit'],
+            'regional_level': country['lowest'],
+        })
+
+    return countries
+
+
+def cut_grid_finder_targets(country):
+    """
+    Take the global grid finder targets layer and cut out.
+
+    """
+    iso3 = country['iso3']
+    level = country['regional_level']
+
+    folder_tifs = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets', 'tifs')
+
+    if not os.path.exists(folder_tifs):
+        os.makedirs(folder_tifs)
+
+    folder_shps = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets', 'shapes')
+
+    if not os.path.exists(folder_shps):
+        os.makedirs(folder_shps)
 
     path_targets = os.path.join(DATA_RAW, 'gridfinder', 'targets.tif')
     targets = rasterio.open(path_targets, 'r+')
     targets.nodata = 255
     targets.crs = {"init": "epsg:4326"}
 
-    filename = 'regions_3_CHL.shp'
+    filename = 'regions_{}_{}.shp'.format(level, iso3)
     path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
     regions = gpd.read_file(path, crs='epsg:4326')#[:1]
+
+    filename = 'gridfinder_targets_lut.csv'
+    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets')
+    path_out = os.path.join(folder, filename)
+
+    if os.path.exists(path_out):
+        return
+
+    csv_output = []
 
     for idx, region in regions.iterrows():
 
         GID_level = 'GID_{}'.format(level)
         GID_id = region[GID_level]
 
-        filename = GID_id + '.tif'
-        path_out = os.path.join(folder, filename)
-
-        # if os.path.exists(path):
+        # if not GID_id == 'COL.14.100_1':
         #     continue
 
-        geo_df = gpd.GeoDataFrame(geometry=gpd.GeoSeries(region['geometry']))
+        filename = GID_id + '.tif'
+        path_out = os.path.join(folder_tifs, filename)
+
+        geo_df = gpd.GeoDataFrame(
+            geometry=gpd.GeoSeries(region['geometry']),
+            crs='epsg:4326')
+
+        geo_df_3857 = geo_df.to_crs(3857)
+        geo_df_3857['area_km2'] = geo_df_3857['geometry'].area / 1e6
+        region_area_km2 = geo_df_3857['area_km2'].sum()
 
         bbox = geo_df.envelope
 
@@ -70,10 +131,8 @@ def cut_grid_finder_targets():
 
         coords = [json.loads(geo.to_json())['features'][0]['geometry']]
 
-        #chop on coords
         out_img, out_transform = mask(targets, coords, crop=True)
 
-        # Copy the metadata
         out_meta = targets.meta.copy()
 
         out_meta.update({"driver": "GTiff",
@@ -93,96 +152,55 @@ def cut_grid_finder_targets():
                     {'geometry': poly, 'properties':{'value':value}}
                     for poly, value in polygons
                     if value == 1
-                ]
+                ], crs='epsg:4326'
             )
 
             if len(shapes_df) == 0:
                 continue
 
-            path_out = os.path.join(folder, '..', GID_id + '.shp')
+            path_out = os.path.join(folder_shps, '..', GID_id + '.shp')
             shapes_df.to_file(path_out, crs='epsg:4326')
 
+            shapes_df = shapes_df.to_crs(3857)
+            shapes_df['area_km2'] = shapes_df['geometry'].area/1e6
+            shapes_df = shapes_df.to_dict('records')
 
-def estimate_site_power_source():
+            target_area_km2 = 0
+
+            for item in shapes_df:
+                target_area_km2 += item['area_km2']
+
+            csv_output.append({
+                'country_name': region['NAME_0'],
+                'iso3': region['GID_0'],
+                '{}'.format(GID_level): '{}'.format(GID_id),
+                'region_area_km2': region_area_km2,
+                'target_area_km2': target_area_km2
+            })
+
+    csv_output = pd.DataFrame(csv_output)
+    csv_output.to_csv(path_out, index=False)
+
+
+def estimate_site_power_source(country):
     """
     Estimate the power source for each site.
 
     """
-    iso3 = 'CHL'
-    level = 3
+    iso3 = country['iso3']
+    level = country['regional_level']
 
-    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets')
+    path = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'sites.csv')
+    sites = pd.read_csv(path)
 
-    filename = 'regions_3_CHL.shp'
+    filename = 'gridfinder_targets_lut.csv'
+    path = os.path.join(DATA_INTERMEDIATE, iso3, 'gridfinder_targets', filename)
+    targets = pd.read_csv(path)
+
+    filename = 'regions_{}_{}.shp'.format(level, iso3)
     path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
-    regions = gpd.read_file(path, crs='epsg:4326')#[:1]
-    regions = regions.to_crs('epsg:3857')
-
-    for idx, region in regions.iterrows():
-
-        GID_level = 'GID_{}'.format(level)
-        GID_id = region[GID_level]
-
-        print('Working on {}'.format(GID_id))
-
-        filename = GID_id + '.shp'
-        path = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'by_region', filename)
-
-        output = []
-
-        if os.path.exists(path):
-
-            cells = gpd.read_file(path, crs='epsg:4326')#[:1]
-            cells = cells.to_crs('epsg:3857')
-
-            path = os.path.join(folder, GID_id + '.shp')
-
-            if os.path.exists(path):
-
-                targets = gpd.read_file(path, crs='epsg:4326')
-                targets = targets.to_crs('epsg:3857')
-
-                for idx, point in cells.iterrows():
-                    distances = targets.distance(point['geometry']).tolist()
-                    distances = [i for i in distances if i != 0]
-                    if len(distances) == 0:
-                        shortest_dist = 1e6
-                    else:
-                        shortest_dist = min(distances)
-                    output.append({
-                        'type': 'Feature',
-                        'geometry': point['geometry'],
-                        'properties': {
-                            'closest_elec_target_m': shortest_dist,
-                        }
-                    })
-
-        if len(output) == 0:
-            continue
-
-        output = gpd.GeoDataFrame.from_features(output, crs='epsg:3857')
-        output = output.to_crs('epsg:4326')
-
-        folder_out = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
-        if not os.path.exists(folder_out):
-            os.makedirs(folder_out)
-        path_out = os.path.join(folder_out, GID_id + '.shp')
-        output.to_file(path_out, crs='epsg:4326')
-
-
-def write_all_sites_lut():
-    """
-
-    """
-    iso3 = 'CHL'
-    level = 3
-
-    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
-
-    filename = 'regions_3_CHL.shp'
-    path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
-    regions = gpd.read_file(path, crs='epsg:4326')#[:1]
-    regions = regions.to_crs('epsg:3857')
+    regions = gpd.read_file(path, crs='epsg:4326')#[:20]
+    # regions = regions.to_crs('epsg:3857')
 
     output = []
 
@@ -191,31 +209,54 @@ def write_all_sites_lut():
         GID_level = 'GID_{}'.format(level)
         GID_id = region[GID_level]
 
-        path = os.path.join(folder, GID_id + '.shp')
+        sites_subset = sites.loc[sites[GID_level] == region[GID_level]]
+        targets_subset = targets.loc[targets[GID_level] == region[GID_level]]
 
-        if os.path.exists(path):
+        if len(targets_subset) == 0:
+            continue
 
-            sites = gpd.read_file(path, crs='epsg:4326')
+        target_area_km2 = targets_subset['target_area_km2'].values[0]
+        region_area_km2 = targets_subset['region_area_km2'].values[0]
 
-            for idx, site in sites.iterrows():
-                output.append({
-                    'GID_id': GID_id,
-                    'GID_level': level,
-                    #distance to the closest electricity point
-                    'distance': site['closest_el'],
-                })
+        #Get the density of sites
+        sites_estimated_km2 = sites_subset['sites_estimated_km2'].values[0]
 
+        #Get the density of area with electricity
+        target_density_km2 = target_area_km2 / region_area_km2
+
+        total_estimated_sites = sites_subset['total_estimated_sites']
+
+        for i in range(1, total_estimated_sites.values[0] + 1):
+
+            # Get the mean half point distance between points
+            # https://felix.rohrba.ch/en/2015/point-density-and-point-spacing/
+            distance = math.sqrt(1/target_density_km2)
+
+            rand = uniform(0, distance)
+
+            total_distance = distance + rand
+
+            output.append({
+                'GID_id': GID_id,
+                'GID_level': GID_level,
+                'distance': total_distance * 1e3,
+                'rand': rand * 1e3,
+            })
+
+    folder_out = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
+    if not os.path.exists(folder_out):
+        os.makedirs(folder_out)
+    path_out = os.path.join(folder_out, 'a_all_sites.csv')
     output = pd.DataFrame(output)
-    path = os.path.join(folder, 'a_all_sites.csv')
-    output.to_csv(path, index=False)
+    output.to_csv(path_out)
 
 
-def write_site_lut():
+def write_site_lut(country):
     """
 
     """
-    iso3 = 'CHL'
-    level = 3
+    iso3 = country['iso3']
+    level = country['regional_level']
 
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites', 'site_power')
     filename = 'a_all_sites.csv'
@@ -223,7 +264,7 @@ def write_site_lut():
     sites = pd.read_csv(path)#[:500]
     sites = sites.sort_values('distance')
 
-    perc_ongrid = COUNTRY_PARAMETERS['energy']['perc_ongrid']
+    perc_ongrid = COUNTRY_PARAMETERS[iso3]['energy']['perc_ongrid']
     # perc_other = COUNTRY_PARAMETERS['energy']['perc_other']
 
     quantity_ongrid = len(sites) * (perc_ongrid / 100)
@@ -251,10 +292,10 @@ def write_site_lut():
 
         count += 1
 
-    filename = 'regions_3_CHL.shp'
+    filename = 'regions_{}_{}.shp'.format(level, iso3)
     path = os.path.join(DATA_INTERMEDIATE, iso3, 'regions', filename)
     regions = gpd.read_file(path, crs='epsg:4326')#[:5]
-    unique_regions = regions['GID_3'].unique()
+    unique_regions = regions['GID_{}'.format(level)].unique()
 
     interim_df = pd.DataFrame(interim)
     path = os.path.join(folder, 'interim_df.csv')
@@ -355,68 +396,23 @@ def process_solar_atlas():
                 dest.write(out_img)
 
 
-# def energy_forcast():
-#     """
-#     Forcast the energy mix over the next n years.
-
-#     """
-#     output = []
-
-#     iso3 = 'CHL'
-
-#     on_grid_mix = {
-#         'hydro': 31,
-#         'oil': 22,
-#         'gas': 17,
-#         'coal': 18,
-#         'renewables': 12,
-#     }
-
-#     growth_rate = {
-#         'hydro': 2,
-#         'oil': -2,
-#         'gas': 1,
-#         'coal': -2,
-#         'renewables': 4,
-#     }
-
-#     timesteps = [t for t in range(2020, 2030 + 1, 1)]
-
-#     for key1, value1 in on_grid_mix.items():
-
-#         share = value1
-
-#         for timestep in timesteps:
-
-#             for key2, value2 in on_grid_mix.items():
-#                 if key1 == key2:
-#                     if timestep == 2020:
-#                         share = share
-#                     else:
-#                         share = share + growth_rate[key1]
-
-#                     output.append({
-#                         'type': key1,
-#                         'share': share,
-#                         'year': timestep,
-#                     })
-
-#     output = pd.DataFrame(output)
-#     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'energy_forecast')
-#     path = os.path.join(folder, 'energy_forecast.csv')
-#     output.to_csv(path, index=False)
-
-
 if __name__ == '__main__':
 
-    # cut_grid_finder_targets()
+    os.environ['GDAL_DATA'] = ("C:\\Users\edwar\Anaconda3\Library\share\gdal")
 
-    estimate_site_power_source()
+    countries = find_country_list([])
 
-    write_all_sites_lut()
+    for country in countries:#[:1]:
 
-    write_site_lut()
+        if not country['iso3'] == 'COL':
+            continue
 
-    # process_solar_atlas()
+        print('-- Working on {}'.format(country['country_name']))
 
-    # energy_forcast()
+        cut_grid_finder_targets(country)
+
+        estimate_site_power_source(country)
+
+        write_site_lut(country)
+
+        # process_solar_atlas()

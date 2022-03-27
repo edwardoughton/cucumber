@@ -324,6 +324,7 @@ COST_TYPES = {
     'core_edge': 'capex_and_opex',
 }
 
+
 ENERGY_DEMAND = {
     #all costs in $USD
     'equipment_kwh': 5,
@@ -333,6 +334,7 @@ ENERGY_DEMAND = {
     'wireless_medium_kwh': 10,
     'wireless_large_kwh': 15,
 }
+
 
 TECH_LUT = {
     'oil': {

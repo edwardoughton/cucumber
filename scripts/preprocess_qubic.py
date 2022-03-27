@@ -3,7 +3,7 @@ Preprocessing scripts.
 
 Written by Ed Oughton.
 
-Summer 2021
+Winter 2020
 
 """
 import os
@@ -25,7 +25,6 @@ from rtree import index
 import numpy as np
 import random
 import math
-from tqdm import tqdm
 
 from countries import COUNTRY_LIST
 
@@ -54,24 +53,36 @@ def find_country_list(continent_list):
         the stated continent.
 
     """
+    print('----')
+    print('Loading all countries')
+    path = os.path.join(DATA_RAW, 'gadm36_levels_shp', 'gadm36_0.shp')
+    countries = gpd.read_file(path)
+
+    print('Adding continent information to country shapes')
     glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
+    load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
+    countries = countries.merge(load_glob_info, left_on='GID_0',
+        right_on='ISO_3digit')
 
-    countries = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
-
-    if len(continent_list) > 0:
-        subset = countries.loc[countries['continent'].isin(continent_list)]
-    else:
-        subset = countries
+    subset = countries.loc[countries['continent'].isin(continent_list)]
 
     countries = []
 
     for index, country in subset.iterrows():
 
+        if country['GID_0'] in ['LBY', 'ESH']:
+            continue
+
+        if country['GID_0'] in ['LBY', 'ESH'] :
+            regional_level =  1
+        else:
+            regional_level = 2
+
         countries.append({
             'country_name': country['country'],
-            'iso3': country['ISO_3digit'],
+            'iso3': country['GID_0'],
             'iso2': country['ISO_2digit'],
-            'regional_level': country['lowest'],
+            'regional_level': regional_level,
         })
 
     return countries
@@ -791,7 +802,8 @@ def process_existing_fiber(country):
     if os.path.exists(path_output):
         return print('Existing fiber already processed')
 
-    if not iso3 in ['GMB', 'UGA', 'MWI', 'KEN', 'SEN']:
+    # if not iso3 in ['CMR','GMB', 'UGA', 'MWI', 'KEN', 'SEN']:
+    if not iso3 in ['AGO','CMR','EGY','GMB','KEN','MAR','MDG','MOZ','MWI','NGA', 'SEN']:
         path = os.path.join(DATA_RAW, 'fiber_maps', iso3, 'existing_network.shp')
         if os.path.exists(path):
             data = gpd.read_file(path, crs='epsg:3857')
@@ -860,13 +872,16 @@ def generate_agglomeration_lut(country):
     regional_level = country['regional_level']
     GID_level = 'GID_{}'.format(regional_level)
 
+    core_node_level = 'GID_{}'.format(country['core_node_level'])
+    regional_node_level = 'GID_{}'.format(country['regional_node_level'])
+
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'agglomerations')
     if not os.path.exists(folder):
         os.makedirs(folder)
     path_output = os.path.join(folder, 'agglomerations.shp')
 
-    # if os.path.exists(path_output):
-    #     return print('Agglomeration processing has already completed')
+    if os.path.exists(path_output):
+        return print('Agglomeration processing has already completed')
 
     print('Working on {} agglomeration lookup table'.format(iso3))
 
@@ -877,14 +892,14 @@ def generate_agglomeration_lut(country):
 
     path_settlements = os.path.join(DATA_INTERMEDIATE, iso3, 'settlements.tif')
     settlements = rasterio.open(path_settlements, 'r+')
-    settlements.nodata = 0
+    settlements.nodata = 255
     settlements.crs = {"init": "epsg:4326"}
 
     folder_tifs = os.path.join(DATA_INTERMEDIATE, iso3, 'agglomerations', 'tifs')
     if not os.path.exists(folder_tifs):
         os.makedirs(folder_tifs)
 
-    for idx, region in tqdm(regions.iterrows(), total=regions.shape[0]):
+    for idx, region in regions.iterrows():
 
         path_output = os.path.join(folder_tifs, region[GID_level] + '.tif')
 
@@ -897,7 +912,10 @@ def generate_agglomeration_lut(country):
         coords = [json.loads(geo.to_json())['features'][0]['geometry']]
 
         #chop on coords
-        out_img, out_transform = mask(settlements, coords, crop=True)
+        try:
+            out_img, out_transform = mask(settlements, coords, crop=True)
+        except:
+            continue
 
         # Copy the metadata
         out_meta = settlements.meta.copy()
@@ -943,6 +961,8 @@ def generate_agglomeration_lut(country):
                         'id': idx1,
                         'GID_0': region['GID_0'],
                         GID_level: region[GID_level],
+                        core_node_level: region[core_node_level],
+                        regional_node_level: region[regional_node_level],
                         'population': node['sum'],
                     }
                 })
@@ -953,6 +973,9 @@ def generate_agglomeration_lut(country):
         if len(seen_coords) == 0:
 
             pop_tif = os.path.join(folder_tifs, region[GID_level] + '.tif')
+
+            if not os.path.exists(pop_tif):
+                continue
 
             with rasterio.open(pop_tif) as src:
                 data = src.read()
@@ -985,6 +1008,8 @@ def generate_agglomeration_lut(country):
                             'id': 'regional_node',
                             'GID_0': region['GID_0'],
                             GID_level: region[GID_level],
+                            core_node_level: region[core_node_level],
+                            regional_node_level: region[regional_node_level],
                             'population': shapes_df['value'].values[0],
                         }
                     })
@@ -997,6 +1022,8 @@ def generate_agglomeration_lut(country):
                         'id': item['properties']['id'],
                         'GID_0':item['properties']['GID_0'],
                         GID_level: item['properties'][GID_level],
+                        core_node_level: item['properties'][core_node_level],
+                        regional_node_level: item['properties'][regional_node_level],
                         'population': item['properties']['population'],
                     }
                 }
@@ -1030,6 +1057,9 @@ def find_settlement_nodes(country, regions):
     regional_level = country['regional_level']
     GID_level = 'GID_{}'.format(regional_level)
 
+    core_node_level = 'GID_{}'.format(country['core_node_level'])
+    regional_node_level = 'GID_{}'.format(country['regional_node_level'])
+
     threshold = country['pop_density_km2']
     settlement_size = country['settlement_size']
 
@@ -1039,9 +1069,12 @@ def find_settlement_nodes(country, regions):
     missing_nodes = set()
 
     print('Working on gathering data from regional rasters')
-    for idx, region in tqdm(regions.iterrows(), total=regions.shape[0]):
+    for idx, region in regions.iterrows():
 
         path = os.path.join(folder_tifs, region[GID_level] + '.tif')
+
+        if not os.path.exists(path):
+            continue
 
         with rasterio.open(path) as src:
             data = src.read()
@@ -1064,7 +1097,9 @@ def find_settlement_nodes(country, regions):
             {
                 'geometry': region['geometry'],
                 'properties': {
-                    GID_level: region[GID_level]
+                    GID_level: region[GID_level],
+                    core_node_level: region[core_node_level],
+                    regional_node_level: region[regional_node_level],
                 }
             }
         ]
@@ -1073,7 +1108,9 @@ def find_settlement_nodes(country, regions):
                 [
                     {'geometry': poly['geometry'],
                     'properties':{
-                        GID_level: poly['properties'][GID_level]
+                        GID_level: poly['properties'][GID_level],
+                        core_node_level: region[core_node_level],
+                        regional_node_level: region[regional_node_level],
                         }}
                     for poly in geojson_region
                 ], crs='epsg:4326'
@@ -1100,6 +1137,8 @@ def find_settlement_nodes(country, regions):
                     'geometry': item['geometry'].centroid,
                     'properties': {
                         GID_level: region[GID_level],
+                        core_node_level: region[core_node_level],
+                        regional_node_level: region[regional_node_level],
                         'count': item['count'],
                         'sum': item['sum']
                     }
@@ -1117,11 +1156,15 @@ def find_nodes_on_existing_infrastructure(country):
     iso3 = country['iso3']
     core_node_size = country['core_node_size']
 
+    GID_level = 'GID_{}'.format(country['regional_level'])
+    core_node_level = 'GID_{}'.format(country['core_node_level'])
+    regional_node_level = 'GID_{}'.format(country['regional_node_level'])
+
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'existing_network')
+    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network_existing')
     filename = 'core_nodes_existing.shp'
     path_output = os.path.join(folder, filename)
 
@@ -1131,7 +1174,8 @@ def find_nodes_on_existing_infrastructure(country):
         if not os.path.dirname(path_output):
             os.makedirs(os.path.dirname(path_output))
 
-    path = os.path.join(folder, 'fiber_edges.shp')
+    path = os.path.join(folder, 'core_edges_existing.shp')
+
     if not os.path.exists(path):
         return print('No existing infrastructure')
 
@@ -1155,11 +1199,118 @@ def find_nodes_on_existing_infrastructure(country):
 
     agglomerations = agglomerations[agglomerations[0] == True].drop(columns=0)
 
-    agglomerations['source'] = 'existing'
+    unique_regions = agglomerations[core_node_level].unique()#[:1]
+
+    agglomerations = agglomerations.to_dict('records')
+
+    output = []
+
+    for unique_region in unique_regions:
+
+        nodes_by_region = []
+
+        for item in agglomerations:
+            if unique_region == item[core_node_level]:
+                nodes_by_region.append(item)
+
+        main_node = max(nodes_by_region, key=lambda x:x['population'])
+
+        output.append({
+            'type': 'Point',
+            'geometry': main_node['geometry'],
+            'properties': {
+                'GID_0': main_node['GID_0'],
+                GID_level: main_node[GID_level],
+                core_node_level: main_node[core_node_level],
+                regional_node_level: main_node[regional_node_level],
+                'population': main_node['population'],
+                'source': 'existing',
+            }
+        })
+
+    agglomerations = gpd.GeoDataFrame.from_features(output, crs='epsg:4326')
 
     agglomerations.to_file(path_output, crs='epsg:4326')
 
     return print('Found nodes on existing infrastructure')
+
+
+# def get_missing_nodes(country, regions, missing_nodes, threshold, settlement_size):
+#     """
+#     Find any missing nodes
+
+#     """
+#     iso3 = country['iso3']
+#     regional_level = country['regional_level']
+#     GID_level = 'GID_{}'.format(regional_level)
+
+#     folder_tifs = os.path.join(DATA_INTERMEDIATE, iso3, 'agglomerations', 'tifs')
+
+#     interim = []
+
+#     for idx, region in regions.iterrows():
+
+#         if not region[GID_level] in list(missing_nodes):
+#             continue
+
+#         path = os.path.join(folder_tifs, region[GID_level] + '.tif')
+
+#         with rasterio.open(path) as src:
+#             data = src.read()
+#             data[data < threshold] = 0
+#             data[data >= threshold] = 1
+#             polygons = rasterio.features.shapes(data, transform=src.transform)
+#             shapes_df = gpd.GeoDataFrame.from_features(
+#                 [
+#                     {'geometry': poly, 'properties':{'value':value}}
+#                     for poly, value in polygons
+#                     if value > 0
+#                 ],
+#                 crs='epsg:4326'
+#             )
+
+#         geojson_region = [
+#             {
+#                 'geometry': region['geometry'],
+#                 'properties': {
+#                     GID_level: region[GID_level]
+#                 }
+#             }
+#         ]
+
+#         gpd_region = gpd.GeoDataFrame.from_features(
+#                 [
+#                     {'geometry': poly['geometry'],
+#                     'properties':{
+#                         GID_level: poly['properties'][GID_level]
+#                         }}
+#                     for poly in geojson_region
+#                 ], crs='epsg:4326'
+#             )
+
+#         nodes = gpd.overlay(shapes_df, gpd_region, how='intersection')
+
+#         stats = zonal_stats(shapes_df['geometry'], path, stats=['count', 'sum'])
+
+#         stats_df = pd.DataFrame(stats)
+
+#         nodes = pd.concat([shapes_df, stats_df], axis=1).drop(columns='value')
+
+#         max_sum = nodes['sum'].max()
+
+#         nodes = nodes[nodes['sum'] > max_sum - 1]
+
+#         for idx, item in nodes.iterrows():
+#             interim.append({
+#                     'geometry': item['geometry'].centroid,
+#                     'properties': {
+#                         GID_level: region[GID_level],
+#                         'count': item['count'],
+#                         'sum': item['sum']
+#                     }
+#             })
+
+#     return interim
 
 
 def find_regional_nodes(country):
@@ -1167,8 +1318,10 @@ def find_regional_nodes(country):
 
     """
     iso3 = country['iso3']
-    regional_level = country['regional_level']
-    GID_level = 'GID_{}'.format(regional_level)
+
+    core_node_level = 'GID_{}'.format(country['core_node_level'])
+    regional_node_level = 'GID_{}'.format(country['regional_node_level'])
+    GID_level = 'GID_{}'.format(country['regional_level'])
 
     folder = os.path.join(DATA_INTERMEDIATE, iso3)
     input_path = os.path.join(folder, 'agglomerations', 'agglomerations.shp')
@@ -1177,7 +1330,7 @@ def find_regional_nodes(country):
     regional_output_path = os.path.join(folder, 'network', 'regional_nodes')
 
     regions = gpd.read_file(input_path, crs="epsg:4326")
-    unique_regions = regions[GID_level].unique()
+    unique_regions = regions[core_node_level].unique()
 
     if os.path.exists(output_path):
         return print('Regional nodes layer already generated')
@@ -1194,12 +1347,14 @@ def find_regional_nodes(country):
     for unique_region in unique_regions:
         agglomerations = []
         for idx, region in regions.iterrows():
-            if unique_region == region[GID_level]:
+            if unique_region == region[core_node_level]:
                 agglomerations.append({
                     'type': 'Feature',
                     'geometry': region['geometry'],
                     'properties': {
                         GID_level: region[GID_level],
+                        core_node_level: region[core_node_level],
+                        regional_node_level: region[regional_node_level],
                         'population': region['population'],
                         'source': 'existing',
                     }
@@ -1223,12 +1378,15 @@ def find_regional_nodes(country):
         existing_nodes = existing_nodes.to_dict('records')
 
         for item in existing_nodes:
-            seen.add(item[GID_level])
+
+            seen.add(item[core_node_level])
             output.append({
                 'type': 'Point',
                 'geometry': mapping(item['geometry']),
                 'properties': {
                     GID_level: item[GID_level],
+                    core_node_level: item[core_node_level],
+                    regional_node_level: item[regional_node_level],
                     'population': item['population'],
                     'source': 'existing',
                 }
@@ -1241,6 +1399,8 @@ def find_regional_nodes(country):
                     'geometry': mapping(item['geometry']),
                     'properties': {
                         GID_level: item['properties'][GID_level],
+                        core_node_level: item['properties'][core_node_level],
+                        regional_node_level: item['properties'][regional_node_level],
                         'population': item['properties']['population'],
                         'source': 'new',
                     }
@@ -1429,17 +1589,18 @@ def fit_regional_edges(country):
 
     """
     iso3 = country['iso3']
-    regional_level = country['regional_level']
-    GID_level = 'GID_{}'.format(regional_level)
+    # regional_level = country['regional_level']
+    regional_node_level = 'GID_{}'.format(country['core_node_level'])
 
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
     path = os.path.join(folder, 'core_nodes.shp')
 
     nodes = gpd.read_file(path, crs="epsg:4326")
-    unique_regions = nodes[GID_level].unique()
+    unique_regions = nodes[regional_node_level].unique()
 
     for unique_region in unique_regions:
-
+        if unique_region == None:
+            continue
         input_path = os.path.join(folder, 'regional_nodes', unique_region + '.shp')
         output_path = os.path.join(DATA_INTERMEDIATE, country['iso3'], 'network', 'regional_edges', unique_region + '.shp')
         fit_edges(input_path, output_path)
@@ -1447,7 +1608,8 @@ def fit_regional_edges(country):
     output = []
 
     for unique_region in unique_regions:
-
+        if unique_region == None:
+            continue
         path = os.path.join(DATA_INTERMEDIATE, country['iso3'], 'network', 'regional_edges', unique_region + '.shp')
         if os.path.exists(path):
             regional_edges = gpd.read_file(path, crs='epsg:4326')
@@ -1479,12 +1641,10 @@ def generate_core_lut(country):
 
     filename = 'core_lut.csv'
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
-    if not os.path.exists(folder):
-        os.makedirs(folder)
     output_path = os.path.join(folder, filename)
 
-    # if os.path.exists(output_path):
-    #     return print('Core LUT already generated')
+    if os.path.exists(output_path):
+        return print('Core LUT already generated')
 
     filename = 'regions_{}_{}.shp'.format(level, iso3)
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
@@ -1694,6 +1854,106 @@ def generate_core_lut(country):
     return print('Completed core lut')
 
 
+def generate_backhaul_lut(country):
+    """
+    Simulate backhaul distance given a 100km^2 area.
+      Simulations show that for every 10x increase in node density,
+      there is a 3.2x decrease in backhaul length.
+
+    node_density_km2	average_distance_km
+    0.000001	606.0	10	 3.2
+    0.00001	189.0	10	 3.8
+    0.0001	50.0	10	 3.1
+    0.001	16.0	10	 3.2
+    0.01	5.0	10	 3.2
+    0.1	1.6	10	 3.2
+    1	0.5
+
+    """
+    filename = 'backhaul_lut.csv'
+    folder = os.path.join(DATA_INTERMEDIATE)
+    path = os.path.join(folder, filename)
+
+    if os.path.exists(path):
+        return print('Backhaul LUT already generated')
+
+    output = []
+
+    number_of_regional_nodes_range = [1, 10, 100, 1000, 10000]
+
+    area_km2 = 1e6
+
+    for number_of_regional_nodes in number_of_regional_nodes_range:
+
+        sites = []
+
+        for i in range(1, int(round(max(number_of_regional_nodes_range) + 1))):
+            x = random.uniform(0, round(math.sqrt(area_km2)))
+            y = random.uniform(0, round(math.sqrt(area_km2)))
+            sites.append({
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': (x, y)
+                },
+                'properties': {
+                    'id': i
+                }
+            })
+
+        regional_nodes = []
+
+        for i in range(1, number_of_regional_nodes + 1):
+            x = random.uniform(0, round(math.sqrt(area_km2)))
+            y = random.uniform(0, round(math.sqrt(area_km2)))
+            regional_nodes.append({
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': (x, y)
+                },
+                'properties': {
+                    'id': i
+                }
+            })
+
+        distances = []
+
+        idx = index.Index()
+
+        for regional_node in regional_nodes:
+            idx.insert(
+                regional_node['properties']['id'],
+                shape(regional_node['geometry']).bounds,
+                regional_node)
+
+        for site in sites:
+
+            geom1 = shape(site['geometry'])
+
+            nearest_regional_node = [i for i in idx.nearest((geom1.bounds))][0]
+
+            for regional_node in regional_nodes:
+                if regional_node['properties']['id'] == nearest_regional_node:
+
+                    x1 = site['geometry']['coordinates'][0]
+                    x2 = regional_node['geometry']['coordinates'][0]
+                    y1 = site['geometry']['coordinates'][1]
+                    y2 = regional_node['geometry']['coordinates'][1]
+
+                    distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+                    distances.append(distance)
+
+        output.append({
+            'node_density_km2': round(number_of_regional_nodes / area_km2, 8),
+            'average_distance_km': int(round(sum(distances) / len(distances))),
+        })
+
+    output = pd.DataFrame(output)
+    output.to_csv(path, index=False)
+
+    return print('Completed backhaul LUT processing')
+
+
 def load_subscription_data(path, iso3):
     """
     Load in itu cell phone subscription data.
@@ -1733,21 +1993,21 @@ def load_subscription_data(path, iso3):
 
 if __name__ == '__main__':
 
-    countries = find_country_list([])
+    for country in COUNTRY_LIST:
 
-    for country in countries:#[:1]:
-        print(country)
         if not country['iso3'] == 'COL':
             continue
 
-        print('Processing coverage shapes')
-        process_coverage_shapes(country)
+        print('--Working on {}'.format(country['iso3']))
 
-        print('Chopping coverage shapes')
-        process_regional_coverage(country)
+        # print('Processing coverage shapes')
+        # process_coverage_shapes(country)
 
-        print('Load existing fiber infrastructure')
-        process_existing_fiber(country)
+        # print('Chopping coverage shapes')
+        # process_regional_coverage(country)
+
+        # print('Load existing fiber infrastructure')
+        # process_existing_fiber(country)
 
         print('Generating agglomeration lookup table')
         generate_agglomeration_lut(country)
@@ -1766,3 +2026,6 @@ if __name__ == '__main__':
 
         print('Create core lookup table')
         generate_core_lut(country)
+
+        print('Create backhaul lookup table')
+        generate_backhaul_lut(country)
