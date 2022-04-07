@@ -107,7 +107,7 @@ ggplot(long, aes(x=strategy_short, y=baseline, fill=strategy_power)) +
   scale_fill_viridis_d() + 
   facet_wrap(~type, scales = "free", labeller=label_parsed)
 
-path = file.path(folder, 'figures', 'power_strategies.png')
+path = file.path(folder, 'figures', iso3, 'power_strategies.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 path = file.path(folder, '..', 'reports', 'images', 'COL', 'power_strategies.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)

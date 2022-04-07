@@ -7,7 +7,7 @@ my_list = list(
 )
 
 for(i in 1:length(my_list)) {
-  
+
   print(i)
   iso3 = my_list[[i]][1]
   # decimal_places_a = as.numeric(my_list[[i]][2])
@@ -159,8 +159,8 @@ for(i in 1:length(my_list)) {
     scale_fill_viridis_d() + 
     facet_grid(~scenario_capacity)
   
-  dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-  path = file.path(folder, 'figures', 'carbon.png')
+  dir.create(file.path(folder, 'figures', iso3), showWarnings = FALSE)
+  path = file.path(folder, 'figures', iso3, 'carbon.png')
   ggsave(path, units="in", width=8, height=4, dpi=300)
   dir.create(file.path(folder, '..', 'reports', 'images', iso3), showWarnings = FALSE)
   path = file.path(folder, '..', 'reports', 'images', iso3, 'carbon.png')
@@ -288,8 +288,8 @@ for(i in 1:length(my_list)) {
     labels = c("A", "B"),
     ncol = 1, nrow = 2)
   
-  dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-  path = file.path(folder, 'figures', 'energy_emissions.png')
+  dir.create(file.path(folder, 'figures', iso3), showWarnings = FALSE)
+  path = file.path(folder, 'figures', iso3, 'energy_emissions.png')
   ggsave(path, units="in", width=8, height=7, dpi=300)
   dir.create(file.path(folder, '..', 'reports', 'images', iso3), showWarnings = FALSE)
   path = file.path(folder, '..', 'reports', 'images', iso3, 'energy_emissions.png')
@@ -303,8 +303,8 @@ for(i in 1:length(my_list)) {
     labels = c("A", "B", "C"),
     ncol = 1, nrow = 3)
   
-  dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-  path = file.path(folder, 'figures', 'health_emissions.png')
+  dir.create(file.path(folder, 'figures', iso3), showWarnings = FALSE)
+  path = file.path(folder, 'figures', iso3, 'health_emissions.png')
   ggsave(path, units="in", width=8, height=10, dpi=300)
   dir.create(file.path(folder, '..', 'reports', 'images', iso3), showWarnings = FALSE)
   path = file.path(folder, '..', 'reports', 'images', iso3, 'health_emissions.png')

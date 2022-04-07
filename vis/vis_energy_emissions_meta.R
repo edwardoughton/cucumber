@@ -193,7 +193,7 @@ for(i in 1:length(my_list)) {
     theme(legend.position = 'none',
           axis.text.x = element_text(angle = 45, hjust=1)) +
     labs(title=expression(paste("Universal Broadband Emissions 2020-2030 (", NO[x], ")")),
-      # title = "Universal Broadband Emissions for Chile 2020-2030 (Nitrogen Oxides)",
+      # title = "Universal Broadband Emissions for Colombia 2020-2030 (Nitrogen Oxides)",
          fill=NULL,
          subtitle = paste("Interval bars reflect estimates for low and high adoption scenarios for", country_name),
          x = NULL, y=expression(paste("Tonnes of ", NO[x])), sep="")  +
@@ -231,7 +231,7 @@ for(i in 1:length(my_list)) {
     theme(legend.position = 'none',
           axis.text.x = element_text(angle = 45, hjust=1)) +
     labs(title=expression(paste("Universal Broadband Emissions 2020-2030 (", SO[x], ")")),
-      # title = "Universal Broadband Emissions for Chile 2020-2030 (Sulphur Oxides)",
+      # title = "Universal Broadband Emissions for Colombia 2020-2030 (Sulphur Oxides)",
          fill=NULL,
          subtitle = paste("Interval bars reflect estimates for low and high adoption scenarios for", country_name),
          x = NULL, y=expression(paste("Tonnes of ", SO[x])), sep="") +

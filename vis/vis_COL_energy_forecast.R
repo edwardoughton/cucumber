@@ -4,9 +4,8 @@ library(ggpubr)
 
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
-filename = 'energy_forecast.csv'
-data <- read.csv(file.path(folder, '..', 'data', 'intermediate', 'COL', 'energy_forecast', filename))
-
+filename = 'iea_forecast.csv'
+data <- read.csv(file.path(folder, '..', 'data', 'raw', 'iea_data', filename))
 
 data %>% 
   ggplot(aes(x = year, y = share, fill = type)) +
