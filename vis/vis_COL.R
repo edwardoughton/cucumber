@@ -102,8 +102,8 @@ ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
 
-dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'social_costs_by_strategy.png')
+dir.create(file.path(folder, 'figures', iso3), showWarnings = FALSE)
+path = file.path(folder, 'figures', iso3, 'social_costs_by_strategy.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 dir.create(file.path(folder, '..', 'reports', 'images', 'COL'), showWarnings = FALSE)
 path = file.path(folder, '..', 'reports', 'images', 'COL', 'social_costs_by_strategy.png')
@@ -206,7 +206,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
 
-path = file.path(folder, 'figures', 'social_costs_by_sharing_strategy.png')
+path = file.path(folder, 'figures', iso3, 'social_costs_by_sharing_strategy.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 dir.create(file.path(folder, '..', 'reports', 'images', 'COL'), showWarnings = FALSE)
 path = file.path(folder, '..', 'reports', 'images', 'COL', 'social_costs_by_sharing_strategy.png')
@@ -315,7 +315,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
 
-path = file.path(folder, 'figures', 'social_costs_by_policy_options.png')
+path = file.path(folder, 'figures', iso3, 'social_costs_by_policy_options.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 path = file.path(folder, '..', 'reports', 'images', 'COL', 'social_costs_by_policy_options.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
