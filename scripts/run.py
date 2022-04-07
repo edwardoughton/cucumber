@@ -420,8 +420,8 @@ if __name__ == '__main__':
             filename = 'core_lut.csv'
             core_lut = load_core_lut(os.path.join(folder, filename))
 
-            folder = os.path.join(DATA_RAW, 'energy_forecast')
-            filename = 'energy_forecast.csv'
+            folder = os.path.join(DATA_RAW, 'iea_data')
+            filename = 'iea_forecast.csv'
             on_grid_mix = load_on_grid_mix(os.path.join(folder, filename))
 
             print('-----')
