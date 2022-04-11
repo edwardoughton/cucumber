@@ -48,44 +48,50 @@ def process(data):
     data = data[data.Product != 'Total']
     data = data[data.Scenario == 'Stated Policies Scenario']
     data = data.replace({'Product' : { 'Coal' : 'coal', 'Natural gas' : 'gas',
-        'Solar PV' : 'renewables', 'Wind' : 'renewables', 'Nuclear' : 'renewables',
+        'Solar PV' : 'renewables', 'Wind' : 'renewables', 'Nuclear' : 'nuclear',
         'Renewables' : 'renewables'}})
     start_year = 2020
     end_year = 2030
     data = data[data.Year.isin([start_year, end_year])]
 
-    data = data[data.Region == 'Central and South America']
+    # data = data[data.Region == 'Central and South America']
+    regions = data.Region.unique()
 
-    data = data[['Product', 'Year', 'Value']]
+
+    data = data[['Region', 'Product', 'Year', 'Value', 'Unit']]
     products = data.Product.unique()#[:1]
 
     output = []
 
-    for product in products:
+    for region in regions:
+        for product in products:
 
-        subset = data[data.Product == product]
-        start = subset.loc[subset.Year == start_year, 'Value'].values[0]
-        end = subset.loc[subset.Year == end_year, 'Value'].values[0]
-        increment = (end - start) /(end_year - start_year)
+            subset = data[(data.Region == region) & (data.Product == product)]
+            start = subset.loc[subset.Year == start_year, 'Value'].values[0]
+            end = subset.loc[subset.Year == end_year, 'Value'].values[0]
+            increment = (end - start) /(end_year - start_year)
 
-        subset = subset.to_dict('records')
-        for year in range(start_year, end_year+1):
+            subset = subset.to_dict('records')
+            for year in range(start_year, end_year+1):
 
-            if year == 2020:
-                Value = start
+                if year == 2020:
+                    Value = start
 
-            Value = start + ((year - start_year) * increment)
+                Value = start + ((year - start_year) * increment)
 
-            output.append({
-                'type': product,
-                'year': year,
-                'value': Value
-            })
+                output.append({
+                    'region': region,
+                    'type': product,
+                    'year': year,
+                    'value': round(Value),
+                    'unit': 'TWh',
+                })
 
     path = os.path.join(DATA_RAW, 'iea_data', 'iea_forecast.csv')
     output = pd.DataFrame(output)
 
-    output['share'] = output['value'] / output.groupby('year')['value'].transform('sum') * 100
+    output['share'] = round(output['value'] /
+        output.groupby(['year', 'region'])['value'].transform('sum') * 100)
 
     output.to_csv(path, index=False)
 

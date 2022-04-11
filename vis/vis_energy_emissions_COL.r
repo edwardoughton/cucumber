@@ -113,7 +113,7 @@ for(i in 1:length(my_list)) {
               size = 3, data = totals, vjust=-.5, hjust=.5) +
     theme(legend.position = 'none',
           axis.text.x = element_text(angle = 45, hjust=1)) +
-    labs(title = "Total Universal Broadband Energy Demand for {} over 2020-2030",
+    labs(title = "Total Universal Broadband Energy Demand for over 2020-2030",
          fill=NULL,
          subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
          x = NULL, y = "Terawatt hours (TWh)") +
@@ -128,7 +128,7 @@ for(i in 1:length(my_list)) {
       value = round(sum(demand_carbon_per_kwh)),
     )
   
-  sample$value = sample$value / 1e6
+  sample$value = sample$value / 1e9
   
   min_value = min(round(sample$value))
   max_value = max(round(sample$value)) + 1
@@ -139,7 +139,7 @@ for(i in 1:length(my_list)) {
   totals <- sample %>%
     group_by(scenario_capacity, strategy_short) %>%
     summarize(value2 = round(
-      (baseline), 0))
+      (baseline), 1))
   
   carbon_dioxide = ggplot(sample, 
                   aes(x=strategy_short, y=baseline, fill=strategy_short)) + 
@@ -154,7 +154,7 @@ for(i in 1:length(my_list)) {
     labs(title=expression(paste("Universal Broadband Emissions 2020-2030 (", CO[2], ")")),
          fill=NULL,
          subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
-         x=NULL, y=expression(paste("Kilotonnes of ", CO[2])),sep="") + 
+         x=NULL, y=expression(paste("Megatonnes of ", CO[2])),sep="") + 
     scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
     scale_fill_viridis_d() + 
     facet_grid(~scenario_capacity)
@@ -238,7 +238,7 @@ for(i in 1:length(my_list)) {
       # title = "Universal Broadband Emissions for Chile 2020-2030 (Sulphur Oxides)",
          fill=NULL,
          subtitle = "Interval bars reflect estimates for low and high adoption scenarios",
-         x = NULL, y=expression(paste("Tonnes of ", SO[x])), sep="") +
+         x = NULL, y=expression(paste("Kilotonnes of ", SO[x])), sep="") +
     scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
     scale_fill_viridis_d() + 
     facet_grid(~scenario_capacity)

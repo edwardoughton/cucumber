@@ -6,11 +6,12 @@ Country Assessment list
 COUNTRY_LIST = [
     {
         'country_name': 'Chile',
-        'preferred_name': 'Chile',
+        'prefered_name': 'Chile',
         'iso3': 'CHL',
         'iso2': 'CH',
         'regional_level': 3,
         'region': 'LAC',
+        'iea_group': 'Central and South America',
         'cluster': 'C6',
         # 'coverage_4G': 70,
         'pop_density_km2': 500,
@@ -30,13 +31,14 @@ COUNTRY_LIST = [
     },
     {
         'country_name': 'Colombia',
-        'preferred_name': 'Colombia',
+        'prefered_name': 'Colombia',
         'iso3': 'COL',
         'iso2': 'CO',
         'regional_level': 2,
         'core_node_level': 1,
         'regional_node_level': 2,
         'region': 'LAC',
+        'iea_group': 'Central and South America',
         'regions_to_exclude_GID_1': ['COL.26_1'],
         # 'regions_to_exclude-GID_2': ['COL.26_1'],
         # 'coverage_4G': 70,
@@ -197,8 +199,8 @@ COUNTRY_PARAMETERS = {
         'energy': {
             ##based on GSMA there are 14,012 ongrid towers, 2,855 using renewables, 611 diesel
             ##Check the GSMA spreadsheet in raw/gsma
-            'perc_ongrid': 80.2, #98.75,
-            'perc_other': 19.8, #1.25, #offgrid diesel
+            'perc_ongrid': 80, #98.75,
+            'perc_other': 19, #1.25, #offgrid diesel
             },
         },
     }
