@@ -14,10 +14,13 @@ import glob
 from jinja2 import Environment, FileSystemLoader
 from xhtml2pdf import pisa
 
+from countries import COUNTRY_LIST
+
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 
+DATA_RAW = os.path.join(BASE_PATH, 'raw')
 RESULTS = os.path.join(BASE_PATH, '..', 'results')
 IMAGES = "D:\\Github\\cuba\\reports\\images" #unfortunately needs hard coding
 OUTPUT = os.path.join(BASE_PATH, '..', 'reports', 'countries')
@@ -37,6 +40,8 @@ def generate_report(country):
     power_percs = get_power_data(iso3)
 
     policy_inputs = get_policy_inputs(iso3)
+    energy_gen = get_energy_gen_inputs(country['iea_group'])
+    hist_emissions = historical_emissions(iso3)
 
     path = os.path.join(BASE_PATH, '..', 'reports', 'templates')
     env = Environment(loader=FileSystemLoader(path))
@@ -100,6 +105,16 @@ def generate_report(country):
         "lowspectrum_cost_4g_10mbps": policy_percs['baseline_10mbps_lowspectrumfees']['social_cost_bn'],
         "highspectrum_cost_4g_10mbps": policy_percs['baseline_10mbps_highspectrumfees']['social_cost_bn'],
 
+        "iea_group": country['iea_group'],
+        "coal_2020_perc": energy_gen['coal_2020_perc'],
+        "gas_2020_perc": energy_gen['gas_2020_perc'],
+        "renewables_2020_perc": energy_gen['renewables_2020_perc'],
+        "nuclear_2020_perc": energy_gen['nuclear_2020_perc'],
+        "coal_2030_perc": energy_gen['coal_2030_perc'],
+        "gas_2030_perc": energy_gen['gas_2030_perc'],
+        "renewables_2030_perc": energy_gen['renewables_2030_perc'],
+        "nuclear_2030_perc": energy_gen['nuclear_2030_perc'],
+
         "figure_4": os.path.join(IMAGES, iso3, 'energy_emissions.png'),
         "figure_5": os.path.join(IMAGES, iso3, 'health_emissions.png'),
 
@@ -116,18 +131,18 @@ def generate_report(country):
         "energy_baseline_20mbps_5g_w": float(round(energy_percs['baseline_20mbps_5g_w']['total_energy_annual_demand_kwh']/1e9,1)),
         "energy_baseline_20mbps_5g_fb": float(round(energy_percs['baseline_20mbps_5g_fb']['total_energy_annual_demand_kwh']/1e9,1)),
 
-        "carbon_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['demand_carbon_per_kwh']/1e6)),
-        "carbon_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['demand_carbon_per_kwh']/1e6)),
+        "carbon_baseline_5mbps_4g_w": float(round(energy_percs['baseline_5mbps_4g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_5mbps_4g_fb": float(round(energy_percs['baseline_5mbps_4g_fb']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_5mbps_5g_w": float(round(energy_percs['baseline_5mbps_5g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_5mbps_5g_fb": float(round(energy_percs['baseline_5mbps_5g_fb']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_10mbps_4g_w": float(round(energy_percs['baseline_10mbps_4g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_10mbps_4g_fb": float(round(energy_percs['baseline_10mbps_4g_fb']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_10mbps_5g_w": float(round(energy_percs['baseline_10mbps_5g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_10mbps_5g_fb": float(round(energy_percs['baseline_10mbps_5g_fb']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_20mbps_4g_w": float(round(energy_percs['baseline_20mbps_4g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_20mbps_4g_fb": float(round(energy_percs['baseline_20mbps_4g_fb']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_20mbps_5g_w": float(round(energy_percs['baseline_20mbps_5g_w']['demand_carbon_per_kwh']/1e9,1)),
+        "carbon_baseline_20mbps_5g_fb": float(round(energy_percs['baseline_20mbps_5g_fb']['demand_carbon_per_kwh']/1e9,1)),
 
         "nitrogen_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['nitrogen_oxide_per_kwh']/1e3)),
         "nitrogen_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['nitrogen_oxide_per_kwh']/1e3)),
@@ -142,31 +157,31 @@ def generate_report(country):
         "nitrogen_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['nitrogen_oxide_per_kwh']/1e3)),
         "nitrogen_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['nitrogen_oxide_per_kwh']/1e3)),
 
-        "sulpher_baseline_5mbps_4g_w": round(energy_percs['baseline_5mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_5mbps_4g_fb": round(energy_percs['baseline_5mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_5mbps_5g_w": round(energy_percs['baseline_5mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_5mbps_5g_fb": round(energy_percs['baseline_5mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_10mbps_4g_w": round(energy_percs['baseline_10mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_10mbps_4g_fb": round(energy_percs['baseline_10mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_10mbps_5g_w": round(energy_percs['baseline_10mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_10mbps_5g_fb": round(energy_percs['baseline_10mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_20mbps_4g_w": round(energy_percs['baseline_20mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_20mbps_4g_fb": round(energy_percs['baseline_20mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_20mbps_5g_w": round(energy_percs['baseline_20mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6,2),
-        "sulpher_baseline_20mbps_5g_fb": round(energy_percs['baseline_20mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6,2),
+        "sulpher_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['sulpher_dioxide_per_kwh']/1e6)),
+        "sulpher_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['sulpher_dioxide_per_kwh']/1e6)),
 
-        "pm10_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['pm10_per_kwh']/1e3)),
-        "pm10_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['pm10_per_kwh']/1e3)),
+        "pm10_baseline_5mbps_4g_w": int(round(energy_percs['baseline_5mbps_4g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_5mbps_4g_fb": int(round(energy_percs['baseline_5mbps_4g_fb']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_5mbps_5g_w": int(round(energy_percs['baseline_5mbps_5g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_5mbps_5g_fb": int(round(energy_percs['baseline_5mbps_5g_fb']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_10mbps_4g_w": int(round(energy_percs['baseline_10mbps_4g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_10mbps_4g_fb": int(round(energy_percs['baseline_10mbps_4g_fb']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_10mbps_5g_w": int(round(energy_percs['baseline_10mbps_5g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_10mbps_5g_fb": int(round(energy_percs['baseline_10mbps_5g_fb']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_20mbps_4g_w": int(round(energy_percs['baseline_20mbps_4g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_20mbps_4g_fb": int(round(energy_percs['baseline_20mbps_4g_fb']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_20mbps_5g_w": int(round(energy_percs['baseline_20mbps_5g_w']['pm10_per_kwh']/1e6)),
+        "pm10_baseline_20mbps_5g_fb": int(round(energy_percs['baseline_20mbps_5g_fb']['pm10_per_kwh']/1e6)),
 
         "perc_energy_baseline_5mbps_4g_w": energy_percs['baseline_5mbps_4g_w']['perc_energy_dif_vs_4G'],
         "perc_energy_baseline_5mbps_4g_fb": energy_percs['baseline_5mbps_4g_fb']['perc_energy_dif_vs_4G'],
@@ -255,11 +270,13 @@ def generate_report(country):
         "perc_pm10_baseline_10mbps_5g_w_renewables": round(abs(power_percs['baseline_10mbps_5g_w_renewables']['perc_pm10_dif_vs_renewables'])),
         "perc_pm10_baseline_10mbps_5g_fb_renewables": round(abs(power_percs['baseline_10mbps_5g_fb_renewables']['perc_pm10_dif_vs_renewables'])),
 
+        "historical_co2": round(hist_emissions['historical_co2'],1),
+
     }
 
     html_out = template.render(template_vars)
 
-    filename = 'Oughton, E.J. (2021) Assessment of 4G and 5G Universal Broadband Infrastructure Strategies for {}.pdf'.format(
+    filename = 'Oughton, E.J. & Comini, N. (2022) Assessment of 4G and 5G Universal Broadband Infrastructure Strategies for {}.pdf'.format(
         country['prefered_name'])
     path = os.path.join(OUTPUT, filename)
 
@@ -529,6 +546,45 @@ def get_policy_inputs(iso3):
     return output
 
 
+def get_energy_gen_inputs(iea_group):
+    """
+    """
+    output = {}
+
+    filename = 'iea_forecast.csv'
+    path = os.path.join(DATA_RAW, 'IEA_data', filename)
+    data = pd.read_csv(path)
+
+    for idx, row in data.iterrows():
+
+        if row['region'] == iea_group:
+
+            handle = '{}_{}_perc'.format(row['type'], row['year'])
+
+            output[handle] = int(round(row['share']))
+
+    return output
+
+
+def historical_emissions(iso3):
+    """
+    Process historical emissions.
+
+    """
+    output = {}
+
+    path = os.path.join(DATA_RAW, 'Emissions', 'owid-co2-data.csv')
+    data = pd.read_csv(path)
+    data = data[data.iso_code == iso3]
+    data = data[data.year == 2020]
+    data = data.to_dict('records')
+
+    for item in data:
+        output['historical_co2'] = item['co2']
+
+    return output
+
+
 def convert_html_to_pdf(source_html, output_filename):
     # open output file for writing (truncated binary)
     result_file = open(output_filename, "w+b")
@@ -550,11 +606,6 @@ if __name__ == '__main__':
     if not os.path.exists(os.path.join(OUTPUT)):
         os.makedirs(os.path.join(OUTPUT))
 
-    countries = [
-        # {'iso3': 'CHL','prefered_name': 'Chile'},
-        {'iso3': 'COL','prefered_name': 'Colombia'},
-    ]
-
-    for country in countries:
+    for country in COUNTRY_LIST:
 
         generate_report(country)

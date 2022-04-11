@@ -86,7 +86,7 @@ long$type = factor(long$type,
                                 labels=c(
                                   expression(paste("Kilotonnes of ", CO[2])),
                                   expression(paste("Tonnes of ", NO[x])),
-                                  expression(paste("Tonnes of ", SO[x])),
+                                  expression(paste("Kilotonnes of ", SO[x])),
                                   expression(paste("Kilotonnes of ", PM[10]))
                                 ))
 

@@ -4,8 +4,10 @@ library(ggpubr)
 
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
+iso3 = 'COL'
+
 filename = 'national_market_cost_results_technology_options.csv'
-data <- read.csv(file.path(folder, '..', 'results', 'model_results', 'COL', filename))
+data <- read.csv(file.path(folder, '..', 'results', 'model_results', iso3, filename))
 
 names(data)[names(data) == 'GID_0'] <- 'country'
 
@@ -71,7 +73,7 @@ min_value[min_value > 0] = 0
 
 colnames(data)[colnames(data) == 'private_cost'] <- 'Private Investment Cost ($USD)'
 colnames(data)[colnames(data) == 'government_cost'] <- 'Government Cost ($USD)'
-colnames(data)[colnames(data) == 'societal_cost'] <- 'Social Cost ($USD)'
+colnames(data)[colnames(data) == 'societal_cost'] <- 'Financial Cost ($USD)'
 
 data <- data %>% gather(key="Cost_Type", value = "value",
                         'Private Investment Cost ($USD)', 
@@ -93,10 +95,10 @@ ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) +
   scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Social Cost of Universal Broadband by Technology in Chile", 
+  labs(title = "Financial Cost of Universal Broadband by Technology in Colombia", 
        colour=NULL,
        subtitle = "Reported for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Social Cost (Billions $USD)") +
+       x = NULL, y = "Financial Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value+8)) +
   theme(panel.spacing = unit(0.5, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
@@ -175,7 +177,7 @@ data$social_cost = data$private_cost + data$government_cost
 
 colnames(data)[colnames(data) == 'private_cost'] <- 'Private Investment Cost ($USD)'
 colnames(data)[colnames(data) == 'government_cost'] <- 'Government Cost ($USD)'
-colnames(data)[colnames(data) == 'societal_cost'] <- 'Social Cost ($USD)'
+colnames(data)[colnames(data) == 'societal_cost'] <- 'Financial Cost ($USD)'
 
 data <- data %>% gather(key="Cost_Type", value = "value",
                         'Private Investment Cost ($USD)', 
@@ -197,10 +199,10 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Social Cost of Universal Broadband by Infrastructure Sharing Strategy in Chile", 
+  labs(title = "Financial Cost of Universal Broadband by Infrastructure Sharing Strategy in Colombia", 
        colour=NULL,
        subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Social Cost (Billions $USD)") +
+       x = NULL, y = "Financial Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(-min_value, max_value+10)) +
   theme(panel.spacing = unit(0.6, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
@@ -284,7 +286,7 @@ min_value[min_value > 0] = 0
 
 colnames(data)[colnames(data) == 'private_cost'] <- 'Private Investment Cost ($USD)'
 colnames(data)[colnames(data) == 'government_cost'] <- 'Government Cost ($USD)'
-colnames(data)[colnames(data) == 'societal_cost'] <- 'Social Cost ($USD)'
+colnames(data)[colnames(data) == 'societal_cost'] <- 'Financial Cost ($USD)'
 
 data <- data %>% gather(key="Cost_Type", value = "value",
                         'Private Investment Cost ($USD)', 
@@ -306,10 +308,10 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title = "Social Cost of Universal Broadband by Policy Strategy in Chile", 
+  labs(title = "Financial Cost of Universal Broadband by Policy Strategy in Colombia", 
        colour=NULL,
        subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Social Cost (Billions $USD)") +
+       x = NULL, y = "Financial Cost (Billions $USD)") +
   scale_y_continuous(expand = c(0, 0), limits = c(-0, max_value+10)) +
   theme(panel.spacing = unit(0.6, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
