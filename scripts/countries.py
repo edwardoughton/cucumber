@@ -139,8 +139,8 @@ COUNTRY_PARAMETERS = {
             'medium': 1,
         },
         'arpu': {
-            'high': 12,
-            'medium': 9,
+            'high': 10,
+            'medium': 6,
             'low': 4,
         },
         'networks': {

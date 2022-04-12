@@ -50,15 +50,15 @@ def assess_energy(country, regions, assets, option, global_parameters,
 
                 if 'equipment' in asset.values():
                     equipment_quantity += asset['quantity']
-                if 'regional_node' in asset.values():
+                elif 'regional_node' in asset.values():
                     regional_nodes += asset['quantity']
-                if 'core_node' in asset.values():
+                elif 'core_node' in asset.values():
                     core_nodes += asset['quantity']
-                if 'wireless_small' in asset.values():
+                elif 'backhaul_wireless_small' in asset.values():
                     wireless_small += asset['quantity']
-                if 'wireless_medium' in asset.values():
+                elif 'backhaul_wireless_medium' in asset.values():
                     wireless_medium += asset['quantity']
-                if 'wireless_large' in asset.values():
+                elif 'backhaul_wireless_large' in asset.values():
                     wireless_large += asset['quantity']
 
         equipment_hourly_demand_kwh = equipment_quantity * energy_demand['equipment_kwh']

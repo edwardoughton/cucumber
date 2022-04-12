@@ -21,7 +21,6 @@ def test_find_cost(setup_region, setup_costs,
     setup_region[0]['new_mno_sites'] = 1
     setup_region[0]['upgraded_mno_sites'] = 0
     setup_region[0]['site_density'] = 0.5
-    setup_region[0]['backhaul_new'] = 0
 
     answer = find_cost(
         setup_region[0],
@@ -34,7 +33,7 @@ def test_find_cost(setup_region, setup_costs,
         setup_cost_types
     )
 
-    assert answer['network_cost'] == 34500
+    assert answer['network_cost'] == 61990.75
 
 
 def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_parameters,
@@ -119,13 +118,14 @@ def test_aggregate_costs():
         'site_rental': 1,
         'operation_and_maintenance': 1,
         'power': 1,
-        'backhaul': 1,
+        'backhaul_wireless_small':1,
         'site_build': 1,
         'installation': 1,
         'regional_node': 1,
         'regional_edge': 1,
         'core_node': 1,
         'core_edge': 1,
+
     }
 
     answer = aggregate_costs(cost_by_assets)

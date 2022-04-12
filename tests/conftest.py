@@ -316,7 +316,11 @@ def setup_assets():
         {
             'GID_id': 'MWI.1.1.1_1', 'asset': 'installation', 'quantity': 1,
             'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'new'
-        }
+        },
+        {
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'backhaul', 'quantity': 2000,
+            'cost_per_unit': 10, 'total_cost': 20000, 'build_type': 'new'
+        },
     ]
 
 

@@ -175,8 +175,9 @@ def aggregate_costs(cost_by_asset):
     for key, value in cost_by_asset.items():
         if key in ran:
             ran_cost += value
-        if key in backhaul_fronthaul:
-            backhaul_fronthaul_cost += value
+        if key.startswith('backhaul'):
+            if key.split('_')[0] in backhaul_fronthaul:
+                backhaul_fronthaul_cost += value
         if key in civils:
              civils_cost += value
         if key in core:

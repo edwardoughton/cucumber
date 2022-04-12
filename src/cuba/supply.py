@@ -209,8 +209,8 @@ def find_site_density(region, option, global_parameters, country_parameters,
     max_density, max_capacity = density_lut[-1]
     min_density, min_capacity = density_lut[0]
 
-    max_capacity = max_capacity * bandwidth
-    min_capacity = min_capacity * bandwidth
+    # max_capacity = max_capacity * bandwidth
+    # min_capacity = min_capacity * bandwidth
 
     if demand > max_capacity:
 
@@ -227,8 +227,8 @@ def find_site_density(region, option, global_parameters, country_parameters,
             lower_density, lower_capacity  = a
             upper_density, upper_capacity  = b
 
-            lower_capacity = lower_capacity * bandwidth
-            upper_capacity = upper_capacity * bandwidth
+            # lower_capacity = lower_capacity * bandwidth
+            # upper_capacity = upper_capacity * bandwidth
 
             if lower_capacity <= demand < upper_capacity:
 
