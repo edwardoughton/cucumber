@@ -276,7 +276,7 @@ def generate_report(country):
 
     html_out = template.render(template_vars)
 
-    filename = 'Oughton, E.J. & Comini, N. (2022) Assessment of 4G and 5G Universal Broadband Infrastructure Strategies for {}.pdf'.format(
+    filename = 'Oughton, E.J. (2022) Assessment of 4G and 5G Universal Broadband Infrastructure Strategies for {}.pdf'.format(
         country['prefered_name'])
     path = os.path.join(OUTPUT, filename)
 

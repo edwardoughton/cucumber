@@ -258,9 +258,11 @@ def calc_assets(region, option, asset_structure, i, new_backhaul, costs, build_t
             asset_name1 = asset_name1 + '_' + geotype
 
         if asset_name1 == 'backhaul':
-            quantity, asset_name1 = estimate_backhaul_type(backhaul, quantity, geotype)
-
-        cost_per_unit = costs[asset_name1]
+            quantity, backhaul_name = estimate_backhaul_type(backhaul, quantity, geotype)
+            cost_per_unit = costs[backhaul_name]
+            asset_name1 = asset_name1 + '_' + backhaul_name
+        else:
+            cost_per_unit = costs[asset_name1]
 
         total_assets.append({
             'scenario': region['scenario'],
