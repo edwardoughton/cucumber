@@ -356,9 +356,11 @@ def calculate_total_market_costs(regions, option, country_parameters):
 
 def calc(region, metric, ms):
     """
+
     """
     if metric in region:
         value = region[metric]
-        return round((value / ms) * 100)
+        value_per_user = value / region['phones_on_network']
+        return round(value_per_user * region['population_with_phones'])
     else:
         return 0
