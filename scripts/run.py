@@ -21,8 +21,9 @@ from cuba.assess import assess
 from cuba.energy import assess_energy
 from cuba.emissions import assess_emissions
 from write import (define_deciles, write_demand, write_results, write_inputs,
-    write_assets, write_energy, write_emissions, write_emissions_aggregated,
-    write_power_emissions)
+    write_assets, write_energy, write_energy_aggregated, write_energy_annual_aggregated,
+    write_emissions, write_emissions_aggregated,
+    write_emissions_annual_aggregated, write_power_emissions)
 from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
 from percentages import generate_percentages
 
@@ -139,84 +140,6 @@ def read_capacity_lut(path):
     return capacity_lut
 
 
-def lookup_cost(lookup, strategy, environment):
-    """
-    Find cost of network.
-
-    """
-    if (strategy, environment) not in lookup:
-        raise KeyError("Combination %s not found in lookup table",
-                       (strategy, environment))
-
-    density_capacities = lookup[
-        (strategy, environment)
-    ]
-
-    return density_capacities
-
-
-def find_country_list(continent_list):
-    """
-
-    """
-    path_processed = os.path.join(DATA_INTERMEDIATE,'global_countries.shp')
-    countries = geopandas.read_file(path_processed)
-
-    subset = countries.loc[countries['continent'].isin(continent_list)]
-
-    country_list = []
-    country_regional_levels = []
-
-    for name in subset.GID_0.unique():
-
-        country_list.append(name)
-
-        if name in ['ESH', 'LBY', 'LSO'] :
-            regional_level =  1
-        else:
-            regional_level = 2
-
-        country_regional_levels.append({
-            'country': name,
-            'regional_level': regional_level,
-        })
-
-    return country_list, country_regional_levels
-
-
-def load_cluster(path, iso3):
-    """
-    Load cluster number. You need to make sure the
-    R clustering script (podis/vis/clustering/clustering.r)
-    has been run first.
-
-    """
-    output = {}
-
-    if len(iso3) <= 3:
-        with open(path, 'r') as source:
-            reader = csv.DictReader(source)
-            for row in reader:
-                if row['ISO_3digit'] == iso3:
-                    output[iso3] = row['cluster']
-
-    if len(iso3) > 3:
-
-        list_of_country_codes = []
-        country_codes = iso3.split('-')
-        list_of_country_codes.extend(country_codes)
-
-        for item in list_of_country_codes:
-            with open(path, 'r') as source:
-                reader = csv.DictReader(source)
-
-                for row in reader:
-                    if row['ISO_3digit'] == item:
-                        output[item] = row['cluster']
-
-    return output
-
-
 def load_penetration(scenario, path):
     """
     Load penetration forecast.
@@ -261,33 +184,28 @@ def load_smartphones(scenario, path):
     return output
 
 
-def load_sites(country, sites1, sites2):
+def load_sites(country, sites):
     """
     Load sites lookup table.
 
     """
     output = {}
 
-    GID_id = 'GID_{}'.format(country['regional_level'])
+    sites = pd.read_csv(sites)
 
-    sites1 = pd.read_csv(sites1)
-    sites2 = pd.read_csv(sites2)
-
-    for idx, site1 in sites1.iterrows():
-        for idx, site2 in sites2.iterrows():
-            if site1[GID_id] == site2['GID_id']:
-                output[site1[GID_id]] = {
-                    'GID_0': site1['GID_0'],
-                    # 'sites_2G': int(site1['sites_2G']),
-                    # 'sites_3G': int(site1['sites_3G']),
-                    'sites_4G': int(site1['sites_4G']),
-                    'total_estimated_sites': int(site1['total_estimated_sites']),
-                    'backhaul_wireless': float(site1['backhaul_wireless']),
-                    'backhaul_fiber':  float(site1['backhaul_fiber']),
-                    'on_grid_perc': float(site2['on_grid_perc']),
-                    'grid_other_perc': float(site2['grid_other_perc']),
-                    'total_sites': site2['total_sites'],
-                }
+    for idx, site in sites.iterrows():
+        output[site['GID_id']] = {
+            'GID_0': site['GID_0'],
+            # 'sites_2G': int(site1['sites_2G']),
+            # 'sites_3G': int(site1['sites_3G']),
+            'sites_4G': int(site['sites_4G']),
+            'total_estimated_sites': int(site['total_estimated_sites']),
+            'backhaul_wireless': float(site['backhaul_wireless']),
+            'backhaul_fiber':  float(site['backhaul_fiber']),
+            'on_grid_perc': float(site['on_grid_perc']),
+            'grid_other_perc': float(site['grid_other_perc']),
+            'total_sites': site['total_sites'],
+        }
 
     return output
 
@@ -377,15 +295,16 @@ if __name__ == '__main__':
         'business_model_options',
         'policy_options',
         'power_options',
+        'generate_shared_power_options',
     ]
 
-    # all_results = []
+    all_results = []
 
     for decision_option in decision_options:
 
         print('Working on {}'.format(decision_option))
 
-        options = OPTIONS[decision_option]
+        options = OPTIONS[decision_option][:1]
 
         for country in COUNTRY_LIST:#[:1]:
 
@@ -412,9 +331,7 @@ if __name__ == '__main__':
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites')
             sites1 = os.path.join(folder, 'sites.csv')
-            sites2 = os.path.join(folder, 'site_power', 'b_site_power_lut.csv')
-            sites_lut = load_sites(country, sites1, sites2)
-            # sites_lut_to_write = pd.DataFrame(sites_lut)
+            sites_lut = load_sites(country, sites1)
 
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
             filename = 'core_lut.csv'
@@ -450,7 +367,7 @@ if __name__ == '__main__':
 
                     filename = 'regional_data.csv'
                     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
-                    data_initial = load_regions(country, path, sites_lut)#[:20]
+                    data_initial = load_regions(country, path, sites_lut)#[:50]
 
                     data_demand, annual_demand = estimate_demand(
                         data_initial,
@@ -501,26 +418,36 @@ if __name__ == '__main__':
                         TECH_LUT,
                         on_grid_mix,
                         TIMESTEPS,
-                        option
+                        option,
+                        country_parameters
                     )
 
                     final_results = allocate_deciles(data_assess)
 
                     regional_annual_demand = regional_annual_demand + annual_demand
                     regional_results = regional_results + final_results
-                    # all_assets = all_assets + assets
+                    all_assets = all_assets + assets
                     regional_energy_demand = regional_energy_demand + data_energy
                     regional_emissions = regional_emissions + data_emissions
 
-            # all_results = all_results + regional_results
+            all_results = all_results + regional_results
 
             write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            # write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
 
             write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
+            write_energy_annual_aggregated(regional_energy_demand, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
+
+            write_energy_aggregated(regional_energy_demand, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
+
             write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+
+            write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
 
             write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
                 decision_option)
@@ -535,6 +462,6 @@ if __name__ == '__main__':
 
             generate_percentages(iso3, decision_option)
 
-    # write_results(all_results, OUTPUT, 'all_options_all_countries')
+    write_results(all_results, OUTPUT, 'all_options_all_countries')
 
     print('Completed model run')
