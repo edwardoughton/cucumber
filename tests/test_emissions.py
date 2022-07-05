@@ -3,29 +3,41 @@ from cuba.emissions import assess_emissions
 
 
 def test_assess_emissions(setup_data_energy, setup_tech_lut,
-    setup_on_grid_mix, setup_timesteps, setup_option):
+    setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters):
     """
     Unit test.
 
     """
     results = assess_emissions(setup_data_energy, setup_tech_lut,
-        setup_on_grid_mix, setup_timesteps, setup_option)
+        setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters)
 
     for result in results:
 
         if result['grid_type'] == 'on_grid':
 
-            assert result['demand_carbon_per_kwh'] == 30
-            assert result['nitrogen_oxide_per_kwh'] == 30
-            assert result['sulpher_dioxide_per_kwh'] == 30
-            assert result['pm10_per_kwh'] == 30
+            assert result['mno_demand_carbon_per_kwh'] == 30
+            assert result['mno_nitrogen_oxide_per_kwh'] == 30
+            assert result['mno_sulpher_dioxide_per_kwh'] == 30
+            assert result['mno_pm10_per_kwh'] == 30
+
+            # e.g. (30 kg CO2/kwh / 75 phones on network) * 100 total phones users
+            assert result['total_demand_carbon_per_kwh'] == (30 / 75) * 100
+            assert result['total_nitrogen_oxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_sulpher_dioxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_pm10_per_kwh'] == (30 / 75) * 100
 
         if result['grid_type'] == 'off_grid':
 
-            assert result['demand_carbon_per_kwh'] == 30
-            assert result['nitrogen_oxide_per_kwh'] == 30
-            assert result['sulpher_dioxide_per_kwh'] == 30
-            assert result['pm10_per_kwh'] == 30
+            assert result['mno_demand_carbon_per_kwh'] == 30
+            assert result['mno_nitrogen_oxide_per_kwh'] == 30
+            assert result['mno_sulpher_dioxide_per_kwh'] == 30
+            assert result['mno_pm10_per_kwh'] == 30
+
+            # e.g. (30 kg CO2/kwh / 75 phones on network) * 100 total phones users
+            assert result['total_demand_carbon_per_kwh'] == (30 / 75) * 100
+            assert result['total_nitrogen_oxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_sulpher_dioxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_pm10_per_kwh'] == (30 / 75) * 100
 
     setup_timesteps = [
         2020,
@@ -33,7 +45,7 @@ def test_assess_emissions(setup_data_energy, setup_tech_lut,
     ]
 
     results = assess_emissions(setup_data_energy, setup_tech_lut,
-        setup_on_grid_mix, setup_timesteps, setup_option)
+        setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters)
 
     total_carbon = []
     total_nitrogen = []
@@ -42,24 +54,24 @@ def test_assess_emissions(setup_data_energy, setup_tech_lut,
 
     for result in results:
 
-        total_carbon.append(result['demand_carbon_per_kwh'])
-        total_nitrogen.append(result['nitrogen_oxide_per_kwh'])
-        total_sulphur.append(result['sulpher_dioxide_per_kwh'])
-        total_pm10.append(result['pm10_per_kwh'])
+        total_carbon.append(result['mno_demand_carbon_per_kwh'])
+        total_nitrogen.append(result['mno_nitrogen_oxide_per_kwh'])
+        total_sulphur.append(result['mno_sulpher_dioxide_per_kwh'])
+        total_pm10.append(result['mno_pm10_per_kwh'])
 
         if result['grid_type'] == 'on_grid' and result['year'] == 2021:
 
-            assert result['demand_carbon_per_kwh'] == 30
-            assert result['nitrogen_oxide_per_kwh'] == 30
-            assert result['sulpher_dioxide_per_kwh'] == 30
-            assert result['pm10_per_kwh'] == 30
+            assert result['mno_demand_carbon_per_kwh'] == 30
+            assert result['mno_nitrogen_oxide_per_kwh'] == 30
+            assert result['mno_sulpher_dioxide_per_kwh'] == 30
+            assert result['mno_pm10_per_kwh'] == 30
 
         if result['grid_type'] == 'off_grid' and result['year'] == 2021:
 
-            assert result['demand_carbon_per_kwh'] == 30
-            assert result['nitrogen_oxide_per_kwh'] == 30
-            assert result['sulpher_dioxide_per_kwh'] == 30
-            assert result['pm10_per_kwh'] == 30
+            assert result['mno_demand_carbon_per_kwh'] == 30
+            assert result['mno_nitrogen_oxide_per_kwh'] == 30
+            assert result['mno_sulpher_dioxide_per_kwh'] == 30
+            assert result['mno_pm10_per_kwh'] == 30
 
     assert sum(total_carbon) == 30 * 6
     assert sum(total_nitrogen) == 30 * 6
@@ -75,20 +87,35 @@ def test_assess_emissions(setup_data_energy, setup_tech_lut,
         new_energy_data = new_energy_data + interim
 
     results = assess_emissions(new_energy_data, setup_tech_lut,
-        setup_on_grid_mix, [2020], setup_option)
+        setup_on_grid_mix, [2020], setup_option, setup_country_parameters)
 
     for result in results:
 
         if result['grid_type'] == 'on_grid':
 
-            assert result['demand_carbon_per_kwh'] == 30
-            assert result['nitrogen_oxide_per_kwh'] == 30
-            assert result['sulpher_dioxide_per_kwh'] == 30
-            assert result['pm10_per_kwh'] == 30
+            assert result['mno_demand_carbon_per_kwh'] == 30
+            assert result['mno_nitrogen_oxide_per_kwh'] == 30
+            assert result['mno_sulpher_dioxide_per_kwh'] == 30
+            assert result['mno_pm10_per_kwh'] == 30
 
         if result['grid_type'] == 'grid_other':
 
-            assert result['demand_carbon_per_kwh'] == 60
-            assert result['nitrogen_oxide_per_kwh'] == 60
-            assert result['sulpher_dioxide_per_kwh'] == 60
-            assert result['pm10_per_kwh'] == 60
+            assert result['mno_demand_carbon_per_kwh'] == 60
+            assert result['mno_nitrogen_oxide_per_kwh'] == 60
+            assert result['mno_sulpher_dioxide_per_kwh'] == 60
+            assert result['mno_pm10_per_kwh'] == 60
+
+        if result['grid_type'] == 'on_grid':
+
+            # e.g. (30 kwh / 75 phones on network) * 100 total phones users
+            assert result['total_demand_carbon_per_kwh'] == (30 / 75) * 100
+            assert result['total_nitrogen_oxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_sulpher_dioxide_per_kwh'] == (30 / 75) * 100
+            assert result['total_pm10_per_kwh'] == (30 / 75) * 100
+
+        if result['grid_type'] == 'grid_other':
+
+            assert result['total_demand_carbon_per_kwh'] == (60 / 75) * 100
+            assert result['total_nitrogen_oxide_per_kwh'] == (60 / 75) * 100
+            assert result['total_sulpher_dioxide_per_kwh'] == (60 / 75) * 100
+            assert result['total_pm10_per_kwh'] == (60 / 75) * 100

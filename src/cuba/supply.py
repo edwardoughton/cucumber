@@ -64,6 +64,9 @@ def estimate_supply(country, regions, capacity_lut, option,
 
     for region in regions:
 
+        # if not region['GID_id'] == 'COL.14.12_1':
+        #     continue
+
         region['scenario'] = option['scenario']
         region['strategy'] = option['strategy']
         region['confidence'] = ci
@@ -71,21 +74,32 @@ def estimate_supply(country, regions, capacity_lut, option,
         region['mno_site_density'] = find_site_density(region, option,
             global_parameters, country_parameters, capacity_lut, ci)
 
-        total_sites_required = math.ceil(region['mno_site_density'] *
-            region['area_km2'])
+        if region['mno_site_density'] > 0:
 
-        region = estimate_site_upgrades(
-            region,
-            option['strategy'],
-            total_sites_required,
-            country_parameters
-        )
+            total_sites_required = math.ceil(region['mno_site_density'] *
+                region['area_km2'])
 
-        region = estimate_backhaul_upgrades(
-            region,
-            option['strategy'],
-            country_parameters
-        )
+            region = estimate_site_upgrades(
+                region,
+                option['strategy'],
+                total_sites_required,
+                country_parameters
+            )
+
+            region = estimate_backhaul_upgrades(
+                region,
+                option['strategy'],
+                country_parameters
+            )
+
+        else:
+            region['existing_mno_sites'] =  (
+                region['total_estimated_sites'] /
+                country_parameters['networks']['baseline' + '_' + region['geotype'].split(' ')[0]]
+            )
+            region['new_mno_sites'] = 0
+            region['upgraded_mno_sites'] = 0
+            region['backhaul_new'] = 0
 
         assets = estimate_assets(
             region,
@@ -149,6 +163,11 @@ def find_site_density(region, option, global_parameters, country_parameters,
     generation = option['strategy'].split('_')[0]
     frequencies = country_parameters['frequencies']
     frequencies = frequencies[generation]
+    target = find_target(geotype, option)
+
+    if target == 0:
+        return 0
+
     ci = str(ci)
     unique_densities = set()
 
@@ -237,7 +256,24 @@ def find_site_density(region, option, global_parameters, country_parameters,
                     upper_capacity, upper_density,
                     demand
                 )
+
                 return site_density
+
+def find_target(geotype, option):
+    """
+    Find speed target.
+
+    """
+    if geotype == 'urban':
+        target = int(option['scenario'].split('_')[1])
+    elif geotype == 'suburban':
+        target = int(option['scenario'].split('_')[2])
+    elif geotype == 'rural':
+        target = int(option['scenario'].split('_')[3])
+    else:
+        print('Did not recognize geotype when trying to find speed target')
+
+    return target
 
 
 def lookup_capacity(capacity_lut, env, ant_type, frequency,
@@ -335,13 +371,12 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
     """
     generation = strategy.split('_')[0]
     geotype = region['geotype'].split(' ')[0]
+    sharing = strategy.split('_')[3]
 
     #get the number of networks in the area
-    networks = country_parameters['networks']['baseline' + '_' + geotype]
+    networks = country_parameters['networks'][sharing + '_' + geotype]
 
-    #get the total number of existing sites that the network has (2G-4G)
-    region['existing_mno_sites'] = (
-        region['total_estimated_sites'] / networks)
+    region['existing_mno_sites'] = (region['total_estimated_sites'] / networks)
 
     #get the number of existing 4G sites
     existing_4G_sites = math.ceil(region['sites_4G'] / networks )

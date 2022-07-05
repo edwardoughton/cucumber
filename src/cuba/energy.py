@@ -38,6 +38,20 @@ def assess_energy(country, regions, assets, option, global_parameters,
 
     for region in regions:
 
+        # if not region['GID_id'] == 'COL.14.12_1':
+        #     continue
+
+        geotype = region['geotype'].split(' ')[0]
+        sharing = option['strategy'].split('_')[3]
+        baseline_net_handle = 'baseline' + '_' + geotype
+        baseline_networks = country_parameters['networks'][baseline_net_handle]
+        if sharing in ['active', 'srn']:
+            net_handle = sharing + '_' + geotype
+            networks = country_parameters['networks'][net_handle]
+            network_division = (networks/baseline_networks)
+        else:
+            network_division = 1
+
         equipment_quantity = 0
         regional_nodes = 0
         core_nodes = 0
@@ -46,6 +60,7 @@ def assess_energy(country, regions, assets, option, global_parameters,
         wireless_large = 0
 
         for asset in assets:
+
             if asset['GID_id'] == region['GID_id']:
 
                 if 'equipment' in asset.values():
@@ -95,10 +110,30 @@ def assess_energy(country, regions, assets, option, global_parameters,
 
                 grid_type_handle = grid_type + '_perc'
 
-                elec_demand = total_demand_kwh * (region[grid_type_handle] / 100)
-                equip_demand = equipment_annual_demand_kwh * (region[grid_type_handle] / 100)
-                regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
-                core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100)
+                if sharing in ['baseline', 'passive']:
+                    elec_demand = calc_demand(total_demand_kwh, region, grid_type_handle)
+                    equip_demand = calc_demand(equipment_annual_demand_kwh, region, grid_type_handle)
+                    regional_nodes_demand = calc_demand(regional_nodes_annual_demand_kwh, region, grid_type_handle)
+                    core_nodes_demand = calc_demand(core_nodes_annual_demand_kwh, region, grid_type_handle)
+                elif sharing == 'srn':
+                    if geotype == 'urban' or geotype == 'suburban':
+                        elec_demand = calc_demand(total_demand_kwh, region, grid_type_handle)
+                        equip_demand = calc_demand(equipment_annual_demand_kwh, region, grid_type_handle)
+                        regional_nodes_demand = calc_demand(regional_nodes_annual_demand_kwh, region, grid_type_handle)
+                        core_nodes_demand = calc_demand(core_nodes_annual_demand_kwh, region, grid_type_handle)
+                    else:
+                        elec_demand = (total_demand_kwh * (region[grid_type_handle] / 100)) * network_division
+                        equip_demand = equipment_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                        regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                        core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                elif sharing == 'active':
+
+                    elec_demand = (total_demand_kwh * (region[grid_type_handle] / 100)) * network_division
+                    equip_demand = equipment_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                    regional_nodes_demand = regional_nodes_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                    core_nodes_demand = core_nodes_annual_demand_kwh * (region[grid_type_handle] / 100) * network_division
+                else:
+                    print('Did not reognize sharing scenario')
 
                 wireless_backhaul_demand = (
                     wireless_small_annual_demand_kwh +
@@ -110,19 +145,30 @@ def assess_energy(country, regions, assets, option, global_parameters,
                     'year': timestep,
                     'GID_0': region['GID_0'],
                     'GID_id': region['GID_id'],
+                    'geotype': geotype,
                     'scenario': option['scenario'],
                     'strategy': option['strategy'],
                     'confidence': global_parameters['confidence'][0],
-                    'total_sites': region['total_sites'],
-                    'total_upgraded_sites': region['total_upgraded_sites'],
-                    'total_new_sites': region['total_new_sites'],
                     'grid_type_perc': region[grid_type_handle],
                     'grid_type': grid_type,
-                    'total_energy_annual_demand_kwh': elec_demand,
-                    'equipment_annual_demand_kWh': equip_demand,
-                    'regional_nodes_annual_demand_kwh': regional_nodes_demand,
-                    'core_nodes_annual_demand_kwh': core_nodes_demand,
-                    'wireless_backhaul_annual_demand_kwh': wireless_backhaul_demand,
+                    'network_division': network_division,
+                    'mno_energy_annual_demand_kwh': elec_demand,
+                    'mno_equipment_annual_demand_kWh': equip_demand,
+                    'mno_regional_nodes_annual_demand_kwh': regional_nodes_demand,
+                    'mno_core_nodes_annual_demand_kwh': core_nodes_demand,
+                    'mno_wireless_backhaul_annual_demand_kwh': wireless_backhaul_demand,
+                    'total_energy_annual_demand_kwh': elec_demand * baseline_networks,
+                    'total_equipment_annual_demand_kWh': equip_demand * baseline_networks,
+                    'total_regional_nodes_annual_demand_kwh': regional_nodes_demand * baseline_networks,
+                    'total_core_nodes_annual_demand_kwh': core_nodes_demand * baseline_networks,
+                    'total_wireless_backhaul_annual_demand_kwh': wireless_backhaul_demand * baseline_networks,
                 })
 
     return output
+
+
+def calc_demand(total, region, grid_type_handle):
+
+    demand = total * (region[grid_type_handle] / 100)
+
+    return demand

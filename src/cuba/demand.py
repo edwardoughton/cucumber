@@ -46,7 +46,7 @@ def estimate_demand(regions, option, global_parameters,
     annual_output = []
 
     # generation_core_backhaul_sharing_networks_spectrum_tax
-    network_strategy = option['strategy'].split('_')[4]
+    network_strategy = option['strategy'].split('_')[3]
 
     for region in regions:
 
@@ -67,8 +67,8 @@ def estimate_demand(regions, option, global_parameters,
         revenue = []
         demand_mbps_km2 = []
 
-        scenario_per_user_capacity = get_per_user_capacity(
-            region['geotype'], option)
+        scenario_per_user_mbps = get_per_user_capacity(
+            region['geotype'], option, global_parameters)
 
         for timestep in timesteps:
 
@@ -142,8 +142,8 @@ def estimate_demand(regions, option, global_parameters,
             # Total demand in mbps / km^2.
             demand_mbps_km2.append(
                 (region['smartphones_on_network'] *
-                scenario_per_user_capacity / #User demand in Mbps
-                global_parameters['overbooking_factor'] /
+                scenario_per_user_mbps / #User demand in Mbps
+                # global_parameters['overbooking_factor'] /
                 region['area_km2']
                 ))
 
@@ -184,6 +184,7 @@ def estimate_demand(regions, option, global_parameters,
                 'revenue': annual_revenue,
             })
 
+        region['scenario_per_user_mbps'] = scenario_per_user_mbps
         region['demand_mbps_km2'] = max(demand_mbps_km2)
         region['total_mno_revenue'] = round(sum(revenue))
         region['revenue_km2'] = round(sum(revenue) / region['area_km2'])
@@ -193,10 +194,11 @@ def estimate_demand(regions, option, global_parameters,
     return output, annual_output
 
 
-def get_per_user_capacity(geotype, option):
+def get_per_user_capacity(geotype, option, global_parameters):
     """
-    Function to return the target per user capacity by scenario,
+    Function to return the per user data rate by scenario,
     from the scenario string.
+
     Parameters
     ----------
     geotype : string
@@ -214,15 +216,27 @@ def get_per_user_capacity(geotype, option):
     """
     if geotype.split(' ')[0] == 'urban':
 
-        return int(option['scenario'].split('_')[1])
+        per_month_gb = int(option['scenario'].split('_')[1])
+        per_day_gb = per_month_gb / 30
+        busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
+        per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
+        return round(per_user_mbps, 2)
 
     elif geotype.split(' ')[0] == 'suburban':
 
-        return int(option['scenario'].split('_')[2])
+        per_month_gb = int(option['scenario'].split('_')[2])
+        per_day_gb = per_month_gb / 30
+        busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
+        per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
+        return round(per_user_mbps, 2)
 
     elif geotype.split(' ')[0] == 'rural':
 
-        return int(option['scenario'].split('_')[3])
+        per_month_gb = int(option['scenario'].split('_')[3])
+        per_day_gb = per_month_gb / 30
+        busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
+        per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
+        return round(per_user_mbps, 2)
 
     else:
         return 'Did not recognise geotype'

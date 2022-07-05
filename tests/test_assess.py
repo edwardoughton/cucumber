@@ -132,7 +132,8 @@ def test_assess(setup_option, setup_global_parameters,
             'total_mno_revenue': 20000,
             'network_cost': 5000,
             'phones_on_network': 250,
-            'smartphones_on_network': 250
+            'smartphones_on_network': 250,
+            'population_with_phones': 500,
         },
         {
             'GID_id': 'b',
@@ -142,7 +143,8 @@ def test_assess(setup_option, setup_global_parameters,
             'total_mno_revenue': 12000,
             'network_cost': 8000,
             'phones_on_network': 300,
-            'smartphones_on_network': 250
+            'smartphones_on_network': 250,
+            'population_with_phones': 500,
         },
     ]
 
@@ -185,6 +187,7 @@ def test_assess(setup_option, setup_global_parameters,
             'network_cost': 5200,
             'phones_on_network': 250,
             'smartphones_on_network': 250,
+            'population_with_phones': 500,
         },
         {
             'GID_id': 'b',
@@ -195,6 +198,7 @@ def test_assess(setup_option, setup_global_parameters,
             'network_cost': 5200,
             'phones_on_network': 250,
             'smartphones_on_network': 250,
+            'population_with_phones': 500,
         },
     ]
 
