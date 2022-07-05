@@ -56,7 +56,6 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
 
     assert answer['equipment'] == 10000 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
 
-
     answer = calc_sharing(
         setup_assets,
         setup_region[0],

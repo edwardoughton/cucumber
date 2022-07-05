@@ -25,7 +25,7 @@ def test_estimate_demand(
         setup_penetration_lut,
         {'urban': {2020: 50}}
     )
-    print(answer)
+
     # pop = 10000
     # pen = 50%
     # = 5000 phones
@@ -53,13 +53,11 @@ def test_estimate_demand(
     assert round(answer[0]['revenue_km2']) == round((15 * 5000 * 12 / 3) / 2)
 
     # 833 smartphones
-    # scenario = 30
-    # overbooking factor = 100
+    # scenario = 0.56
     # area = 2
-    # demand_mbps_km2 = 125
 
     assert round(answer[0]['demand_mbps_km2']) == round(
-        smartphones_on_network * 50 / 100 / 2
+        smartphones_on_network * 0.56 / 2
     )
 
     #Check suburban geotype uses urban in the smartphone lut
@@ -108,7 +106,7 @@ def test_estimate_demand(
 
     setup_region[0]['geotype'] = 'rural'
     setup_region[0]['mean_luminosity_km2'] = 2
-    setup_option['strategy'] = '4G_epc_microwave_baseline_shared_baseline_baseline'
+    setup_option['strategy'] = '4G_epc_wireless_srn_baseline_baseline_baseline_baseline'
     setup_country_parameters['arpu']['medium'] = 7
 
     #iterate through years to create annual lookup
@@ -159,13 +157,12 @@ def test_estimate_demand(
     assert round(answer[0]['total_mno_revenue']) == round(3663129)
 
     # 2500 smartphones
-    # scenario = 50
-    # overbooking factor = 100
+    # scenario = 0.56
     # area = 2
     # demand_mbps_km2 = 125
     #sum [625.0, 625.0, 625.0, 625.0, 625.0, 625.0, 625.0, 625.0, 625.0, 625.0, 625.0] / 11
     assert round(answer[0]['demand_mbps_km2']) == round(
-        ((smartphones_on_network * 50 / 100 / 2) * 11) / 11
+        ((smartphones_on_network * 0.56 / 2) * 11) / 11
     )
 
     setup_region[0]['population_total'] = 0
@@ -187,20 +184,21 @@ def test_estimate_demand(
 def test_get_per_user_capacity():
     """
     Unit test.
+
     """
-    answer = get_per_user_capacity('urban', {'scenario': 'S1_25_5_1'})
+    answer = get_per_user_capacity('urban', {'scenario': 'S1_25_5_1'}, {'traffic_in_the_busy_hour_perc': 15})
 
-    assert answer == 25
+    assert round(answer,2) == round((25 / 30) * 0.15 * 8 * 1000 / 3600, 2)
 
-    answer = get_per_user_capacity('suburban', {'scenario': 'S1_25_5_1'})
+    answer = get_per_user_capacity('suburban', {'scenario': 'S1_25_5_1'}, {'traffic_in_the_busy_hour_perc': 15})
 
-    assert answer == 5
+    assert round(answer,2) == round((5 / 30) * 0.15 * 8 * 1000 / 3600, 2)
 
-    answer = get_per_user_capacity('rural', {'scenario': 'S1_25_5_1'})
+    answer = get_per_user_capacity('rural', {'scenario': 'S1_25_5_1'}, {'traffic_in_the_busy_hour_perc': 15})
 
-    assert answer == 1
+    assert round(answer,2) == round((1 / 30) * 0.15 * 8 * 1000 / 3600, 2)
 
-    answer = get_per_user_capacity('made up geotype', {'scenario': 'S1_25_5_1'})
+    answer = get_per_user_capacity('made up geotype', {'scenario': 'S1_25_5_1'}, {'traffic_in_the_busy_hour_perc': 15})
 
     assert answer == 'Did not recognise geotype'
 
