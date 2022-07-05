@@ -78,9 +78,9 @@ COUNTRY_PARAMETERS = {
             'baseline_urban': 4,
             'baseline_suburban': 4,
             'baseline_rural': 4,
-            'shared_urban': 4,
-            'shared_suburban': 4,
-            'shared_rural': 1,
+            'srn_urban': 4,
+            'srn_suburban': 4,
+            'srn_rural': 1,
         },
         'frequencies': {
             '3G': [
@@ -147,9 +147,15 @@ COUNTRY_PARAMETERS = {
             'baseline_urban': 3,
             'baseline_suburban': 3,
             'baseline_rural': 3,
-            'shared_urban': 3,
-            'shared_suburban': 3,
-            'shared_rural': 1,
+            'passive_urban': 3,
+            'passive_suburban': 3,
+            'passive_rural': 3,
+            'active_urban': 1,
+            'active_suburban': 1,
+            'active_rural': 1,
+            'srn_urban': 3,
+            'srn_suburban': 3,
+            'srn_rural': 1,
         },
         'frequencies': {
             '3G': [
@@ -165,11 +171,11 @@ COUNTRY_PARAMETERS = {
                     'bandwidth': '2x10',
                     # 'status': 'active',
                 },
-                # {
-                #     'frequency': 1700,
-                #     'bandwidth': '2x10',
-                #     # 'status': 'active',
-                # },
+                {
+                    'frequency': 1700,
+                    'bandwidth': '2x10',
+                    # 'status': 'active',
+                },
             ],
             '5G': [
                 {
