@@ -11,13 +11,15 @@ data <- read.csv(file.path(folder, '..', 'results', 'model_results', iso3, filen
 
 names(data)[names(data) == 'GID_0'] <- 'country'
 
+data$scenario_adopt = ''
 data$scenario_adopt[grep("low", data$scenario)] = 'Low (2% Adoption CAGR)'
 data$scenario_adopt[grep("baseline", data$scenario)] = 'Baseline (4% Adoption CAGR)'
 data$scenario_adopt[grep("high", data$scenario)] = 'High (6% Adoption CAGR)'
 
-data$scenario_capacity[grep("5_5_5", data$scenario)] = '~5 Mbps Per User'
-data$scenario_capacity[grep("10_10_10", data$scenario)] = '~10 Mbps Per User'
-data$scenario_capacity[grep("20_20_20", data$scenario)] = '~20 Mbps Per User'
+data$scenario_capacity = ''
+data$scenario_capacity[grep("25_25_25", data$scenario)] = '25 GB/Month'
+data$scenario_capacity[grep("50_50_50", data$scenario)] = '50 GB/Month'
+data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 
 data$strategy_short = ''
 # data$strategy_short[grep("3G_umts_fiber", data$strategy)] = '3G (F)'
@@ -43,11 +45,11 @@ data$strategy_short = factor(data$strategy_short, levels=c(
                                     '5G (W)'
                                      ))
 
-data$scenario_capacity = factor(data$scenario_capacity, 
-                                levels=c("~20 Mbps Per User", 
-                                         "~10 Mbps Per User",
-                                         "~5 Mbps Per User"
-                                         ))
+data$scenario_capacity = factor(data$scenario_capacity,
+                                levels=c('25 GB/Month',
+                                         '50 GB/Month',
+                                         '100 GB/Month'
+                                ))
 
 data = data[complete.cases(data), ]
 
@@ -124,10 +126,10 @@ names(data)[names(data) == 'GID_0'] <- 'country'
 data$scenario_adopt[grep("low", data$scenario)] = 'Low (2% Adoption Growth)'
 data$scenario_adopt[grep("baseline", data$scenario)] = 'Baseline (4% Adoption Growth)'
 data$scenario_adopt[grep("high", data$scenario)] = 'High (6% Adoption Growth)'
-
-data$scenario_capacity[grep("5_5_5", data$scenario)] = '~5 Mbps Per User'
-data$scenario_capacity[grep("10_10_10", data$scenario)] = '~10 Mbps Per User'
-data$scenario_capacity[grep("20_20_20", data$scenario)] = '~20 Mbps Per User'
+data$scenario_capacity = ''
+data$scenario_capacity[grep("25_25_25", data$scenario)] = '25 GB/Month'
+data$scenario_capacity[grep("50_50_50", data$scenario)] = '50 GB/Month'
+data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 
 data$strategy_short = ''
 data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
@@ -147,10 +149,11 @@ labels=c(
   "Active"
 ))
 
-data$scenario_capacity = factor(data$scenario_capacity, 
-                                levels=c("~20 Mbps Per User",
-                                         "~10 Mbps Per User",
-                                         "~5 Mbps Per User"))
+data$scenario_capacity = factor(data$scenario_capacity,
+                                levels=c('25 GB/Month',
+                                         '50 GB/Month',
+                                         '100 GB/Month'
+                                ))
 
 data$scenario_adopt = factor(data$scenario_adopt, 
                              levels=c("Low (2% Adoption Growth)",
@@ -195,7 +198,7 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   geom_bar(position="stack", stat="identity") +
   geom_text(y=0, aes(strategy, social_cost, label = social_cost, 
                      fill = NULL, color="#FF0000FF"), show.legend = FALSE,
-            size = 3, data = totals, vjust=-1, hjust=.5) +
+            size = 3, data = totals, vjust=-.5, hjust=.5) +
   scale_fill_manual(values=c("#29af7f", "#482173"), name=NULL) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust=1)) +
@@ -228,9 +231,10 @@ data$scenario_adopt[grep("low", data$scenario)] = 'Low (2% Adoption Growth)'
 data$scenario_adopt[grep("baseline", data$scenario)] = 'Baseline (4% Adoption Growth)'
 data$scenario_adopt[grep("high", data$scenario)] = 'High (6% Adoption Growth)'
 
-data$scenario_capacity[grep("5_5_5", data$scenario)] = '5 Mbps Per User'
-data$scenario_capacity[grep("10_10_10", data$scenario)] = '10 Mbps Per User'
-data$scenario_capacity[grep("20_20_20", data$scenario)] = '20 Mbps Per User'
+data$scenario_capacity = ''
+data$scenario_capacity[grep("25_25_25", data$scenario)] = '25 GB/Month'
+data$scenario_capacity[grep("50_50_50", data$scenario)] = '50 GB/Month'
+data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 
 data$strategy_short = ''
 data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
@@ -254,14 +258,10 @@ labels=c(
 
 data = data[complete.cases(data),]
 
-data$scenario_capacity = factor(data$scenario_capacity, 
-                                levels=c("20 Mbps Per User",
-                                         "10 Mbps Per User",
-                                         "5 Mbps Per User"),
-                                labels=c(
-                                  "~20 Mbps Per User",
-                                  "~10 Mbps Per User",
-                                  "~5 Mbps Per User"
+data$scenario_capacity = factor(data$scenario_capacity,
+                                levels=c('25 GB/Month',
+                                         '50 GB/Month',
+                                         '100 GB/Month'
                                 ))
 
 data$scenario_adopt = factor(data$scenario_adopt, 
