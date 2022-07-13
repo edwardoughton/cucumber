@@ -58,12 +58,8 @@ def load_regions(country, path, sites_lut):
                     'GID_id': item['GID_id'],
                     'GID_level': item['GID_level'],
                     'population_total': item['population'],
-                    # 'population_over_10': item['population_over_10'],
-                    # 'population_f_over_10': item['population_f_over_10'],
-                    # 'population_m_over_10': item['population_m_over_10'],
                     'area_km2': item['area_km2'],
                     'population_km2': item['population_km2'],
-                    # 'population_over_10yrs_km2': item['population_over_10yrs_km2'],
                     'mean_luminosity_km2': item['mean_luminosity_km2'],
                     'geotype': item['geotype'],
                     'sites_4G': value['sites_4G'],
@@ -245,6 +241,40 @@ def load_core_lut(path):
     return output
 
 
+def country_specific_emissions_factors(country, TECH_LUT):
+    """
+
+    """
+    iso3 = country['iso3']
+
+    path = os.path.join(DATA_RAW, 'Emissions', 'owid-co2-data_full.csv')
+    data = pd.read_csv(path)
+
+    row = data.loc[data['iso3'] == iso3] #.value[0]
+    selected_owid_2019 = row['selected_owid_2019'].values[0]
+
+    lut = {}
+
+    for key1, value1 in TECH_LUT.items():
+
+        interim = {}
+
+        if key1 == 'renewables':
+            lut[key1] = value1
+            continue
+
+        for key2, value2 in value1.items():
+
+            if key2 == 'carbon_per_kWh':
+                interim[key2] = float(selected_owid_2019)
+            else:
+                interim[key2] = value2
+
+        lut[key1] = interim
+
+    return lut
+
+
 def load_on_grid_mix(path):
 
     on_grid_mix = {}
@@ -295,7 +325,7 @@ if __name__ == '__main__':
         'business_model_options',
         'policy_options',
         'power_options',
-        'generate_shared_power_options',
+        'business_model_power_options',
     ]
 
     all_results = []
@@ -304,7 +334,7 @@ if __name__ == '__main__':
 
         print('Working on {}'.format(decision_option))
 
-        options = OPTIONS[decision_option][:1]
+        options = OPTIONS[decision_option]#[:1]
 
         for country in COUNTRY_LIST:#[:1]:
 
@@ -336,6 +366,8 @@ if __name__ == '__main__':
             folder = os.path.join(DATA_INTERMEDIATE, iso3, 'network')
             filename = 'core_lut.csv'
             core_lut = load_core_lut(os.path.join(folder, filename))
+
+            tech_lut = country_specific_emissions_factors(country, TECH_LUT)
 
             folder = os.path.join(DATA_RAW, 'iea_data')
             filename = 'iea_forecast.csv'
@@ -415,7 +447,7 @@ if __name__ == '__main__':
 
                     data_emissions = assess_emissions(
                         data_energy,
-                        TECH_LUT,
+                        tech_lut,
                         on_grid_mix,
                         TIMESTEPS,
                         option,
@@ -434,7 +466,7 @@ if __name__ == '__main__':
 
             write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+            # write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
 
             write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
@@ -462,6 +494,6 @@ if __name__ == '__main__':
 
             generate_percentages(iso3, decision_option)
 
-    write_results(all_results, OUTPUT, 'all_options_all_countries')
+    # write_results(all_results, OUTPUT, 'all_options_all_countries')
 
-    print('Completed model run')
+    # print('Completed model run')
