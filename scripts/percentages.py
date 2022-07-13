@@ -40,6 +40,8 @@ def generate_percentages(iso3, decision_option):
             filename = 'percentages_technologies_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)
             data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
 
     if decision_option == 'business_model_options':
 
@@ -47,12 +49,13 @@ def generate_percentages(iso3, decision_option):
         path = os.path.join(RESULTS, iso3, filename)
 
         if os.path.exists(path):
-
             data = pd.read_csv(path)
             data = process_sharing_data(data)
             filename = 'percentages_sharing_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)
             data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
 
     if decision_option == 'policy_options':
 
@@ -60,48 +63,65 @@ def generate_percentages(iso3, decision_option):
         path = os.path.join(RESULTS, iso3, filename)
 
         if os.path.exists(path):
-
             data = pd.read_csv(path)
             data = process_policy_data(data)
             filename = 'percentages_policy_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)
             data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
 
-    if decision_option == 'mixed_options':
-        filename = 'national_market_results_mixed_options.csv'
-        path = os.path.join(RESULTS, iso3, filename)
+    # if decision_option == 'mixed_options':
+    #     filename = 'national_market_results_mixed_options.csv'
+    #     path = os.path.join(RESULTS, iso3, filename)
 
-        if os.path.exists(path):
-
-            data = pd.read_csv(path)
-            data = process_mixed_data(data)
-            filename = 'percentages_mixed_{}.csv'.format(iso3)
-            path = os.path.join(OUTPUT, filename)
-            data.to_csv(path, index=False)
+    #     if os.path.exists(path):
+    #         data = pd.read_csv(path)
+    #         data = process_mixed_data(data)
+    #         filename = 'percentages_mixed_{}.csv'.format(iso3)
+    #         path = os.path.join(OUTPUT, filename)
+    #         data.to_csv(path, index=False)
+    #     else:
+    #         print('Could not find {}'.format(path))
 
     if decision_option == 'technology_options':
         filename = 'emissions_technology_options.csv'
         path = os.path.join(RESULTS, iso3, filename)
 
         if os.path.exists(path):
-
             data = pd.read_csv(path)
             data = process_emissions_data(data)
             filename = 'percentages_emissions_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)
             data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
 
     if decision_option == 'power_options':
-        filename = 'power_emissions_power_options.csv'
+        filename = 'emissions_power_options.csv'
         path = os.path.join(RESULTS, iso3, filename)
 
         if os.path.exists(path):
-
             data = pd.read_csv(path)
             data = process_power_data(data)
             filename = 'percentages_power_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)
             data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
+
+    if decision_option == 'business_model_power_options':
+        filename = 'emissions_national_business_model_power_options.csv'
+        path = os.path.join(RESULTS, iso3, filename)
+
+        if os.path.exists(path):
+            data = pd.read_csv(path)
+            data = process_business_model_emissions_data(data)
+            filename = 'percentages_emissions_business_model_{}.csv'.format(iso3)
+            path = os.path.join(OUTPUT, filename)
+            data.to_csv(path, index=False)
+        else:
+            print('Could not find {}'.format(path))
 
     print('--Finished percentages: {}'.format(decision_option))
 
@@ -147,9 +167,9 @@ def process_technology_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -217,9 +237,9 @@ def process_sharing_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -265,9 +285,9 @@ def process_policy_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -315,9 +335,9 @@ def process_mixed_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -366,9 +386,9 @@ def process_emissions_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -386,8 +406,8 @@ def process_emissions_data(data):
 
     data = data[['capacity', 'strategy', 'scenario', 'generation', 'backhaul',
         'total_energy_annual_demand_kwh',
-        'demand_carbon_per_kwh', 'nitrogen_oxide_per_kwh',
-        'sulpher_dioxide_per_kwh', 'pm10_per_kwh'
+        'total_demand_carbon_tonnes', 'total_nitrogen_oxide_tonnes',
+        'total_sulpher_dioxide_tonnes', 'total_pm10_tonnes'
         ]]
 
     data = data.groupby([
@@ -397,23 +417,23 @@ def process_emissions_data(data):
     data_gen = data.copy()
     data_gen['perc_energy_dif_vs_4G'] = round(data_gen.groupby(
                                     ['capacity', 'scenario', 'backhaul'])[
-                                    'total_energy_annual_demand_kwh'].pct_change()*100)
+                                    'total_energy_annual_demand_kwh'].pct_change()*100, 1)
 
     data_gen['perc_carbon_dif_vs_4G'] = round(data_gen.groupby(
                                     ['capacity', 'scenario', 'backhaul'])[
-                                    'demand_carbon_per_kwh'].pct_change()*100)
+                                    'total_demand_carbon_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_nitrogen_dif_vs_4G'] = round(data_gen.groupby(
                                     ['capacity', 'scenario', 'backhaul'])[
-                                    'nitrogen_oxide_per_kwh'].pct_change()*100)
+                                    'total_nitrogen_oxide_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_sulpher_dif_vs_4G'] = round(data_gen.groupby(
                                     ['capacity', 'scenario', 'backhaul'])[
-                                    'sulpher_dioxide_per_kwh'].pct_change()*100)
+                                    'total_sulpher_dioxide_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_pm10_dif_vs_4G'] = round(data_gen.groupby(
                                     ['capacity', 'scenario', 'backhaul'])[
-                                    'pm10_per_kwh'].pct_change()*100)
+                                    'total_pm10_tonnes'].pct_change()*100, 1)
 
     data_gen = data_gen.dropna()
 
@@ -447,9 +467,9 @@ def process_power_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('5_5_5', na=False), 'capacity'] = '5 Mbps'
-    data.loc[data['scenario'].str.endswith('10_10_10', na=False), 'capacity'] = '10 Mbps'
-    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20 Mbps'
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -488,8 +508,8 @@ def process_power_data(data):
 
     data = data[['capacity',
         'scenario', 'generation', 'backhaul', 'power',
-        'demand_carbon_per_kwh', 'nitrogen_oxide_per_kwh',
-        'sulpher_dioxide_per_kwh', 'pm10_per_kwh'
+        'total_demand_carbon_tonnes', 'total_nitrogen_oxide_tonnes',
+        'total_sulpher_dioxide_tonnes', 'total_pm10_tonnes'
         ]]
 
     data = data.groupby([
@@ -499,19 +519,19 @@ def process_power_data(data):
 
     data_gen['perc_carbon_dif_vs_renewables'] = round(data_gen.groupby(
                 ['capacity', 'scenario','generation', 'backhaul'])[
-                'demand_carbon_per_kwh'].pct_change()*100)
+                'total_demand_carbon_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_nitrogen_dif_vs_renewables'] = round(data_gen.groupby(
                 ['capacity', 'scenario', 'generation', 'backhaul'])[
-                                    'nitrogen_oxide_per_kwh'].pct_change()*100)
+                'total_nitrogen_oxide_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_sulpher_dif_vs_renewables'] = round(data_gen.groupby(
                 ['capacity', 'scenario','generation', 'backhaul'])[
-                'sulpher_dioxide_per_kwh'].pct_change()*100)
+                'total_sulpher_dioxide_tonnes'].pct_change()*100, 1)
 
     data_gen['perc_pm10_dif_vs_renewables'] = round(data_gen.groupby(
                 ['capacity', 'scenario', 'generation', 'backhaul'])[
-                                    'pm10_per_kwh'].pct_change()*100)
+                'total_pm10_tonnes'].pct_change()*100, 1)
 
     data_gen = data_gen.dropna()
 
@@ -532,6 +552,146 @@ def process_power_data(data):
     return data
 
 
+def process_business_model_emissions_data(data):
+    """
+    Process emissions for infrastructure sharing strategies.
+
+    Parameters
+    ----------
+    data : pandas df
+        All model results.
+
+    Returns
+    -------
+    data : pandas df
+        All processed model results.
+
+    """
+    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
+    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
+    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+
+    # data = data.loc[data.capacity == '50gbmonth']
+
+    data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
+    data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
+    data.loc[data['scenario'].str.startswith('high', na=False), 'scenario'] = 'High'
+
+    conditions = [
+        (data['strategy'] == '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_wireless_passive_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_wireless_active_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_wireless_srn_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_fiber_passive_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_fiber_active_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '4G_epc_fiber_srn_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_wireless_baseline_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_wireless_passive_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_wireless_active_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_wireless_srn_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_fiber_baseline_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_fiber_passive_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_fiber_active_baseline_baseline_baseline_baseline'),
+        (data['strategy'] == '5G_nsa_fiber_srn_baseline_baseline_baseline_baseline'),
+        ]
+
+    # create a list of the values we want to assign for each condition
+    values = [
+        'Baseline','Passive','Active','SRN',
+        'Baseline','Passive','Active','SRN',
+        'Baseline','Passive','Active','SRN',
+        'Baseline','Passive','Active','SRN',
+    ]
+
+    data['sharing'] = np.select(conditions, values)
+
+    data['strategy'] = data['strategy'].replace(['4G_epc_wireless_baseline_baseline_baseline_baseline_baseline'], '4G (W)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_wireless_passive_baseline_baseline_baseline_baseline'], '4G (W)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_wireless_active_baseline_baseline_baseline_baseline'], '4G (W)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_wireless_srn_baseline_baseline_baseline_baseline'], '4G (W)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_fiber_baseline_baseline_baseline_baseline_baseline'], '4G (FB)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_fiber_passive_baseline_baseline_baseline_baseline'], '4G (FB)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_fiber_active_baseline_baseline_baseline_baseline'], '4G (FB)')
+    data['strategy'] = data['strategy'].replace(['4G_epc_fiber_srn_baseline_baseline_baseline_baseline'], '4G (FB)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_wireless_baseline_baseline_baseline_baseline_baseline'], '5G (W)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_wireless_passive_baseline_baseline_baseline_baseline'], '5G (W)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_wireless_active_baseline_baseline_baseline_baseline'], '5G (W)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_wireless_srn_baseline_baseline_baseline_baseline'], '5G (W)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_fiber_baseline_baseline_baseline_baseline_baseline'], '5G (FB)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_fiber_passive_baseline_baseline_baseline_baseline'], '5G (FB)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_fiber_active_baseline_baseline_baseline_baseline'], '5G (FB)')
+    data['strategy'] = data['strategy'].replace(['5G_nsa_fiber_srn_baseline_baseline_baseline_baseline'], '5G (FB)')
+
+    data['generation'] = data['strategy'].str.split(' ').str[0]
+    data['backhaul'] = data['strategy'].str.split(' ').str[1]
+
+    data = data[['scenario', 'capacity', 'generation', 'backhaul', 'strategy', 'sharing',
+        'total_energy_annual_demand_kwh', 'total_demand_carbon_tonnes',
+        'total_nitrogen_oxide_tonnes', 'total_sulpher_dioxide_tonnes', 'total_pm10_tonnes']]
+
+    baseline = data.loc[data['sharing'] == 'Baseline']
+
+    data = data.groupby([
+        'scenario', 'capacity', 'generation', 'backhaul', 'sharing'
+        ]).sum().reset_index()
+
+    data = pd.merge(data, baseline,
+                how='left',
+                left_on=['scenario', 'capacity', 'generation', 'backhaul'],
+                right_on = ['scenario', 'capacity', 'generation', 'backhaul']
+            )
+    data.to_csv(os.path.join(OUTPUT, 'test.csv'))
+    cost_type_y = 'total_energy_annual_demand_kwh' + '_y'
+    cost_type_x = 'total_energy_annual_demand_kwh' + '_x'
+    data['energy_saving_against_baseline'] = ((abs(data[cost_type_y] - data[cost_type_x])) /
+                                    data[cost_type_y]) * 100
+    data['energy_saving_against_baseline'] = round(data['energy_saving_against_baseline'], 1)
+
+    cost_type_y = 'total_demand_carbon_tonnes' + '_y'
+    cost_type_x = 'total_demand_carbon_tonnes' + '_x'
+    data['carbon_saving_against_baseline'] = ((abs(data[cost_type_y] - data[cost_type_x])) /
+                                    data[cost_type_y]) * 100
+    data['carbon_saving_against_baseline'] = round(data['carbon_saving_against_baseline'], 1)
+
+    cost_type_y = 'total_nitrogen_oxide_tonnes' + '_y'
+    cost_type_x = 'total_nitrogen_oxide_tonnes' + '_x'
+    data['nitrogen_saving_against_baseline'] = ((abs(data[cost_type_y] - data[cost_type_x])) /
+                                    data[cost_type_y]) * 100
+    data['nitrogen_saving_against_baseline'] = round(data['nitrogen_saving_against_baseline'], 1)
+
+    cost_type_y = 'total_sulpher_dioxide_tonnes' + '_y'
+    cost_type_x = 'total_sulpher_dioxide_tonnes' + '_x'
+    data['sulpher_saving_against_baseline'] = ((abs(data[cost_type_y] - data[cost_type_x])) /
+                                    data[cost_type_y]) * 100
+    data['sulpher_saving_against_baseline'] = round(data['sulpher_saving_against_baseline'], 1)
+
+    cost_type_y = 'total_pm10_tonnes' + '_y'
+    cost_type_x = 'total_pm10_tonnes' + '_x'
+    data['pm10_saving_against_baseline'] = ((abs(data[cost_type_y] - data[cost_type_x])) /
+                                    data[cost_type_y]) * 100
+    data['pm10_saving_against_baseline'] = round(data['pm10_saving_against_baseline'], 1)
+
+    data = data.groupby([
+        'capacity', 'scenario', 'generation', 'backhaul', 'sharing_x']).sum().reset_index()
+
+    data_gen = data.copy()
+    data_gen = data_gen.dropna()
+
+    data = pd.merge(data,
+            data_gen[['capacity', 'scenario',
+            'generation', 'backhaul', 'sharing_x',
+            ]],
+            how='left',
+            left_on=['capacity', 'scenario',
+            'generation', 'backhaul', 'sharing_x'],
+            right_on = ['capacity', 'scenario',
+            'generation', 'backhaul', 'sharing_x']
+        )
+
+    return data
+
+
 if __name__ == '__main__':
 
     decision_options = [
@@ -541,6 +701,7 @@ if __name__ == '__main__':
         'mixed_options',
         'energy_and_emissions',
         'power_options',
+        'business_model_power_options',
     ]
 
     for decision_option in decision_options:
@@ -548,7 +709,7 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            # if not iso3 == 'GMB':
-            #     continue
+            if not iso3 == 'COL':
+                continue
 
             generate_percentages(iso3, decision_option)

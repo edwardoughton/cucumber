@@ -405,7 +405,6 @@ def write_energy_aggregated(data_energy, regional_annual_demand, folder, metric)
     df = df.drop_duplicates()
     df = df[[
         'GID_0', 'scenario', 'strategy', 'confidence', 'grid_type',
-        'population', 'population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
         'mno_equipment_annual_demand_kWh',
         'mno_regional_nodes_annual_demand_kwh',
@@ -434,7 +433,6 @@ def write_energy_annual_aggregated(data_energy, regional_annual_demand, folder, 
     df = df.drop_duplicates()
     df = df[[
         'GID_0', 'year', 'scenario', 'strategy', 'confidence', 'grid_type',
-        # 'population', 'population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
         'mno_equipment_annual_demand_kWh',
         'mno_regional_nodes_annual_demand_kwh',
@@ -502,17 +500,17 @@ def write_emissions_aggregated(emissions, folder, metric):
     df = df.drop_duplicates()
     df = df[[
         'GID_0', 'scenario', 'strategy', 'confidence',
-        'population','population_with_phones', 'population_with_smartphones',
+        # 'population','population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
-        'mno_demand_carbon_per_kwh',
-        'mno_nitrogen_oxide_per_kwh',
-        'mno_sulpher_dioxide_per_kwh',
-        'mno_pm10_per_kwh',
+        'mno_demand_carbon_tonnes',
+        'mno_nitrogen_oxide_tonnes',
+        'mno_sulpher_dioxide_tonnes',
+        'mno_pm10_tonnes',
         'total_energy_annual_demand_kwh',
-        'total_demand_carbon_per_kwh',
-        'total_nitrogen_oxide_per_kwh',
-        'total_sulpher_dioxide_per_kwh',
-        'total_pm10_per_kwh'
+        'total_demand_carbon_tonnes',
+        'total_nitrogen_oxide_tonnes',
+        'total_sulpher_dioxide_tonnes',
+        'total_pm10_tonnes'
     ]]
     df = df.groupby([
         'GID_0', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
@@ -535,15 +533,15 @@ def write_emissions_annual_aggregated(emissions, regional_annual_demand, folder,
         # 'total_upgraded_sites',
         # 'total_new_sites',
         'mno_energy_annual_demand_kwh',
-        'mno_demand_carbon_per_kwh',
-        'mno_nitrogen_oxide_per_kwh',
-        'mno_sulpher_dioxide_per_kwh',
-        'mno_pm10_per_kwh',
+        'mno_demand_carbon_tonnes',
+        'mno_nitrogen_oxide_tonnes',
+        'mno_sulpher_dioxide_tonnes',
+        'mno_pm10_tonnes',
         'total_energy_annual_demand_kwh',
-        'total_demand_carbon_per_kwh',
-        'total_nitrogen_oxide_per_kwh',
-        'total_sulpher_dioxide_per_kwh',
-        'total_pm10_per_kwh'
+        'total_demand_carbon_tonnes',
+        'total_nitrogen_oxide_tonnes',
+        'total_sulpher_dioxide_tonnes',
+        'total_pm10_tonnes'
     ]]
     df = df.groupby([
         'year', 'GID_0', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
@@ -573,22 +571,21 @@ def write_power_emissions(emissions, folder, metric):
     """
     print('Writing emissions aggregated')
     df = pd.DataFrame(emissions)
+    df = df.drop_duplicates()
     df = df[[
         'GID_0', 'scenario', 'strategy', 'confidence', 'grid_type',
-        'population','population_with_phones', 'population_with_smartphones',
+        # 'population','population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
-        'mno_demand_carbon_per_kwh',
-        'mno_nitrogen_oxide_per_kwh',
-        'mno_sulpher_dioxide_per_kwh',
-        'mno_pm10_per_kwh',
+        'mno_demand_carbon_tonnes',
+        'mno_nitrogen_oxide_tonnes',
+        'mno_sulpher_dioxide_tonnes',
+        'mno_pm10_tonnes',
         'total_energy_annual_demand_kwh',
-        'total_demand_carbon_per_kwh',
-        'total_nitrogen_oxide_per_kwh',
-        'total_sulpher_dioxide_per_kwh',
-        'total_pm10_per_kwh'
+        'total_demand_carbon_tonnes',
+        'total_nitrogen_oxide_tonnes',
+        'total_sulpher_dioxide_tonnes',
+        'total_pm10_tonnes'
     ]]
-    df = pd.DataFrame(df)
-    df = df.drop_duplicates()
     df = df.groupby([
         'GID_0', 'scenario', 'strategy', 'confidence', 'grid_type'], as_index=True).sum()
     path = os.path.join(folder,'power_emissions_{}.csv'.format(metric))
