@@ -28,9 +28,10 @@ def generate_tech_options():
     """
     output = []
 
-    scenarios = ['low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10']
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc', '5G_nsa'] #'3G_umts',
     backhaul_types = ['wireless', 'fiber']
     sharing_types = ['baseline']
@@ -71,9 +72,10 @@ def generate_business_model_options():
     """
     output = []
 
-    scenarios = ['low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10']
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc'] #'3G_umts', , '5G_nsa'
     backhaul_types = ['wireless'] #, 'fiber'
     sharing_types = ['baseline', 'passive', 'active', 'srn']
@@ -114,9 +116,10 @@ def generate_policy_options():
     """
     output = []
 
-    scenarios = ['low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10']
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc'] #'3G_umts', , '5G_nsa'
     backhaul_types = ['wireless'] #, 'fiber'
     sharing_types = ['baseline']
@@ -157,9 +160,10 @@ def generate_mixed_options():
     """
     output = []
 
-    scenarios = ['low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10']
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc'] #'3G_umts', '5G_nsa'
     backhaul_types = ['wireless', 'fiber']
     sharing_types = ['baseline', 'srn']
@@ -200,11 +204,10 @@ def generate_power_options():
     """
     output = []
 
-    scenarios = [
-        'low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-        'low_30_30_30','baseline_30_30_30','high_30_30_30',
-        'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10'
-        ]
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc', '5G_nsa']
     backhaul_types = ['wireless', 'fiber']
     sharing_types = ['baseline']
@@ -238,18 +241,17 @@ def generate_power_options():
     return output
 
 
-def generate_shared_power_options():
+def business_model_power_options():
     """
     Generate energy strategy options.
 
     """
     output = []
 
-    scenarios = [
-        'low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-        'low_30_30_30','baseline_30_30_30','high_30_30_30',
-        'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10'
-    ]
+    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                ]
     generation_core_types = ['4G_epc', '5G_nsa'] #'3G_umts',
     backhaul_types = ['wireless', 'fiber']
     sharing_types = ['baseline', 'passive', 'active', 'srn']
@@ -289,7 +291,7 @@ OPTIONS = {
     'policy_options': generate_policy_options(),
     'mixed_options': generate_mixed_options(),
     'power_options': generate_power_options(),
-    'generate_shared_power_options': generate_shared_power_options(),
+    'business_model_power_options': business_model_power_options(),
 }
 
 
