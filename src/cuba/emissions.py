@@ -20,8 +20,6 @@ def assess_emissions(data_energy, tech_lut, on_grid_mix, timesteps, option, coun
 
             geotype = item['geotype'].split(' ')[0]
             net_handle = option['strategy'].split('_')[4] + '_' + geotype
-            networks = country_parameters['networks'][net_handle]
-            ms = 100 / networks
 
             power_strategy = option['strategy'].split('_')[7]
 
@@ -117,15 +115,15 @@ def assess_emissions(data_energy, tech_lut, on_grid_mix, timesteps, option, coun
                     'grid_type_perc': item['grid_type_perc'],
                     'grid_type': item['grid_type'],
                     'mno_energy_annual_demand_kwh': item['mno_energy_annual_demand_kwh'],
-                    'mno_demand_carbon_per_kwh': mno_demand_carbon_per_kwh,
-                    'mno_nitrogen_oxide_per_kwh': mno_nitrogen_oxide_per_kwh,
-                    'mno_sulpher_dioxide_per_kwh': mno_sulpher_dioxide_per_kwh,
-                    'mno_pm10_per_kwh': mno_pm10_per_kwh,
+                    'mno_demand_carbon_tonnes': mno_demand_carbon_per_kwh / 1e3,
+                    'mno_nitrogen_oxide_tonnes': mno_nitrogen_oxide_per_kwh / 1e3,
+                    'mno_sulpher_dioxide_tonnes': mno_sulpher_dioxide_per_kwh / 1e3,
+                    'mno_pm10_tonnes': mno_pm10_per_kwh / 1e3,
                     'total_energy_annual_demand_kwh': item['total_energy_annual_demand_kwh'],
-                    'total_demand_carbon_per_kwh': total_demand_carbon_per_kwh,
-                    'total_nitrogen_oxide_per_kwh': total_nitrogen_oxide_per_kwh,
-                    'total_sulpher_dioxide_per_kwh': total_sulpher_dioxide_per_kwh,
-                    'total_pm10_per_kwh': total_pm10_per_kwh,
+                    'total_demand_carbon_tonnes': total_demand_carbon_per_kwh / 1e3,
+                    'total_nitrogen_oxide_tonnes': total_nitrogen_oxide_per_kwh / 1e3,
+                    'total_sulpher_dioxide_tonnes': total_sulpher_dioxide_per_kwh / 1e3,
+                    'total_pm10_tonnes': total_pm10_per_kwh / 1e3,
                 })
 
     return output
