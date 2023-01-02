@@ -15,8 +15,8 @@ from cuba.costs import find_cost
 
 
 def estimate_supply(country, regions, capacity_lut, option,
-    global_parameters, country_parameters, costs, core_lut, ci,
-    infra_sharing_options, cost_types):
+    global_parameters, country_parameters, costs, #core_lut,
+    ci, infra_sharing_options, cost_types):
     """
     For each region, find the least-cost design and estimate
     the required investment for for the single network being modeled.
@@ -102,12 +102,12 @@ def estimate_supply(country, regions, capacity_lut, option,
             region['backhaul_new'] = 0
 
         assets = estimate_assets(
+            country,
             region,
             option,
             costs,
             global_parameters,
             country_parameters,
-            core_lut
         )
 
         region = find_cost(
@@ -161,7 +161,40 @@ def find_site_density(region, option, global_parameters, country_parameters,
     geotype = region['geotype'].split(' ')[0]
     ant_type = 'macro'
     generation = option['strategy'].split('_')[0]
-    frequencies = country_parameters['frequencies']
+    frequencies = {
+        '3G': [
+            {
+                'frequency': 1900,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+        ],
+        '4G': [
+            {
+                'frequency': 850,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+            {
+                'frequency': 1700,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+        ],
+        '5G': [
+            {
+                'frequency': 700,
+                'bandwidth': '2x10',
+                # 'status': 'inactive',
+            },
+            {
+                'frequency': 3500,
+                'bandwidth': ' 1x40',
+                # 'status': 'inactive',
+            },
+        ]
+    }
+    # frequencies = country_parameters['frequencies']
     frequencies = frequencies[generation]
     target = find_target(geotype, option)
 
@@ -368,6 +401,7 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
     -------
     region : dict
         Contains all regional data.
+
     """
     generation = strategy.split('_')[0]
     geotype = region['geotype'].split(' ')[0]
@@ -379,7 +413,7 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
     region['existing_mno_sites'] = (region['total_estimated_sites'] / networks)
 
     #get the number of existing 4G sites
-    existing_4G_sites = math.ceil(region['sites_4G'] / networks )
+    existing_4G_sites = math.ceil(region['total_estimated_sites_4G'] / networks )
 
     if total_sites_required > region['existing_mno_sites']:
 

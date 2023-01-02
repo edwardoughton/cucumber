@@ -9,8 +9,9 @@ from itertools import tee
 import collections, functools, operator
 
 
-def estimate_assets(region, option, costs, global_parameters,
-    country_parameters, core_lut):
+def estimate_assets(country, region, option, costs, global_parameters,
+    country_parameters, # core_lut,
+    ):
     """
     Calculates the required number of assets.
 
@@ -45,85 +46,58 @@ def estimate_assets(region, option, costs, global_parameters,
 
     assets = []
 
-    # for i in range(1, int(existing_mno_sites) + 1): #existing sites
-
-    #     asset_structure = brownfield_site(region, strategy, costs, core_lut)
-    #     total_assets = calc_existing_assets(region, asset_structure, 'existing')
-    #     assets = assets + total_assets
-
     for i in range(1, int(all_new_or_upgraded_sites) + 1): #new/upgraded sites
 
         if i <= upgraded_sites:
 
-            asset_structure = upgrade_site(region, strategy, costs, core_lut)
+            asset_structure = upgrade_site(country, region, strategy, costs)#, core_lut)
             total_assets = calc_assets(region, option, asset_structure, i,
                                         new_backhaul, costs, 'upgraded')
             assets = assets + total_assets
 
         if i > upgraded_sites:
 
-            asset_structure = greenfield_site(region, strategy, costs, core_lut)
+            asset_structure = greenfield_site(country, region, strategy, costs)#, core_lut)
             total_assets = calc_assets(region, option, asset_structure, i,
                                         new_backhaul, costs, 'new')
             assets = assets + total_assets
 
-    core_assets = estimate_core_assets(
-        region,
-        option,
-        costs,
-        core_lut,
-        all_new_or_upgraded_sites
-    )
+    # core_assets = estimate_core_assets(
+    #     region,
+    #     option,
+    #     costs,
+    #     core_lut,
+    #     all_new_or_upgraded_sites
+    # )
 
-    assets = assets + core_assets
-
-    return assets
-
-
-def brownfield_site(region, strategy, costs, core_lut):
-    """
-    Build a brownfield asset.
-
-    """
-
-    assets = {
-        'equipment': 1,
-        'site_build': 1,
-        'installation': 1,
-        'site_rental': 1,
-        'operation_and_maintenance': 1,
-        # 'power': costs['power'],
-        'backhaul': get_backhaul_dist(region, core_lut),
-    }
+    # assets = assets + core_assets
 
     return assets
 
 
-def upgrade_site(region, strategy, costs, core_lut):
+def upgrade_site(country, region, strategy, costs):#, core_lut):
     """
     Reflects the baseline scenario of needing to build a single dedicated
     network.
 
     """
-
     assets = {
         'equipment': 1,
         'installation': 1,
         'site_rental': 1,
         'operation_and_maintenance': 1,
         # 'power': costs['power'],
-        'backhaul': get_backhaul_dist(region, core_lut),
+        'backhaul': get_backhaul_dist(country, region),
     }
 
     return assets
 
 
-def greenfield_site(region, strategy, costs, core_lut):
+def greenfield_site(country, region, strategy, costs): #, core_lut
     """
     Build a greenfield asset.
 
     """
-
     assets = {
         'equipment': 1,
         'site_build': 1,
@@ -131,7 +105,7 @@ def greenfield_site(region, strategy, costs, core_lut):
         'site_rental': 1,
         'operation_and_maintenance': 1,
         # 'power': costs['power'],
-        'backhaul': get_backhaul_dist(region, core_lut),
+        'backhaul': get_backhaul_dist(country, region),
     }
 
     return assets
@@ -182,7 +156,7 @@ def estimate_core_assets(region, option, costs, core_lut, all_new_or_upgraded_si
                     'scenario': region['scenario'],
                     'strategy': region['strategy'],
                     'confidence': region['confidence'],
-                    'GID_id': region['GID_id'],
+                    'decile': region['decile'],
                     'asset': asset_type,
                     'quantity': quantity,
                     'cost_per_unit': cost_per_unit,
@@ -194,19 +168,13 @@ def estimate_core_assets(region, option, costs, core_lut, all_new_or_upgraded_si
     return core_assets
 
 
-def get_backhaul_dist(region, core_lut):
+def get_backhaul_dist(country, region):
     """
     Calculate backhaul distance.
     # backhaul_fiber backhaul_copper backhaul_wireless	backhaul_satellite
 
     """
-    nodes = 0
-    for asset_type in ['core_node', 'regional_node']:
-        for status in ['new', 'existing']:
-            combined_key = '{}_{}'.format(region['GID_id'], status)
-            if 'core_node' in core_lut:
-                nodes += core_lut[asset_type][combined_key]
-
+    nodes = math.ceil(math.ceil(region['existing_mno_sites']) * (country['backhaul_fiber_perc']/100))
     node_density_km2 = nodes / region['area_km2']
 
     if node_density_km2 > 0:
@@ -223,7 +191,7 @@ def regional_net_assets(region, asset_type, build_type, core_lut):
 
     """
     if asset_type in core_lut.keys():
-        combined_key = '{}_{}'.format(region['GID_id'], build_type)
+        combined_key = '{}_{}'.format(region['decile'], build_type)
         if combined_key in core_lut[asset_type]:
             if asset_type == 'regional_edge':
                 return core_lut[asset_type][combined_key]
@@ -242,7 +210,7 @@ def core_net_assets(region, asset_type, build_type, core_lut):
     """
     if asset_type == 'core_edge':
         if asset_type in core_lut.keys():
-            combined_key = '{}_{}'.format(region['GID_id'], build_type)
+            combined_key = '{}_{}'.format(region['decile'], build_type)
             if combined_key in core_lut[asset_type].keys():
                 return core_lut[asset_type][combined_key]
             else:
@@ -252,7 +220,7 @@ def core_net_assets(region, asset_type, build_type, core_lut):
 
     elif asset_type == 'core_node':
         if asset_type in core_lut.keys():
-            combined_key = '{}_{}'.format(region['GID_id'], build_type)
+            combined_key = '{}_{}'.format(region['decile'], build_type)
             if combined_key in core_lut[asset_type].keys():
                 return core_lut[asset_type][combined_key]
             else:
@@ -278,7 +246,7 @@ def calc_existing_assets(region, asset_structure, build_type):
             'scenario': region['scenario'],
             'strategy': region['strategy'],
             'confidence': region['confidence'],
-            'GID_id': region['GID_id'],
+            'decile': region['decile'],
             'asset': asset_name1,
             'quantity': 1,
             'cost_per_unit': 0,
@@ -323,7 +291,7 @@ def calc_assets(region, option, asset_structure, i, new_backhaul, costs, build_t
             'scenario': region['scenario'],
             'strategy': region['strategy'],
             'confidence': region['confidence'],
-            'GID_id': region['GID_id'],
+            'decile': region['decile'],
             'asset': asset_name1,
             'quantity': quantity,
             'cost_per_unit': cost_per_unit,

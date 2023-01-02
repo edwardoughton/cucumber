@@ -61,7 +61,7 @@ def assess_energy(country, regions, assets, option, global_parameters,
 
         for asset in assets:
 
-            if asset['GID_id'] == region['GID_id']:
+            if asset['decile'] == region['decile']:
 
                 if 'equipment' in asset.values():
                     equipment_quantity += asset['quantity']
@@ -144,7 +144,7 @@ def assess_energy(country, regions, assets, option, global_parameters,
                 output.append({
                     'year': timestep,
                     'GID_0': region['GID_0'],
-                    'GID_id': region['GID_id'],
+                    'decile': region['decile'],
                     'geotype': geotype,
                     'scenario': option['scenario'],
                     'strategy': option['strategy'],

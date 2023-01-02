@@ -21,7 +21,7 @@ import rasterio
 from rasterio.mask import mask
 from rasterstats import zonal_stats
 
-from countries import COUNTRY_LIST
+from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
@@ -32,87 +32,87 @@ DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 
-def find_country_list(continent_list):
-    """
-    This function produces country information by continent.
+# def find_country_list(continent_list):
+#     """
+#     This function produces country information by continent.
 
-    Parameters
-    ----------
-    continent_list : list
-        Contains the name of the desired continent, e.g. ['Africa']
+#     Parameters
+#     ----------
+#     continent_list : list
+#         Contains the name of the desired continent, e.g. ['Africa']
 
-    Returns
-    -------
-    countries : list of dicts
-        Contains all desired country information for countries in
-        the stated continent.
+#     Returns
+#     -------
+#     countries : list of dicts
+#         Contains all desired country information for countries in
+#         the stated continent.
 
-    """
-    # print('Loading all countries')
-    path = os.path.join(DATA_RAW, 'gadm36_levels_shp', 'gadm36_0.shp')
-    countries = gpd.read_file(path)
+#     """
+#     # print('Loading all countries')
+#     path = os.path.join(DATA_RAW, 'gadm36_levels_shp', 'gadm36_0.shp')
+#     countries = gpd.read_file(path)
 
-    # print('Adding continent information to country shapes')
-    glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
-    load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1",
-        keep_default_na=False)
-    countries = countries.merge(load_glob_info, left_on='GID_0',
-        right_on='ISO_3digit')
+#     # print('Adding continent information to country shapes')
+#     glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
+#     load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1",
+#         keep_default_na=False)
+#     countries = countries.merge(load_glob_info, left_on='GID_0',
+#         right_on='ISO_3digit')
 
-    subset = countries.loc[countries['continent'].isin(continent_list)]
+#     subset = countries.loc[countries['continent'].isin(continent_list)]
 
-    countries = []
+#     countries = []
 
-    for index, country in subset.iterrows():
+#     for index, country in subset.iterrows():
 
-        if country['GID_0'] in ['COM','CPV','ESH','LBY','LSO','MUS','MYT','SYC'] :
-            regional_level =  1
-        else:
-            regional_level = 2
+#         if country['GID_0'] in ['COM','CPV','ESH','LBY','LSO','MUS','MYT','SYC'] :
+#             regional_level =  1
+#         else:
+#             regional_level = 2
 
-        countries.append({
-            'country_name': country['country'],
-            'iso3': country['GID_0'],
-            'iso2': country['ISO_2digit'],
-            'regional_level': regional_level,
-            'region': country['continent']
-        })
+#         countries.append({
+#             'country_name': country['country'],
+#             'iso3': country['GID_0'],
+#             'iso2': country['ISO_2digit'],
+#             'regional_level': regional_level,
+#             'region': country['continent']
+#         })
 
-    return countries
+#     return countries
 
 
-def get_cluster(country):
-    """
-    Gets the country cluster.
+# def get_cluster(country):
+#     """
+#     Gets the country cluster.
 
-    Parameters
-    ----------
-    country : dict
-        Contains all desired country information.
+#     Parameters
+#     ----------
+#     country : dict
+#         Contains all desired country information.
 
-    Returns
-    -------
-    country : dict
-        Contains all desired country information.
+#     Returns
+#     -------
+#     country : dict
+#         Contains all desired country information.
 
-    """
-    path = os.path.join(DATA_INTERMEDIATE, 'data_clustering_results.csv')
-    data = pd.read_csv(path)
+#     """
+#     path = os.path.join(DATA_INTERMEDIATE, 'data_clustering_results.csv')
+#     data = pd.read_csv(path)
 
-    data = data.to_dict('records')
+#     data = data.to_dict('records')
 
-    for item in data:
-        if country['iso3'] == item['ISO_3digit']:
-            country['cluster'] = item['cluster']
-            return country
+#     for item in data:
+#         if country['iso3'] == item['ISO_3digit']:
+#             country['cluster'] = item['cluster']
+#             return country
 
-    if country['iso3'] == 'BGD':
-        country['cluster'] = 'C3'
-        return country
+#     if country['iso3'] == 'BGD':
+#         country['cluster'] = 'C3'
+#         return country
 
-    if country['iso3'] == 'MDV':
-        country['cluster'] = 'C3'
-        return country
+#     if country['iso3'] == 'MDV':
+#         country['cluster'] = 'C3'
+#         return country
 
 
 def process_country_shapes(country):
@@ -743,12 +743,7 @@ def forecast_linear(country, historical_data, start_point, end_point, horizon):
     """
     output = []
 
-    # genders = ['female', 'male']
     scenarios = ['low', 'baseline', 'high']
-
-    # for gender in genders:
-
-        # by_gender = [d for d in historical_data if d['gender'] == gender]
 
     for scenario in scenarios:
 
@@ -764,17 +759,17 @@ def forecast_linear(country, historical_data, start_point, end_point, horizon):
 
                 penetration = year_0['penetration'] * (1 + (subs_growth/100))
 
-                # penetration = adjust_penetration(country, gender, penetration)
-
             else:
                 penetration = penetration * (1 + (subs_growth/100))
+
+            if penetration > 90:
+                penetration = 90
 
             if year not in [item['year'] for item in scenario_data]:
 
                 scenario_data.append({
                     'scenario': scenario,
                     'country': country['iso3'],
-                    # 'gender': gender,
                     'year': year,
                     'penetration': round(penetration, 2),
                 })
@@ -816,15 +811,27 @@ def forecast_smartphones(country):
     """
     iso3 = country['iso3']
 
-    filename = 'wb_smartphone_survey.csv'
-    path = os.path.join(DATA_RAW, 'wb_smartphone_survey', filename)
-    survey_data = load_smartphone_data(path, country)
+    # filename = 'smartphone_adoption.csv'
+    # path = os.path.join(DATA_RAW, filename)
+    # survey_data = load_smartphone_data(path, country)
+    sp_data = [
+        {
+            'iso3': country['iso3'],
+            'smartphone_penetration': country['smartphone_penetration'],
+            'settlement_type': 'urban',
+        },
+        {
+            'iso3': country['iso3'],
+            'smartphone_penetration': country['smartphone_penetration'],
+            'settlement_type': 'rural',
+        },
+        ]
 
     start_point = 2020
     end_point = 2030
 
     forecast = forecast_smartphones_linear(
-        survey_data,
+        sp_data,
         country,
         start_point,
         end_point
@@ -847,48 +854,48 @@ def forecast_smartphones(country):
     return print('Completed subscription forecast')
 
 
-def load_smartphone_data(path, country):
-    """
-    Load smartphone adoption survey data.
+# def load_smartphone_data(path, country):
+#     """
+#     Load smartphone adoption survey data.
 
-    Parameters
-    ----------
-    path : string
-        Location of data as .csv.
-    country : string
-        ISO3 digital country code.
+#     Parameters
+#     ----------
+#     path : string
+#         Location of data as .csv.
+#     country : string
+#         ISO3 digital country code.
 
-    """
-    survey_data = pd.read_csv(path)
+#     """
+#     survey_data = pd.read_csv(path)
 
-    survey_data = survey_data.to_dict('records')
+#     survey_data = survey_data.to_dict('records')
 
-    countries_with_data = [i['iso3'] for i in survey_data]
+#     countries_with_data = [i['iso3'] for i in survey_data]
+#     print(countries_with_data)
+#     output = []
 
-    output = []
+#     if country['iso3']  in countries_with_data:
+#         print(country)
+#         for item in survey_data:
+#                 if item['iso3'] == country['iso3']:
+#                     output.append({
+#                         'country': item['iso3'],
+#                         'cluster': item['cluster'],
+#                         'settlement_type': item['Settlement'],
+#                         'smartphone_penetration': item['Smartphone']
+#                     })
 
-    if country['iso3']  in countries_with_data:
-        print('here')
-        for item in survey_data:
-                if item['iso3'] == country['iso3']:
-                    output.append({
-                        'country': item['iso3'],
-                        'cluster': item['cluster'],
-                        'settlement_type': item['Settlement'],
-                        'smartphone_penetration': item['Smartphone']
-                    })
+#     else:
+#         for item in survey_data:
+#             if item['cluster'] == country['cluster']:
+#                 output.append({
+#                     'country': country['iso3'],
+#                     'cluster': item['cluster'],
+#                     'settlement_type': item['Settlement'],
+#                     'smartphone_penetration': item['Smartphone']
+#                 })
 
-    else:
-        for item in survey_data:
-            if item['cluster'] == country['cluster']:
-                output.append({
-                    'country': country['iso3'],
-                    'cluster': item['cluster'],
-                    'settlement_type': item['Settlement'],
-                    'smartphone_penetration': item['Smartphone']
-                })
-
-    return output
+#     return output
 
 
 def forecast_smartphones_linear(data, country, start_point, end_point):
@@ -920,8 +927,8 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
     for scenario in scenarios:
         for settlement_type in settlement_types:
 
-            smartphone_growth = country['sp_growth_{}_{}'.format(scenario, settlement_type)]
-
+            # smartphone_growth = country['sp_growth_{}_{}'.format(scenario, settlement_type)]
+            smartphone_growth = country['sp_growth_{}'.format(scenario)]
             seen_years = set()
 
             for item in data:
@@ -943,12 +950,13 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
 
                         penetration = penetration * (1 + (smartphone_growth/100))
 
-                    if penetration > 95:
-                        penetration = 95
+                    if penetration > 90:
+                        penetration = 90
 
                     output.append({
                         'scenario': scenario,
-                        'country': item['country'],
+                        'country': country['country_name'],
+                        'iso3': item['iso3'],
                         'settlement_type': item['settlement_type'].lower(),
                         'year': year,
                         'penetration': round(penetration, 2),
@@ -961,41 +969,44 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
 
 if __name__ == '__main__':
 
-    # countries = find_country_list(['Africa'])
-    # countries = countries#[::-1]
+    countries = find_country_list([])
+    countries = countries#[::-1]
 
-    for country in COUNTRY_LIST:#[:1]:
+    for country in countries:#[:1]:
+
+        # if not country['iso3'] == 'CHN':
+        #     continue
 
         # if country['iso3'] == 'MDV': #MDV has it's own set of scripts
         #     continue #see -> ~/qubic/scripts/MDV/
 
-        if not country['iso3'] == 'COL':
-            continue
+        # if not country['iso3'] == 'GBR':
+        #     continue
 
         print('----')
         print('-- Working on {}'.format(country['country_name']))
 
-        country = get_cluster(country)
+        # country = get_cluster(country)
 
-        # print('Processing country boundary')
-        process_country_shapes(country)
+        # # print('Processing country boundary')
+        # process_country_shapes(country)
 
-        # print('Processing regions')
-        process_regions(country)
+        # # print('Processing regions')
+        # process_regions(country)
 
-        # print('Processing night lights')
-        process_night_lights(country)
+        # # print('Processing night lights')
+        # process_night_lights(country)
 
-        # print('Processing settlement layers')
-        process_settlement_layer(country)
+        # # print('Processing settlement layers')
+        # process_settlement_layer(country)
 
-        # print('Getting regional data')
-        get_regional_data(country)
+        # # print('Getting regional data')
+        # get_regional_data(country)
 
-        # print('Create subscription forcast')
+        print('Create subscription forcast')
         forecast_subscriptions(country)
 
-        # print('Forecasting smartphones')
+        print('Forecasting smartphones')
         forecast_smartphones(country)
 
     # print('--Completed regional population data estimation')

@@ -106,6 +106,8 @@ venv.bak/
 # specific folders
 /data
 vis/figures/*
+vis/smartphones/data_inputs/*
+vis/subscriptions/data_inputs/*
 results/*
 reports/countries/*
 reports/images/*

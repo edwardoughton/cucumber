@@ -14,7 +14,6 @@ def setup_region():
     'decile': 100,
     'geotype': 'urban',
     'demand_mbps_km2': 5000,
-    'integration': 'baseline'
     }]
 
 
@@ -58,7 +57,6 @@ def setup_global_parameters():
         'return_period': 2,
         'discount_rate': 5,
         'confidence': [1, 10, 50],
-        'regional_integration_factor': 10
     }
 
 
@@ -70,9 +68,9 @@ def setup_country_parameters():
             'medium': 1,
         },
         'arpu': {
-            'high': 15,
-            'medium': 5,
-            'low': 2,
+            'arpu_high': 15,
+            'arpu_baseline': 5,
+            'arpu_low': 2,
         },
         'networks': {
             'baseline_urban': 3,

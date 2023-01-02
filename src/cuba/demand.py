@@ -7,8 +7,8 @@ Winter 2020
 
 """
 
-def estimate_demand(regions, option, global_parameters,
-    country_parameters, timesteps, penetration_lut, smartphone_lut):
+def estimate_demand(regions, option, global_parameters, country_parameters,
+    timesteps, penetration_lut, smartphone_lut):
     """
     Estimate demand metrics including:
         - Total number of basic phone and smartphone users
@@ -56,6 +56,7 @@ def estimate_demand(regions, option, global_parameters,
         geotype = region['geotype'].split(' ')[0]
 
         net_handle = network_strategy + '_' + geotype.split(' ')[0]
+
         networks = country_parameters['networks'][net_handle]
 
         if geotype == 'suburban':
@@ -157,7 +158,7 @@ def estimate_demand(regions, option, global_parameters,
 
             annual_output.append({
                 'GID_0': region['GID_0'],
-                'GID_id': region['GID_id'],
+                'decile': region['decile'],
                 'scenario': option['scenario'],
                 'strategy': option['strategy'],
                 'confidence': global_parameters['confidence'][0],
@@ -262,16 +263,20 @@ def estimate_arpu(region, timestep, global_parameters, country_parameters):
     """
     timestep = timestep - 2020
 
-    if region['mean_luminosity_km2'] > country_parameters['luminosity']['high']:
-        arpu = country_parameters['arpu']['high']
+    if region['geotype'] == 'urban':
+        arpu = country_parameters['arpu']['arpu_high']
         return discount_arpu(arpu, timestep, global_parameters)
 
-    elif region['mean_luminosity_km2'] > country_parameters['luminosity']['medium']:
-        arpu = country_parameters['arpu']['medium']
+    elif region['geotype'] == 'suburban':
+        arpu = country_parameters['arpu']['arpu_baseline']
+        return discount_arpu(arpu, timestep, global_parameters)
+
+    elif region['geotype'] == 'rural':
+        arpu = country_parameters['arpu']['arpu_low']
         return discount_arpu(arpu, timestep, global_parameters)
 
     else:
-        arpu = country_parameters['arpu']['low']
+        arpu = country_parameters['arpu']['arpu_baseline']
         return discount_arpu(arpu, timestep, global_parameters)
 
 

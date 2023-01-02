@@ -123,7 +123,8 @@ def generate_percentages(iso3, decision_option):
         else:
             print('Could not find {}'.format(path))
 
-    print('--Finished percentages: {}'.format(decision_option))
+    # print('--Finished percentages: {}'.format(decision_option))
+    return
 
 
 def find_scenario_variants(data):

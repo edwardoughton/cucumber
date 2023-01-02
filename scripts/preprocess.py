@@ -27,7 +27,8 @@ import random
 import math
 from tqdm import tqdm
 
-from countries import COUNTRY_LIST
+# from countries import COUNTRY_LIST
+from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
@@ -36,45 +37,6 @@ BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
-
-
-def find_country_list(continent_list):
-    """
-    This function produces country information by continent.
-
-    Parameters
-    ----------
-    continent_list : list
-        Contains the name of the desired continent, e.g. ['Africa']
-
-    Returns
-    -------
-    countries : list of dicts
-        Contains all desired country information for countries in
-        the stated continent.
-
-    """
-    glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
-
-    countries = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
-
-    if len(continent_list) > 0:
-        subset = countries.loc[countries['continent'].isin(continent_list)]
-    else:
-        subset = countries
-
-    countries = []
-
-    for index, country in subset.iterrows():
-
-        countries.append({
-            'country_name': country['country'],
-            'iso3': country['ISO_3digit'],
-            'iso2': country['ISO_2digit'],
-            'regional_level': country['lowest'],
-        })
-
-    return countries
 
 
 def process_coverage_shapes(country):
@@ -865,8 +827,8 @@ def generate_agglomeration_lut(country):
         os.makedirs(folder)
     path_output = os.path.join(folder, 'agglomerations.shp')
 
-    # if os.path.exists(path_output):
-    #     return print('Agglomeration processing has already completed')
+    if os.path.exists(path_output):
+        return print('Agglomeration processing has already completed')
 
     print('Working on {} agglomeration lookup table'.format(iso3))
 
@@ -1483,8 +1445,8 @@ def generate_core_lut(country):
         os.makedirs(folder)
     output_path = os.path.join(folder, filename)
 
-    # if os.path.exists(output_path):
-    #     return print('Core LUT already generated')
+    if os.path.exists(output_path):
+        return print('Core LUT already generated')
 
     filename = 'regions_{}_{}.shp'.format(level, iso3)
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
@@ -1736,33 +1698,37 @@ if __name__ == '__main__':
     countries = find_country_list([])
 
     for country in countries:#[:1]:
-        print(country)
-        if not country['iso3'] == 'COL':
+        # print(country)
+        if not country['iso3'] == 'GBR':
             continue
 
-        print('Processing coverage shapes')
-        process_coverage_shapes(country)
+        try:
+            print('Processing coverage shapes')
+            process_coverage_shapes(country)
 
-        print('Chopping coverage shapes')
-        process_regional_coverage(country)
+            print('Chopping coverage shapes')
+            process_regional_coverage(country)
 
-        print('Load existing fiber infrastructure')
-        process_existing_fiber(country)
+            # # print('Load existing fiber infrastructure')
+            # # process_existing_fiber(country)
 
-        print('Generating agglomeration lookup table')
-        generate_agglomeration_lut(country)
+            print('Generating agglomeration lookup table')
+            generate_agglomeration_lut(country)
 
-        print('Estimate existing nodes')
-        find_nodes_on_existing_infrastructure(country)
+            # # print('Estimate existing nodes')
+            # # find_nodes_on_existing_infrastructure(country)
 
-        print('Find regional nodes')
-        find_regional_nodes(country)
+            print('Find regional nodes')
+            find_regional_nodes(country)
 
-        print('Fit edges')
-        prepare_edge_fitting(country)
+            print('Fit edges')
+            prepare_edge_fitting(country)
 
-        print('Fit regional edges')
-        fit_regional_edges(country)
+            print('Fit regional edges')
+            fit_regional_edges(country)
 
-        print('Create core lookup table')
-        generate_core_lut(country)
+            print('Create core lookup table')
+            generate_core_lut(country)
+
+        except:
+            continue

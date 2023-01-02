@@ -11,24 +11,24 @@ import pandas as pd
 import datetime
 
 
-def define_deciles(regions):
-    """
-    Allocate deciles to regions.
+# def define_deciles(regions):
+#     """
+#     Allocate deciles to regions.
 
-    """
-    regions = regions.sort_values(by='population_km2', ascending=True)
+#     """
+#     regions = regions.sort_values(by='population_km2', ascending=True)
 
-    regions['decile'] = regions.groupby([
-        'GID_0',
-        'scenario',
-        'strategy',
-        'confidence'
-    ], as_index=True).population_km2.apply( #cost_per_sp_user
-        pd.qcut, q=11, precision=0,
-        labels=[100,90,80,70,60,50,40,30,20,10,0],
-        duplicates='drop') #   [0,10,20,30,40,50,60,70,80,90,100]
+#     regions['decile'] = regions.groupby([
+#         'GID_0',
+#         'scenario',
+#         'strategy',
+#         'confidence'
+#     ], as_index=True).population_km2.apply( #cost_per_sp_user
+#         pd.qcut, q=11, precision=0,
+#         labels=[100,90,80,70,60,50,40,30,20,10,0],
+#         duplicates='drop') #   [0,10,20,30,40,50,60,70,80,90,100]
 
-    return regions
+#     return regions
 
 
 def write_demand(regional_annual_demand, folder):
@@ -36,11 +36,11 @@ def write_demand(regional_annual_demand, folder):
     Write all annual demand results.
 
     """
-    print('Writing annual_mno_demand')
+    # print('Writing annual_mno_demand')
     regional_annual_demand = pd.DataFrame(regional_annual_demand)
     regional_annual_demand = regional_annual_demand.drop_duplicates()
     regional_annual_market_demand = regional_annual_demand[[
-        'GID_0', 'GID_id', 'scenario', 'strategy',
+        'GID_0', 'decile', 'scenario', 'strategy',
         'confidence', 'year', 'population',
         # 'population_f_over_10', 'population_m_over_10',
         'area_km2', 'population_km2',
@@ -67,7 +67,7 @@ def write_results(regional_results, folder, metric):
     Write all results.
 
     """
-    print('Writing national MNO results')
+    # print('Writing national MNO results')
     national_results = pd.DataFrame(regional_results)
     national_results = national_results[[
         'GID_0', 'scenario', 'strategy', 'confidence', 'population_total', 'area_km2',
@@ -86,7 +86,7 @@ def write_results(regional_results, folder, metric):
     national_results.to_csv(path, index=True)
 
 
-    print('Writing national cost composition results')
+    # print('Writing national cost composition results')
     national_cost_results = pd.DataFrame(regional_results)
     national_cost_results = national_cost_results[[
         'GID_0', 'scenario', 'strategy', 'confidence', 'population_total',
@@ -116,9 +116,9 @@ def write_results(regional_results, folder, metric):
     national_cost_results.to_csv(path, index=True)
 
 
-    print('Writing general decile results')
+    # print('Writing general decile results')
     decile_results = pd.DataFrame(regional_results)
-    decile_results = define_deciles(decile_results)
+    # decile_results = define_deciles(decile_results)
     decile_results = decile_results[[
         'GID_0', 'scenario', 'strategy', 'decile', 'confidence',
         'population_total', 'area_km2', 'phones_on_network',
@@ -147,9 +147,9 @@ def write_results(regional_results, folder, metric):
     decile_results.to_csv(path, index=True)
 
 
-    print('Writing cost decile results')
+    # print('Writing cost decile results')
     decile_cost_results = pd.DataFrame(regional_results)
-    decile_cost_results = define_deciles(decile_cost_results)
+    # decile_cost_results = define_deciles(decile_cost_results)
     decile_cost_results = decile_cost_results[[
         'GID_0', 'scenario', 'strategy', 'decile', 'confidence',
         'population_total', 'area_km2', 'phones_on_network', 'smartphones_on_network',
@@ -169,27 +169,27 @@ def write_results(regional_results, folder, metric):
     decile_cost_results.to_csv(path, index=True)
 
 
-    print('Writing regional results')
-    regional_mno_results = pd.DataFrame(regional_results)
-    regional_mno_results = define_deciles(regional_mno_results)
-    regional_mno_results = regional_mno_results[[
-        'GID_0', 'GID_id', 'scenario', 'strategy', 'decile',
-        'confidence', 'population_total', 'area_km2',
-        'phones_on_network', 'smartphones_on_network',
-        'total_estimated_sites', 'existing_mno_sites',
-        'upgraded_mno_sites', 'new_mno_sites',
-        'total_mno_revenue', 'total_mno_cost',
-    ]]
-    regional_mno_results = regional_mno_results.drop_duplicates()
-    regional_mno_results['cost_per_network_user'] = (
-        regional_mno_results['total_mno_cost'] / regional_mno_results['phones_on_network'])
-    regional_mno_results['cost_per_smartphone_user'] = (
-        regional_mno_results['total_mno_cost'] / regional_mno_results['smartphones_on_network'])
-    path = os.path.join(folder,'regional_mno_results_{}.csv'.format(metric))
-    regional_mno_results.to_csv(path, index=True)
+    # # print('Writing regional results')
+    # regional_mno_results = pd.DataFrame(regional_results)
+    # # regional_mno_results = define_deciles(regional_mno_results)
+    # regional_mno_results = regional_mno_results[[
+    #     'GID_0', 'decile', 'scenario', 'strategy', 'decile',
+    #     'confidence', 'population_total', 'area_km2',
+    #     'phones_on_network', 'smartphones_on_network',
+    #     'total_estimated_sites', 'existing_mno_sites',
+    #     'upgraded_mno_sites', 'new_mno_sites',
+    #     'total_mno_revenue', 'total_mno_cost',
+    # ]]
+    # regional_mno_results = regional_mno_results.drop_duplicates()
+    # regional_mno_results['cost_per_network_user'] = (
+    #     regional_mno_results['total_mno_cost'] / regional_mno_results['phones_on_network'])
+    # regional_mno_results['cost_per_smartphone_user'] = (
+    #     regional_mno_results['total_mno_cost'] / regional_mno_results['smartphones_on_network'])
+    # path = os.path.join(folder,'regional_mno_results_{}.csv'.format(metric))
+    # regional_mno_results.to_csv(path, index=True)
 
 
-    print('Writing national market results')
+    # print('Writing national market results')
     national_results = pd.DataFrame(regional_results)
     national_results = national_results[[
         'GID_0', 'scenario', 'strategy', 'confidence',
@@ -221,7 +221,7 @@ def write_results(regional_results, folder, metric):
 
 
     #=cost / market share * 100
-    print('Writing national market cost composition results')
+    # print('Writing national market cost composition results')
     national_cost_results = pd.DataFrame(regional_results)
     national_cost_results = national_cost_results[[
         'GID_0', 'scenario', 'strategy', 'confidence', 'population_total',
@@ -253,9 +253,9 @@ def write_results(regional_results, folder, metric):
     national_cost_results.to_csv(path, index=True)
 
 
-    print('Writing general decile results')
+    # print('Writing general decile results')
     decile_results = pd.DataFrame(regional_results)
-    decile_results = define_deciles(decile_results)
+    # decile_results = define_deciles(decile_results)
     decile_results = decile_results[[
         'GID_0', 'scenario', 'strategy', 'decile', 'confidence',
         'population_total', 'area_km2', 'total_phones', 'total_smartphones',
@@ -274,9 +274,9 @@ def write_results(regional_results, folder, metric):
     decile_results.to_csv(path, index=True)
 
 
-    print('Writing cost decile results')
+    # print('Writing cost decile results')
     decile_cost_results = pd.DataFrame(regional_results)
-    decile_cost_results = define_deciles(decile_cost_results)
+    # decile_cost_results = define_deciles(decile_cost_results)
     decile_cost_results = decile_cost_results[[
         'GID_0', 'scenario', 'strategy', 'decile', 'confidence',
         'population_total', 'area_km2', 'total_phones', 'total_smartphones',
@@ -300,50 +300,50 @@ def write_results(regional_results, folder, metric):
     decile_cost_results.to_csv(path, index=True)
 
 
-    print('Writing regional results')
-    regional_market_results = pd.DataFrame(regional_results)
-    regional_market_results = define_deciles(regional_market_results)
-    regional_market_results = regional_market_results[[
-        'GID_0', 'GID_id', 'scenario', 'strategy', 'decile', 'geotype',
-        'confidence', 'population_total', 'area_km2',
-        'total_phones', 'total_smartphones',
-        'total_upgraded_sites','total_new_sites',
-        'total_required_state_subsidy', 'total_spectrum_cost',
-        'total_tax', 'total_market_revenue', 'total_market_cost',
-    ]]
-    regional_market_results = regional_market_results.drop_duplicates()
+    # # print('Writing regional results')
+    # regional_market_results = pd.DataFrame(regional_results)
+    # # regional_market_results = define_deciles(regional_market_results)
+    # regional_market_results = regional_market_results[[
+    #     'GID_0', 'decile', 'scenario', 'strategy', 'decile', 'geotype',
+    #     'confidence', 'population_total', 'area_km2',
+    #     'total_phones', 'total_smartphones',
+    #     'total_upgraded_sites','total_new_sites',
+    #     'total_required_state_subsidy', 'total_spectrum_cost',
+    #     'total_tax', 'total_market_revenue', 'total_market_cost',
+    # ]]
+    # regional_market_results = regional_market_results.drop_duplicates()
 
-    regional_market_results['total_private_cost'] = regional_market_results['total_market_cost']
-    regional_market_results['total_government_cost'] = (
-        regional_market_results['total_required_state_subsidy'] -
-            (regional_market_results['total_spectrum_cost'] +
-            regional_market_results['total_tax']))
-    regional_market_results['total_societal_cost'] = (
-        regional_market_results['total_private_cost'] +
-        regional_market_results['total_government_cost'])
+    # regional_market_results['total_private_cost'] = regional_market_results['total_market_cost']
+    # regional_market_results['total_government_cost'] = (
+    #     regional_market_results['total_required_state_subsidy'] -
+    #         (regional_market_results['total_spectrum_cost'] +
+    #         regional_market_results['total_tax']))
+    # regional_market_results['total_societal_cost'] = (
+    #     regional_market_results['total_private_cost'] +
+    #     regional_market_results['total_government_cost'])
 
-    regional_market_results['private_cost_per_network_user'] = (
-        regional_market_results['total_private_cost'] /
-        regional_market_results['total_phones'])
-    regional_market_results['government_cost_per_network_user'] = (
-        regional_market_results['total_government_cost'] /
-        regional_market_results['total_phones'])
-    regional_market_results['societal_cost_per_network_user'] = (
-        regional_market_results['total_societal_cost'] /
-        regional_market_results['total_phones'])
+    # regional_market_results['private_cost_per_network_user'] = (
+    #     regional_market_results['total_private_cost'] /
+    #     regional_market_results['total_phones'])
+    # regional_market_results['government_cost_per_network_user'] = (
+    #     regional_market_results['total_government_cost'] /
+    #     regional_market_results['total_phones'])
+    # regional_market_results['societal_cost_per_network_user'] = (
+    #     regional_market_results['total_societal_cost'] /
+    #     regional_market_results['total_phones'])
 
-    regional_market_results['private_cost_per_smartphone_user'] = (
-        regional_market_results['total_private_cost'] /
-        regional_market_results['total_smartphones'])
-    regional_market_results['government_cost_per_smartphone_user'] = (
-        regional_market_results['total_government_cost'] /
-        regional_market_results['total_smartphones'])
-    regional_market_results['societal_cost_per_network_user'] = (
-        regional_market_results['total_societal_cost'] /
-        regional_market_results['total_smartphones'])
+    # regional_market_results['private_cost_per_smartphone_user'] = (
+    #     regional_market_results['total_private_cost'] /
+    #     regional_market_results['total_smartphones'])
+    # regional_market_results['government_cost_per_smartphone_user'] = (
+    #     regional_market_results['total_government_cost'] /
+    #     regional_market_results['total_smartphones'])
+    # regional_market_results['societal_cost_per_network_user'] = (
+    #     regional_market_results['total_societal_cost'] /
+    #     regional_market_results['total_smartphones'])
 
-    path = os.path.join(folder,'regional_market_results_{}.csv'.format(metric))
-    regional_market_results.to_csv(path, index=True)
+    # path = os.path.join(folder,'regional_market_results_{}.csv'.format(metric))
+    # regional_market_results.to_csv(path, index=True)
 
 
 def write_inputs(folder, country, country_parameters, global_parameters,
@@ -369,9 +369,7 @@ def write_inputs(folder, country, country_parameters, global_parameters,
         columns=['parameter', 'value'])
     costs['source'] = 'costs'
 
-    parameters = country_info.append(country_params)
-    parameters = parameters.append(global_parameters)
-    parameters = parameters.append(costs)
+    parameters = pd.concat([country_info, country_params, global_parameters, costs])
     parameters = parameters[['source', 'parameter', 'value']]
 
     timenow = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -386,8 +384,8 @@ def write_energy(data_energy, folder, metric):
     Write all energy consumption.
 
     """
-    print('Writing energy')
-    print('write_energy: {}'.format(len(data_energy)))
+    # print('Writing energy')
+    # print('write_energy: {}'.format(len(data_energy)))
     data_energy = pd.DataFrame(data_energy)
 
     path = os.path.join(folder,'energy_{}.csv'.format(metric))
@@ -399,8 +397,8 @@ def write_energy_aggregated(data_energy, regional_annual_demand, folder, metric)
     Write energy.
 
     """
-    print('Writing energy aggregated')
-    print('write_energy_aggregated: {}'.format(len(data_energy)))
+    # print('Writing energy aggregated')
+    # print('write_energy_aggregated: {}'.format(len(data_energy)))
     df = pd.DataFrame(data_energy)
     df = df.drop_duplicates()
     df = df[[
@@ -427,8 +425,8 @@ def write_energy_annual_aggregated(data_energy, regional_annual_demand, folder, 
     Write energy.
 
     """
-    print('Writing energy aggregated')
-    print('write_energy_annual_aggregated: {}'.format(len(data_energy)))
+    # print('Writing energy aggregated')
+    # print('write_energy_annual_aggregated: {}'.format(len(data_energy)))
     df = pd.DataFrame(data_energy)
     df = df.drop_duplicates()
     df = df[[
@@ -470,7 +468,7 @@ def write_assets(all_assets, folder, metric):
     Write all planned assets.
 
     """
-    print('Writing assets')
+    # print('Writing assets')
     all_assets = pd.DataFrame(all_assets)
 
     path = os.path.join(folder,'assets_{}.csv'.format(metric))
@@ -482,7 +480,7 @@ def write_emissions(emissions, folder, metric):
     Write all emissions.
 
     """
-    print('Writing emissions')
+    # print('Writing emissions')
     emissions = pd.DataFrame(emissions)
 
     path = os.path.join(folder,'emissions_{}.csv'.format(metric))
@@ -494,7 +492,7 @@ def write_emissions_aggregated(emissions, folder, metric):
     Write all emissions.
 
     """
-    print('Writing emissions aggregated')
+    # print('Writing emissions aggregated')
 
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
@@ -523,7 +521,7 @@ def write_emissions_annual_aggregated(emissions, regional_annual_demand, folder,
     Write all emissions.
 
     """
-    print('Writing emissions aggregated')
+    # print('Writing emissions aggregated')
 
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
@@ -569,7 +567,7 @@ def write_power_emissions(emissions, folder, metric):
     Write all emissions.
 
     """
-    print('Writing emissions aggregated')
+    # print('Writing emissions aggregated')
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
     df = df[[

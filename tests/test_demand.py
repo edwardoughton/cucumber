@@ -15,6 +15,7 @@ def test_estimate_demand(
     ):
     """
     Integration test.
+
     """
     answer, annual_answer = estimate_demand(
         setup_region,
@@ -98,19 +99,19 @@ def test_estimate_demand(
         setup_penetration_lut,
         {'rural': {2020: 50}}
     )
-
-    # 1667 phones on network
-    # arpu = 15
-    # 40% subsidy
-    assert round(answer[0]['total_mno_revenue']) == round(5000 * 15 * 12 / 3)
+    # print(answer)
+    # 5000/3 = 1667 phones on network
+    # arpu = 2 * 12 months
+    # 40,000 = ((5000/3) * 2 * 12)
+    assert round(answer[0]['total_mno_revenue']) == round((5000/3) * 2 * 12)
 
     setup_region[0]['geotype'] = 'rural'
     setup_region[0]['mean_luminosity_km2'] = 2
     setup_option['strategy'] = '4G_epc_wireless_srn_baseline_baseline_baseline_baseline'
-    setup_country_parameters['arpu']['medium'] = 7
+    setup_country_parameters['arpu']['arpu_baseline'] = 7
 
     #iterate through years to create annual lookup
-    setup_timesteps = list(range(2020, 2030 + 1))
+    setup_timesteps = list(range(2020, 2030))
     setup_penetration_lut = {}
     intermediate = {}
     for i in setup_timesteps:
@@ -150,11 +151,11 @@ def test_estimate_demand(
     # 5000 phones
     # arpu = 7 # monthly
     # discounted arpur over 10 years @ 5% = 242
-    #[35000.0, 33333.33333333333, 31746.031746031746, 30234.31594860166,
-    # 28794.586617715864, 27423.41582639606, 26117.538882281962, 24873.846554554246,
-    # 23689.377671004044, 22561.312067622897, 21486.963873926572]
+    # [120000.0, 114285.71428571428, 108843.53741496598, 103660.51182377712,
+    # 98724.29697502582, 94023.13997621505, 89545.8475963953, 85281.75961561457,
+    # 81220.72344344243, 77353.06994613566]
     # multplied by 12 months per year
-    assert round(answer[0]['total_mno_revenue']) == round(3663129)
+    assert round(answer[0]['total_mno_revenue']) == round(972939)
 
     # 2500 smartphones
     # scenario = 0.56
@@ -207,18 +208,19 @@ def test_estimate_arpu(setup_region, setup_timesteps, setup_global_parameters,
     setup_country_parameters):
     """
     Unit test.
+
     """
-    answer = estimate_arpu({'mean_luminosity_km2': 10}, 2020, setup_global_parameters,
+    answer = estimate_arpu({'geotype': 'urban'}, 2020, setup_global_parameters,
         setup_country_parameters)
 
     assert answer == 15
 
-    answer = estimate_arpu({'mean_luminosity_km2': 2}, 2020, setup_global_parameters,
+    answer = estimate_arpu({'geotype': 'suburban'}, 2020, setup_global_parameters,
         setup_country_parameters)
 
     assert answer == 5
 
-    answer = estimate_arpu({'mean_luminosity_km2': 0}, 2020, setup_global_parameters,
+    answer = estimate_arpu({'geotype': 'rural'}, 2020, setup_global_parameters,
         setup_country_parameters)
 
     assert answer == 2
