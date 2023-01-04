@@ -2,6 +2,15 @@ from pytest import fixture
 
 
 @fixture(scope='function')
+def setup_country():
+    return {
+    'GID_0': 'MWI',
+    'income': 'HIC',
+    'backhaul_fiber_perc': 50,
+    }
+
+
+@fixture(scope='function')
 def setup_region():
     return [{
     'GID_0': 'MWI',
@@ -14,7 +23,6 @@ def setup_region():
     'decile': 100,
     'geotype': 'urban',
     'demand_mbps_km2': 5000,
-    'integration': 'baseline'
     }]
 
 
@@ -29,7 +37,7 @@ def setup_region_rural():
     'area_km2': 2,
     'population_km2': 5000,
     'decile': 100,
-    'geotype': 'rural'
+    'geotype': 'rural',
     }]
 
 
@@ -58,7 +66,6 @@ def setup_global_parameters():
         'return_period': 2,
         'discount_rate': 5,
         'confidence': [1, 10, 50],
-        'regional_integration_factor': 10
     }
 
 
@@ -70,9 +77,9 @@ def setup_country_parameters():
             'medium': 1,
         },
         'arpu': {
-            'high': 15,
-            'medium': 5,
-            'low': 2,
+            'arpu_high': 15,
+            'arpu_baseline': 5,
+            'arpu_low': 2,
         },
         'networks': {
             'baseline_urban': 3,
@@ -203,6 +210,13 @@ def setup_lookup():
             (2, 100)
         ],
         ('urban', 'macro', '1800', '4G', '50'): [
+            (0.01, 5),
+            (0.02, 10),
+            (0.05, 20),
+            (0.15, 40),
+            (2, 1000)
+        ],
+        ('urban', 'macro', '2600', '4G', '50'): [
             (0.01, 5),
             (0.02, 10),
             (0.05, 20),
@@ -422,6 +436,7 @@ def setup_data_energy():
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'geotype': 'rural',
+            'decile': 1,
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],
@@ -444,6 +459,7 @@ def setup_data_energy():
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'geotype': 'rural',
+            'decile': 1,
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],
@@ -466,6 +482,7 @@ def setup_data_energy():
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'geotype': 'rural',
+            'decile': 1,
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],
@@ -488,6 +505,7 @@ def setup_data_energy():
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
             'geotype': 'rural',
+            'decile': 1,
             'scenario': 'low_20_20_20',
             'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline_baseline',
             'confidence': [50],

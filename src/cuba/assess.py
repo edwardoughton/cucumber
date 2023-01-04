@@ -151,7 +151,40 @@ def get_spectrum_costs(region, strategy, global_parameters, country_parameters):
 
     """
     population = int(round(region['population_total']))
-    frequencies = country_parameters['frequencies']
+    frequencies = {
+        '3G': [
+            {
+                'frequency': 1900,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+        ],
+        '4G': [
+            {
+                'frequency': 850,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+            {
+                'frequency': 1700,
+                'bandwidth': '2x10',
+                # 'status': 'active',
+            },
+        ],
+        '5G': [
+            {
+                'frequency': 700,
+                'bandwidth': '2x10',
+                # 'status': 'inactive',
+            },
+            {
+                'frequency': 3500,
+                'bandwidth': ' 1x40',
+                # 'status': 'inactive',
+            },
+        ]
+    }
+    # frequencies = country_parameters['frequencies']
     generation = strategy.split('_')[0]
     frequencies = frequencies[generation]
 
@@ -359,8 +392,16 @@ def calc(region, metric, ms):
 
     """
     if metric in region:
+
         value = region[metric]
+
+        if value == 0 or region['phones_on_network'] == 0:
+            return 0
+
         value_per_user = value / region['phones_on_network']
+
         return round(value_per_user * region['population_with_phones'])
+
     else:
+
         return 0

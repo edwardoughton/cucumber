@@ -12,7 +12,7 @@ import configparser
 import json
 import pandas as pd
 import geopandas as gpd
-import xlrd
+# import xlrd
 import numpy as np
 from shapely.geometry import MultiPolygon
 from shapely.ops import transform, unary_union
@@ -24,7 +24,8 @@ import random
 import math
 from random import uniform
 
-from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
+# from countries import COUNTRY_LIST, COUNTRY_PARAMETERS
+from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
@@ -46,23 +47,11 @@ def process_unconstrained_site_estimation(country):
     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
     regional_data = pd.read_csv(path)
 
-    path = os.path.join(DATA_INTERMEDIATE, iso3, 'coverage', 'coverage.csv')
-    coverage_data = pd.read_csv(path)
-
-    coverage_lut = {}
-
-    for idx, region in coverage_data.iterrows():
-        techs = ['2G', '3G', '4G']
-        for tech in techs:
-            if region['generation'] == tech:
-                coverage_lut[region['GID_id']] = {
-                    tech: region['coverage_km2'],
-                }
+    path = os.path.join(DATA_RAW, 'site_counts', 'hybrid_site_data.csv')
+    site_data = pd.read_csv(path, encoding = "ISO-8859-1")
 
     population = regional_data['population'].sum()
 
-    path = os.path.join(DATA_RAW, 'site_counts', 'hybrid_site_data.csv')
-    site_data = pd.read_csv(path, encoding = "ISO-8859-1")
     site_data['estimated_towers'] = pd.to_numeric(site_data['estimated_towers'])
 
     site_data = site_data.loc[site_data['ISO3'] == iso3]
@@ -95,7 +84,7 @@ def process_unconstrained_site_estimation(country):
     else:
         towers_per_pop_4G = towers_4G / population_covered_4G
 
-    backhaul_lut = get_backhaul_lut(iso3, country['region'], '2025')
+    backhaul_lut = get_backhaul_lut(iso3, country['continent2'], '2025')
 
     regional_data = regional_data.to_dict('records')
     data = sorted(regional_data, key=lambda k: k['population_km2'], reverse=True)
@@ -120,24 +109,16 @@ def process_unconstrained_site_estimation(country):
 
         backhaul_estimates = estimate_backhaul(total_existing_sites_2G, backhaul_lut)
 
-        if region['GID_id'] in coverage_lut:
-            region_coverage = coverage_lut[region['GID_id']]
-            if '4G' in region_coverage:
-                sites_4G = (region_coverage['4G'] / 100)
-            else:
-                sites_4G = 0
-        else:
-            sites_4G = 0
-
         output.append({
             'GID_0': region['GID_0'],
             region['GID_level']: region['GID_id'],
             'population': round(region['population']),
             'area_km2': round(region['area_km2']),
+            'total_estimated_sites': max(total_existing_sites_2G, total_existing_sites_4G),
             'total_estimated_sites_2G': round(total_existing_sites_2G),
             'total_estimated_sites_4G': round(total_existing_sites_4G),
-            'sites_estimated_2G_km2': round(total_existing_sites_2G / region['area_km2']),
-            'sites_estimated_4G_km2': round(total_existing_sites_4G / region['area_km2']),
+            'sites_estimated_2G_km2': round(total_existing_sites_2G / region['area_km2'],4),
+            'sites_estimated_4G_km2': round(total_existing_sites_4G / region['area_km2'], 4),
             'backhaul_fiber': backhaul_estimates['backhaul_fiber'],
             'backhaul_copper': backhaul_estimates['backhaul_copper'],
             'backhaul_wireless': backhaul_estimates['backhaul_wireless'],
@@ -547,19 +528,24 @@ def combine_sites(country):
 
 if __name__ == "__main__":
 
-    for country in COUNTRY_LIST:
+    countries = find_country_list([])
 
-        if not country['iso3'] == 'COL':
-            continue
+    for country in countries:
+        # print(country)
+        # if not country['iso3'] in ['BRA', 'CAN', 'DNK', 'EGY', 'JPN', 'KEN', 'MLT', 'PHL', 'RUS', 'ARE','URY']:
+        #     continue
+
+        # if not country['iso3'] == 'GBR':
+        #     continue
 
         print('--Working on {}'.format(country['iso3']))
 
         process_unconstrained_site_estimation(country)
 
-        cut_grid_finder_targets(country)
+        # cut_grid_finder_targets(country)
 
-        estimate_site_power_source(country)
+        # estimate_site_power_source(country)
 
-        write_site_lut(country)
+        # write_site_lut(country)
 
-        combine_sites(country)
+        # combine_sites(country)
