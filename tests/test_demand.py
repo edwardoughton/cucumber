@@ -18,10 +18,10 @@ def test_estimate_demand(
 
     """
     answer, annual_answer = estimate_demand(
+        setup_country_parameters,
         setup_region,
         setup_option,
         setup_global_parameters,
-        setup_country_parameters,
         setup_timesteps,
         setup_penetration_lut,
         {'urban': {2020: 50}}
@@ -64,10 +64,10 @@ def test_estimate_demand(
     #Check suburban geotype uses urban in the smartphone lut
     setup_region[0]['geotype'] = 'suburban'
     answer, annual_answer = estimate_demand(
+        setup_country_parameters,
         setup_region,
         setup_option,
         setup_global_parameters,
-        setup_country_parameters,
         setup_timesteps,
         setup_penetration_lut,
         {'urban': {2020: 50}}
@@ -91,10 +91,10 @@ def test_estimate_demand(
     assert round(answer[0]['smartphones_on_network']) == smartphones_on_network
 
     answer, annual_answer = estimate_demand(
+        setup_country_parameters,
         setup_region_rural,
         setup_option_high,
         setup_global_parameters,
-        setup_country_parameters,
         setup_timesteps,
         setup_penetration_lut,
         {'rural': {2020: 50}}
@@ -122,10 +122,10 @@ def test_estimate_demand(
     setup_smartphone_lut['rural'] = intermediate
 
     answer, annual_answer = estimate_demand(
+        setup_country_parameters,
         setup_region,
         setup_option,
         setup_global_parameters,
-        setup_country_parameters,
         setup_timesteps,
         setup_penetration_lut,
         setup_smartphone_lut
@@ -170,10 +170,10 @@ def test_estimate_demand(
     setup_region[0]['population_km2'] = 0
 
     answer, annual_answer = estimate_demand(
+        setup_country_parameters,
         setup_region,
         setup_option,
         setup_global_parameters,
-        setup_country_parameters,
         setup_timesteps,
         setup_penetration_lut,
         setup_smartphone_lut
