@@ -56,6 +56,7 @@ def find_country_list(continent_list):
             # 'pop_density_km2': float(country['pop_density_km2']),
             # 'settlement_size': float(country['settlement_size']),
             'backhaul_fiber_perc': int(country['backhaul_fiber_perc']),
+            'income': country['income'],
         })
 
     return output

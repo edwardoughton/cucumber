@@ -7,7 +7,7 @@ Winter 2020
 
 """
 
-def estimate_demand(regions, option, global_parameters, country_parameters,
+def estimate_demand(country_parameters, regions, option, global_parameters,
     timesteps, penetration_lut, smartphone_lut):
     """
     Estimate demand metrics including:
@@ -17,6 +17,8 @@ def estimate_demand(regions, option, global_parameters, country_parameters,
 
     Parameters
     ----------
+    country_parameters : dict
+        All country specific parameters.
     regions : list of dicts
         Data for all regions (one dict per region).
     option : dict
@@ -27,8 +29,6 @@ def estimate_demand(regions, option, global_parameters, country_parameters,
         geotype, spectrum and taxation.
     global_parameters : dict
         All global model parameters.
-    country_parameters : dict
-        All country specific parameters.
     timesteps : list
         All years for the assessment period.
     penetration_lut : list of dicts

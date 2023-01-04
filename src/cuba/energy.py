@@ -59,22 +59,21 @@ def assess_energy(country, regions, assets, option, global_parameters,
         wireless_medium = 0
         wireless_large = 0
 
-        for asset in assets:
+        decile_assets = assets[region['decile']]
 
-            if asset['decile'] == region['decile']:
-
-                if 'equipment' in asset.values():
-                    equipment_quantity += asset['quantity']
-                elif 'regional_node' in asset.values():
-                    regional_nodes += asset['quantity']
-                elif 'core_node' in asset.values():
-                    core_nodes += asset['quantity']
-                elif 'backhaul_wireless_small' in asset.values():
-                    wireless_small += asset['quantity']
-                elif 'backhaul_wireless_medium' in asset.values():
-                    wireless_medium += asset['quantity']
-                elif 'backhaul_wireless_large' in asset.values():
-                    wireless_large += asset['quantity']
+        for asset in decile_assets:
+            if 'equipment' in asset.values():
+                equipment_quantity += asset['quantity']
+            elif 'regional_node' in asset.values():
+                regional_nodes += asset['quantity']
+            elif 'core_node' in asset.values():
+                core_nodes += asset['quantity']
+            elif 'backhaul_wireless_small' in asset.values():
+                wireless_small += asset['quantity']
+            elif 'backhaul_wireless_medium' in asset.values():
+                wireless_medium += asset['quantity']
+            elif 'backhaul_wireless_large' in asset.values():
+                wireless_large += asset['quantity']
 
         equipment_hourly_demand_kwh = equipment_quantity * energy_demand['equipment_kwh']
         regional_nodes_hourly_demand_kwh = regional_nodes * energy_demand['regional_node_kwh']

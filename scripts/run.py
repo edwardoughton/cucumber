@@ -12,6 +12,7 @@ import configparser
 import pandas as pd
 import geopandas
 from collections import OrderedDict
+from tqdm import tqdm
 
 from options import (OPTIONS, GLOBAL_PARAMETERS, COSTS, INFRA_SHARING_ASSETS,
     COST_TYPES, ENERGY_DEMAND, TECH_LUT)
@@ -309,7 +310,7 @@ if __name__ == '__main__':
 
         failures = []
 
-        for country in countries[::-1]:#[:1]:
+        for country in tqdm(countries):#[::-1]:#[:1]:
 
             # try:
             regional_annual_demand = []
@@ -329,7 +330,7 @@ if __name__ == '__main__':
             if not iso3 == 'BRA':
                 continue
 
-            print('Working on {}'.format(iso3))
+            # print('-Working on {}'.format(iso3))
 
             country_parameters = country_parameter_lut[iso3]
 
@@ -339,11 +340,11 @@ if __name__ == '__main__':
             filename = 'iea_forecast.csv'
             on_grid_mix = load_on_grid_mix(country, os.path.join(folder, filename))
 
-            print('Working on {} in {}'.format(decision_option, iso3))
+            print('--Working on {} in {}'.format(decision_option, iso3))
 
             for option in options:
 
-                # print('Working on {} and {}'.format(option['scenario'], option['strategy']))
+                print('Working on {} and {}'.format(option['scenario'], option['strategy']))
 
                 # filename = 'national_market_cost_results_{}.csv'.format(decision_option)
                 # path_out = os.path.join(OUTPUT_COUNTRY, filename)
@@ -367,14 +368,14 @@ if __name__ == '__main__':
                     # print('CI: {}'.format(ci))
                     filename = 'decile_data.csv'
                     path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
-                    data_initial = pd.read_csv(path_out)
+                    data_initial = pd.read_csv(path_out)#[:1]
                     data_initial = data_initial.to_dict('records')
 
                     data_demand, annual_demand = estimate_demand(
+                        country_parameters,
                         data_initial,
                         option,
                         GLOBAL_PARAMETERS,
-                        country_parameters,
                         TIMESTEPS,
                         penetration_lut,
                         smartphone_lut
@@ -388,91 +389,94 @@ if __name__ == '__main__':
                         GLOBAL_PARAMETERS,
                         country_parameters,
                         COSTS,
-                        # core_lut,
                         ci,
                         INFRA_SHARING_ASSETS,
                         COST_TYPES
                     )
 
-                    # data_assess = assess(
-                    #     country,
-                    #     data_supply,
-                    #     option,
-                    #     GLOBAL_PARAMETERS,
-                    #     country_parameters,
-                    #     TIMESTEPS
-                    # )
+                    data_assess = assess(
+                        country,
+                        data_supply,
+                        option,
+                        GLOBAL_PARAMETERS,
+                        country_parameters,
+                        TIMESTEPS
+                    )
 
-                    # data_energy = assess_energy(
-                    #     country,
-                    #     data_assess,
-                    #     assets,
-                    #     option,
-                    #     GLOBAL_PARAMETERS,
-                    #     country_parameters,
-                    #     TIMESTEPS,
-                    #     ENERGY_DEMAND,
-                    # )
+                    data_energy = assess_energy(
+                        country,
+                        data_assess,
+                        assets,
+                        option,
+                        GLOBAL_PARAMETERS,
+                        country_parameters,
+                        TIMESTEPS,
+                        ENERGY_DEMAND,
+                    )
 
-                    # data_emissions = assess_emissions(
-                    #     data_energy,
-                    #     tech_lut,
-                    #     on_grid_mix,
-                    #     TIMESTEPS,
-                    #     option,
-                    #     country_parameters
-                    # )
+                    data_emissions = assess_emissions(
+                        data_energy,
+                        tech_lut,
+                        on_grid_mix,
+                        TIMESTEPS,
+                        option,
+                        country_parameters
+                    )
 
-            #         # final_results = allocate_deciles(data_assess)
+                    # final_results = allocate_deciles(data_assess)
 
-            #         regional_annual_demand = regional_annual_demand + annual_demand
-            #         regional_results = regional_results + data_assess
-            #         all_assets = all_assets + assets
-            #         regional_energy_demand = regional_energy_demand + data_energy
-            #         regional_emissions = regional_emissions + data_emissions
+                    regional_annual_demand = regional_annual_demand + annual_demand
+                    regional_results = regional_results + data_assess
+                    for key, value in assets.items():
+                        all_assets = all_assets + value
+                    regional_energy_demand = regional_energy_demand + data_energy
+                    regional_emissions = regional_emissions + data_emissions
 
-            # all_results = all_results + regional_results
+            all_results = all_results + regional_results
 
-            # write_demand(regional_annual_demand, OUTPUT_COUNTRY)
+            write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            # write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
 
-            # write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
+            write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
-            # write_energy_annual_aggregated(regional_energy_demand, regional_annual_demand,
-            #     OUTPUT_COUNTRY, decision_option)
+            write_energy_annual_aggregated(regional_energy_demand, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
 
-            # write_energy_aggregated(regional_energy_demand, regional_annual_demand,
-            #     OUTPUT_COUNTRY, decision_option)
+            write_energy_aggregated(regional_energy_demand, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+            write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
-            #     OUTPUT_COUNTRY, decision_option)
+            write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+            write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
 
-            # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+            write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
 
-            # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
+            write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
-            # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
-            #                 GLOBAL_PARAMETERS, COSTS, decision_option)
+            write_inputs(OUTPUT_COUNTRY, country, country_parameters,
+                            GLOBAL_PARAMETERS, COSTS, decision_option)
 
-            # generate_percentages(iso3, decision_option)
+            generate_percentages(iso3, decision_option)
 
-    #         except:
+        # except:
 
-    #             failures.append(country['iso3'])
-    #             print(failures)
+        #     failures.append(country['iso3'])
+        #     print(failures)
 
-    #     print(failures)
+        # print(failures)
 
     # collect_results('national_market_cost_results_technology_options.csv')
     # collect_results('national_market_cost_results_business_model_options.csv')
     # collect_results('national_market_cost_results_policy_options.csv')
+    # collect_results('emissions_technology_options.csv')
+    # collect_results('power_emissions_power_options.csv')
+    # collect_results('emissions_national_business_model_power_options.csv')
 
     # # write_results(all_results, OUTPUT, 'all_options_all_countries')
 

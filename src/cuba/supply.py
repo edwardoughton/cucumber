@@ -15,7 +15,8 @@ from cuba.costs import find_cost
 
 
 def estimate_supply(country, regions, capacity_lut, option,
-    global_parameters, country_parameters, costs, #core_lut,
+    global_parameters, country_parameters,
+    costs, #core_lut,
     ci, infra_sharing_options, cost_types):
     """
     For each region, find the least-cost design and estimate
@@ -60,7 +61,7 @@ def estimate_supply(country, regions, capacity_lut, option,
 
     """
     output_regions = []
-    output_assets = []
+    output_assets = {}
 
     for region in regions:
 
@@ -71,8 +72,8 @@ def estimate_supply(country, regions, capacity_lut, option,
         region['strategy'] = option['strategy']
         region['confidence'] = ci
 
-        region['mno_site_density'] = find_site_density(region, option,
-            global_parameters, country_parameters, capacity_lut, ci)
+        region['mno_site_density'] = find_site_density(country, region, option,
+            global_parameters, capacity_lut, ci)
 
         if region['mno_site_density'] > 0:
 
@@ -122,12 +123,13 @@ def estimate_supply(country, regions, capacity_lut, option,
         )
 
         output_regions.append(region)
-        output_assets = output_assets + assets
+        output_assets[region['decile']] = assets
+        # output_assets = output_assets + assets
 
     return output_regions, output_assets
 
 
-def find_site_density(region, option, global_parameters, country_parameters,
+def find_site_density(country, region, option, global_parameters, #country_parameters,
     capacity_lut, ci):
     """
     For a given region, estimate the number of needed sites.
@@ -161,41 +163,8 @@ def find_site_density(region, option, global_parameters, country_parameters,
     geotype = region['geotype'].split(' ')[0]
     ant_type = 'macro'
     generation = option['strategy'].split('_')[0]
-    frequencies = {
-        '3G': [
-            {
-                'frequency': 1900,
-                'bandwidth': '2x10',
-                # 'status': 'active',
-            },
-        ],
-        '4G': [
-            {
-                'frequency': 850,
-                'bandwidth': '2x10',
-                # 'status': 'active',
-            },
-            {
-                'frequency': 1700,
-                'bandwidth': '2x10',
-                # 'status': 'active',
-            },
-        ],
-        '5G': [
-            {
-                'frequency': 700,
-                'bandwidth': '2x10',
-                # 'status': 'inactive',
-            },
-            {
-                'frequency': 3500,
-                'bandwidth': ' 1x40',
-                # 'status': 'inactive',
-            },
-        ]
-    }
-    # frequencies = country_parameters['frequencies']
-    frequencies = frequencies[generation]
+    all_frequencies = find_frequencies(country)
+    frequencies = all_frequencies[generation]
     target = find_target(geotype, option)
 
     if target == 0:
@@ -291,6 +260,106 @@ def find_site_density(region, option, global_parameters, country_parameters,
                 )
 
                 return site_density
+
+
+def find_frequencies(country):
+    """
+    Lookup frequency portfolio by country income level.
+
+    """
+    if country['income'] == 'HIC':
+        return {
+            '4G': [
+                {
+                    'frequency': 800,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 1800,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 2600,
+                    'bandwidth': '2x10',
+                },
+            ],
+            '5G': [
+                {
+                    'frequency': 700,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 3500,
+                    'bandwidth': '1x50',
+                },
+            ],
+        }
+    elif country['income'] == 'UMIC' or country['income'] == 'LMIC':
+        return {
+            '4G': [
+                {
+                    'frequency': 800,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 2600,
+                    'bandwidth': '2x10',
+                },
+            ],
+            '5G': [
+                {
+                    'frequency': 700,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 3500,
+                    'bandwidth': '1x50',
+                },
+            ],
+        }
+    elif country['income'] == 'LIC':
+        return {
+            '4G': [
+                {
+                    'frequency': 800,
+                    'bandwidth': '2x10',
+                },
+            ],
+            '5G': [
+                {
+                    'frequency': 700,
+                    'bandwidth': '2x10',
+                },
+            ],
+        }
+    else:
+        print('Did not recognize country income level')
+        print('Using mean spectrum portfolio size')
+        return {
+            '4G': [
+                {
+                    'frequency': 800,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 2600,
+                    'bandwidth': '2x10',
+                },
+            ],
+            '5G': [
+                {
+                    'frequency': 700,
+                    'bandwidth': '2x10',
+                },
+                {
+                    'frequency': 3500,
+                    'bandwidth': '1x50',
+                },
+            ],
+        }
+
+    return
+
 
 def find_target(geotype, option):
     """
@@ -437,7 +506,7 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
             region['upgraded_mno_sites'] = to_upgrade if to_upgrade >= 0 else 0
         else:
             region['upgraded_mno_sites'] = total_sites_required
-
+    # print(region)
     return region
 
 
@@ -445,6 +514,7 @@ def estimate_backhaul_upgrades(region, strategy, country_parameters):
     """
     Estimates the number of backhaul links requiring upgrades for the
     single network being modeled.
+
     Parameters
     ----------
     region : dict
@@ -455,6 +525,7 @@ def estimate_backhaul_upgrades(region, strategy, country_parameters):
         and backhaul, and the level of sharing, subsidy, spectrum and tax.
     country_parameters : dict
         All country specific parameters.
+
     Returns
     -------
     region : dict
