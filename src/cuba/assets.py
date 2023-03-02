@@ -38,10 +38,10 @@ def estimate_assets(country, region, option, costs, global_parameters,
     strategy = option['strategy']
 
     total_existing_mno_sites = math.ceil(region['existing_mno_sites'])
-    new_sites = region['new_mno_sites']
-    upgraded_sites = region['upgraded_mno_sites']
-    all_new_or_upgraded_sites = new_sites + upgraded_sites
-    existing_remaining_sites = total_existing_mno_sites - upgraded_sites
+    new_sites = math.ceil(region['new_mno_sites'])
+    upgraded_sites = math.ceil(region['upgraded_mno_sites'])
+    all_new_or_upgraded_sites = math.ceil(new_sites + upgraded_sites)
+    existing_remaining_sites = math.ceil(total_existing_mno_sites - upgraded_sites)
 
     assets = []
 
@@ -157,16 +157,15 @@ def calc_assets(region, option, asset_structure, costs, build_type):
     total_assets = []
 
     for asset_name1, quantity in asset_structure.items():
-
         if asset_name1 == 'site_rental':
             asset_name1 = asset_name1 + '_' + geotype
 
         if asset_name1 == 'backhaul' and new_backhaul == 0:
-            quantity = quantity['quantity']
+            quantity = math.ceil(quantity['quantity'])
             cost_per_unit = 0
             total_cost = 0
         elif asset_name1 == 'backhaul' and new_backhaul > 0:
-            backhaul_dist_m = quantity['backhaul_dist_m']
+            backhaul_dist_m = math.ceil(quantity['backhaul_dist_m'])
             quantity, backhaul_name = estimate_backhaul_type(
                 backhaul,
                 backhaul_dist_m,

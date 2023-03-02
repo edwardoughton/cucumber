@@ -57,9 +57,9 @@ def collect_results(filename):
 
 if __name__ == "__main__":
 
-    collect_results('national_market_cost_results_technology_options.csv')
-    collect_results('national_market_cost_results_business_model_options.csv')
-    collect_results('national_market_cost_results_policy_options.csv')
-    collect_results('emissions_technology_options.csv')
-    collect_results('power_emissions_power_options.csv')
+    # collect_results('national_market_cost_results_technology_options.csv')
+    # collect_results('national_market_cost_results_business_model_options.csv')
+    # collect_results('national_market_cost_results_policy_options.csv')
+    # collect_results('emissions_technology_options.csv')
+    # collect_results('power_emissions_power_options.csv')
     collect_results('emissions_national_business_model_power_options.csv')

@@ -7,7 +7,7 @@ Winter 2020
 
 """
 
-def estimate_demand(country_parameters, regions, option, global_parameters,
+def estimate_demand(country, country_parameters, regions, option, global_parameters,
     timesteps, penetration_lut, smartphone_lut):
     """
     Estimate demand metrics including:
@@ -159,6 +159,7 @@ def estimate_demand(country_parameters, regions, option, global_parameters,
             annual_output.append({
                 'GID_0': region['GID_0'],
                 'decile': region['decile'],
+                'income': country['income'],
                 'scenario': option['scenario'],
                 'strategy': option['strategy'],
                 'confidence': global_parameters['confidence'][0],
