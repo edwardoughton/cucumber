@@ -974,8 +974,8 @@ if __name__ == '__main__':
 
     for country in countries:#[:1]:
 
-        # if not country['iso3'] == 'CHN':
-        #     continue
+        if not country['iso3'] == 'KEN':
+            continue
 
         # if country['iso3'] == 'MDV': #MDV has it's own set of scripts
         #     continue #see -> ~/qubic/scripts/MDV/

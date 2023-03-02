@@ -322,13 +322,16 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
+            if not iso3 == "GBR":
+                continue
+
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
             if not os.path.exists(OUTPUT_COUNTRY):
                 os.makedirs(OUTPUT_COUNTRY)
 
-            if not iso3 == 'BRA':
-                continue
+            # if not iso3 == 'BRA':
+            #     continue
 
             # print('-Working on {}'.format(iso3))
 
@@ -344,7 +347,7 @@ if __name__ == '__main__':
 
             for option in options:
 
-                print('Working on {} and {}'.format(option['scenario'], option['strategy']))
+                # print('Working on {} and {}'.format(option['scenario'], option['strategy']))
 
                 # filename = 'national_market_cost_results_{}.csv'.format(decision_option)
                 # path_out = os.path.join(OUTPUT_COUNTRY, filename)
@@ -372,6 +375,7 @@ if __name__ == '__main__':
                     data_initial = data_initial.to_dict('records')
 
                     data_demand, annual_demand = estimate_demand(
+                        country,
                         country_parameters,
                         data_initial,
                         option,
@@ -414,14 +418,15 @@ if __name__ == '__main__':
                         ENERGY_DEMAND,
                     )
 
-                    data_emissions = assess_emissions(
-                        data_energy,
-                        tech_lut,
-                        on_grid_mix,
-                        TIMESTEPS,
-                        option,
-                        country_parameters
-                    )
+                    # data_emissions = assess_emissions(
+                    #     country,
+                    #     data_energy,
+                    #     tech_lut,
+                    #     on_grid_mix,
+                    #     TIMESTEPS,
+                    #     option,
+                    #     country_parameters
+                    # )
 
                     # final_results = allocate_deciles(data_assess)
 
@@ -430,7 +435,7 @@ if __name__ == '__main__':
                     for key, value in assets.items():
                         all_assets = all_assets + value
                     regional_energy_demand = regional_energy_demand + data_energy
-                    regional_emissions = regional_emissions + data_emissions
+                    # regional_emissions = regional_emissions + data_emissions
 
             all_results = all_results + regional_results
 
@@ -446,23 +451,23 @@ if __name__ == '__main__':
             write_energy_aggregated(regional_energy_demand, regional_annual_demand,
                 OUTPUT_COUNTRY, decision_option)
 
-            write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+            # write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
-            write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
-                OUTPUT_COUNTRY, decision_option)
+            # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+            #     OUTPUT_COUNTRY, decision_option)
 
-            write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
-                decision_option)
+            # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+            #     decision_option)
 
-            write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
-                decision_option)
+            # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+            #     decision_option)
 
-            write_results(regional_results, OUTPUT_COUNTRY, decision_option)
+            # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
-            write_inputs(OUTPUT_COUNTRY, country, country_parameters,
-                            GLOBAL_PARAMETERS, COSTS, decision_option)
+            # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
+            #                 GLOBAL_PARAMETERS, COSTS, decision_option)
 
-            generate_percentages(iso3, decision_option)
+            # generate_percentages(iso3, decision_option)
 
         # except:
 
@@ -478,6 +483,6 @@ if __name__ == '__main__':
     # collect_results('power_emissions_power_options.csv')
     # collect_results('emissions_national_business_model_power_options.csv')
 
-    # # write_results(all_results, OUTPUT, 'all_options_all_countries')
+    # write_results(all_results, OUTPUT, 'all_options_all_countries')
 
-    # # print('Completed model run')
+    # print('Completed model run')

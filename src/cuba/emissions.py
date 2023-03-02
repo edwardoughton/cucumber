@@ -7,7 +7,8 @@ June 2021
 
 """
 
-def assess_emissions(data_energy, tech_lut, on_grid_mix, timesteps, option, country_parameters):
+def assess_emissions(country, data_energy, tech_lut, on_grid_mix,
+    timesteps, option, country_parameters):
     """
     Calculate emissions.
 
@@ -108,6 +109,7 @@ def assess_emissions(data_energy, tech_lut, on_grid_mix, timesteps, option, coun
                 output.append({
                     'year': timestep,
                     'GID_0': item['GID_0'],
+                    'income': country['income'],
                     'decile': item['decile'],
                     'scenario': item['scenario'],
                     'strategy': item['strategy'],

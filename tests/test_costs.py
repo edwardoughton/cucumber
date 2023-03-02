@@ -9,6 +9,7 @@ from cuba.costs import (
     discount_opex
 )
 
+
 def test_find_cost(setup_region, setup_costs,
     setup_global_parameters, setup_country_parameters,
     setup_core_lut, setup_infra_sharing_assets,
@@ -33,11 +34,66 @@ def test_find_cost(setup_region, setup_costs,
         setup_cost_types
     )
 
-    assert answer['network_cost'] == 61990.75
+    assert answer['network_cost'] == 61990.75 #no sharing
+
+    answer = find_cost(
+        setup_region[0],
+        setup_assets,
+        {'strategy': '3G_epc_wireless_passive_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+        setup_infra_sharing_assets,
+        setup_cost_types
+    )
+
+    assert round(answer['network_cost']) == 28331 #share only passive
+
+    answer = find_cost(
+        setup_region[0],
+        setup_assets,
+        {'strategy': '3G_epc_wireless_active_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+        setup_infra_sharing_assets,
+        setup_cost_types
+    )
+
+    assert round(answer['network_cost']) == 20664 #share all passive + active
+
+    answer = find_cost(
+        setup_region[0],
+        setup_assets,
+        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+        setup_infra_sharing_assets,
+        setup_cost_types
+    )
+
+    assert round(answer['network_cost']) == 61991 #urban, therefore no sharing
+
+    setup_region[0]['geotype'] = 'rural'
+
+    answer = find_cost(
+        setup_region[0],
+        setup_assets,
+        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+        setup_infra_sharing_assets,
+        setup_cost_types
+    )
+
+    assert round(answer['network_cost']) == 20664
 
 
-def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_parameters,
-    setup_country_parameters, setup_infra_sharing_assets):
+def test_calc_sharing(setup_assets, setup_region, setup_option,
+    setup_global_parameters, setup_country_parameters,
+    setup_infra_sharing_assets):
     """
     Unit test.
 
@@ -54,7 +110,7 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
         setup_infra_sharing_assets
     )
 
-    assert answer['equipment'] == 10000 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
+    assert answer['equipment'] == 10000
 
     answer = calc_sharing(
         setup_assets,
@@ -64,7 +120,7 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
         setup_infra_sharing_assets
     )
 
-    assert round(answer['site_build']) == 3333 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
+    assert round(answer['site_build']) == 3333
 
     answer = calc_sharing(
         setup_assets,
@@ -74,7 +130,7 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
         setup_infra_sharing_assets
     )
 
-    assert round(answer['equipment']) == 3333 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
+    assert round(answer['equipment']) == 3333
 
     answer = calc_sharing(
         setup_assets,
@@ -84,7 +140,7 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
         setup_infra_sharing_assets
     )
 
-    assert round(answer['equipment']) == 10000 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
+    assert round(answer['equipment']) == 10000
 
     setup_region[0]['geotype'] = 'rural'
 
@@ -96,12 +152,15 @@ def test_calc_sharing(setup_assets, setup_region, setup_option, setup_global_par
         setup_infra_sharing_assets
     )
 
-    assert round(answer['equipment']) == 3333 #40000 * (1 + (setup_country_parameters['financials']['wacc'] / 100))
+    assert round(answer['equipment']) == 3333
 
 
 def test_calc_npv(setup_assets_dict, setup_cost_types, setup_global_parameters,
     setup_country_parameters):
+    """
+    Unit test.
 
+    """
     answer = calc_npv(setup_assets_dict, setup_cost_types, setup_global_parameters,
         setup_country_parameters)
 
@@ -111,7 +170,10 @@ def test_calc_npv(setup_assets_dict, setup_cost_types, setup_global_parameters,
 
 
 def test_aggregate_costs():
+    """
+    Unit test.
 
+    """
     cost_by_assets = {
         'equipment': 1,
         'site_rental': 1,

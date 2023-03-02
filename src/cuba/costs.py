@@ -81,6 +81,8 @@ def calc_sharing(assets, region, option, country_parameters, infra_sharing_asset
     for key in list(all_keys):
         value = 0
         for item in assets:
+            if item['build_type'] == 'existing':
+                continue
             if key == item['asset']:
                 value += item['total_cost']
 

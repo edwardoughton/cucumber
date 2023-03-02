@@ -75,10 +75,10 @@ data <- select(data, scenario_adopt, scenario_capacity, strategy_short,
 totals <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy_short) %>%
   summarize(social_cost = round(
-    (societal_cost)/1e9))
+    (societal_cost)/1e12,2))
 
-min_value = min(round(data$societal_cost/ 1e9))
-max_value = max(round(data$societal_cost/ 1e9))
+min_value = min(totals$social_cost)
+max_value = max(totals$social_cost) + .2
 min_value[min_value > 0] = 0
 
 colnames(data)[colnames(data) == 'private_cost'] <- 'Private Investment Cost ($USD)'
@@ -95,7 +95,7 @@ data$Cost_Type = factor(data$Cost_Type,
                                  "Private Investment Cost ($USD)"
                         ))
 
-data$value = round(data$value/1e9, 3)
+data$value = round(data$value/1e12, 3)
 
 ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
@@ -108,8 +108,8 @@ ggplot(data, aes(y=value, x=strategy_short, fill=Cost_Type)) +
   labs(title = "Financial Cost of Universal Broadband by Technology", 
        colour=NULL,
        subtitle = "Reported for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Financial Cost (Billions $USD)") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value+8)) +
+       x = NULL, y = "Financial Cost (Trillions $USD)") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   theme(panel.spacing = unit(0.5, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
@@ -157,8 +157,8 @@ data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 data$strategy_short = ''
 data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
 
-data = data %>% 
-  filter(data$strategy_short == '4G (W)')
+# data = data %>% 
+#   filter(data$strategy_short == '4G (W)')
 
 data$strategy = factor(data$strategy, levels=c(
   "4G_epc_wireless_baseline_baseline_baseline_baseline_baseline",
@@ -193,10 +193,10 @@ data <- select(data, scenario_adopt, scenario_capacity, strategy,
 totals <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy) %>%
   summarize(social_cost = round(
-    (societal_cost)/1e9))
+    (societal_cost)/1e12,2))
 
-min_value = min(round(data$societal_cost/ 1e9))
-max_value = max(round(data$societal_cost/ 1e9))
+min_value = min(round(totals$social_cost))
+max_value = max(round(totals$social_cost))# + .25
 min_value[min_value > 0] = 0
 
 data$social_cost = data$private_cost + data$government_cost
@@ -216,7 +216,7 @@ data$Cost_Type = factor(data$Cost_Type,
                                  "Private Investment Cost ($USD)"
                         ))
 
-data$value = round(data$value/1e9, 3)
+data$value = round(data$value/1e12, 3)
 
 ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
@@ -229,8 +229,8 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   labs(title = "Financial Cost of Universal Broadband by Infrastructure Sharing Strategy", 
        colour=NULL,
        subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Financial Cost (Billions $USD)") +
-  scale_y_continuous(expand = c(0, 0), limits = c(-min_value, max_value+10)) +
+       x = NULL, y = "Financial Cost (Trillions $USD)") +
+  scale_y_continuous(expand = c(0, 0), limits = c(-min_value, max_value)) +
   theme(panel.spacing = unit(0.6, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)
@@ -271,7 +271,7 @@ data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 data$strategy_short = ''
 data$strategy_short[grep("4G_epc_wireless", data$strategy)] = '4G (W)'
 
-data = data %>% filter(data$strategy_short == '4G (W)')
+# data = data %>% filter(data$strategy_short == '4G (W)')
 
 data$strategy = factor(data$strategy, levels=c(
   "4G_epc_wireless_baseline_baseline_baseline_baseline_baseline",
@@ -310,10 +310,10 @@ data <- select(data, scenario_adopt, scenario_capacity, strategy,
 totals <- data %>%
   group_by(scenario_adopt, scenario_capacity, strategy) %>%
   summarize(social_cost = round(
-    (societal_cost)/1e9, 1))
+    (societal_cost)/1e12, 2))
 
-min_value = min(round(data$societal_cost/ 1e9, 2))
-max_value = max(round(data$societal_cost/ 1e9, 2))
+min_value = min(round(totals$social_cost, 2))
+max_value = max(round(totals$social_cost, 2)) + .25
 min_value[min_value > 0] = 0
 
 colnames(data)[colnames(data) == 'private_cost'] <- 'Private Investment Cost ($USD)'
@@ -330,7 +330,7 @@ data$Cost_Type = factor(data$Cost_Type,
                                  "Private Investment Cost ($USD)"
                         ))
 
-data$value = round(data$value/1e9, 2)
+data$value = round(data$value/1e12, 2)
 
 ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) + 
   geom_bar(position="stack", stat="identity") +
@@ -343,8 +343,8 @@ ggplot(data, aes(y=value, x=strategy, fill=Cost_Type)) +
   labs(title = "Financial Cost of Universal Broadband by Policy Strategy", 
        colour=NULL,
        subtitle = "Reported using 4G (W) for all adoption scenarios and capacity per user targets (2020-2030)",
-       x = NULL, y = "Financial Cost (Billions $USD)") +
-  scale_y_continuous(expand = c(0, 0), limits = c(-0, max_value+10)) +
+       x = NULL, y = "Financial Cost (Trillions $USD)") +
+  scale_y_continuous(expand = c(0, 0), limits = c(-0, max_value)) +
   theme(panel.spacing = unit(0.6, "lines")) +
   guides(fill=guide_legend(ncol=3, reverse = TRUE)) +
   facet_grid(scenario_capacity~scenario_adopt)

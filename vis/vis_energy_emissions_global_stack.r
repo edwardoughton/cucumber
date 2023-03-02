@@ -57,7 +57,7 @@ data$scenario_capacity = factor(data$scenario_capacity,
                                          '50 GB/Month',
                                          '100 GB/Month'
                                          ))
-# unique(data$income)
+
 data$income = factor(data$income,
                                 levels=c('LIC',
                                          'LMIC',
@@ -87,22 +87,41 @@ sample$value = sample$value / 1e12 #already in kwh, so /1e12 converts to pwh
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
-  group_by(income, scenario_capacity, strategy_short) %>%
+  group_by(scenario_capacity, strategy_short) %>%
   summarize(value2 = round(
-    (baseline), 2))
+    sum(baseline), 2))
 
 min_value = min(round(totals$value2,1))
-max_value = max(round(totals$value2,1)) + .25
+max_value = max(round(totals$value2,1)) + 1
 min_value[min_value > 0] = 0
 
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_capacity, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_capacity, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
+
 energy = 
-  ggplot(sample,
-  aes(x=strategy_short, y=baseline, fill=income)) +
-  geom_bar(stat="identity", position=position_dodge(.75)) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(.75), lwd = .5,
+  ggplot(sample, aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                # position = position_dodge(.75), lwd = .5,
                 show.legend = FALSE, width=0.1,  color="#FF0000FF"
                 ) +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 1),"")), size = 2.5,
+            # position = position_dodge(1), 
+            vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Total Cell Site Energy Demand over 2020-2030",
@@ -122,23 +141,43 @@ sample <- data %>%
 
 sample$value = sample$value / 1e9
 
-min_value = min(round(sample$value,2))
-max_value = max(round(sample$value,2)) + .05
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
-  summarize(value2 = round(
-    (baseline), 2))
+  summarize(value = round(
+    sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + .05
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_capacity, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_capacity, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 carbon_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
-  geom_bar(stat="identity", position=position_dodge(1)) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(.75), lwd = .5,
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1), 
+            vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
        labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", CO[2], ")")),
@@ -166,24 +205,42 @@ sample <- data %>%
 
 sample$value = sample$value / 1e6
 
-min_value = min(round(sample$value,2))
-max_value = max(round(sample$value,2)) + .005
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
-# totals <- sample %>%
-#   group_by(scenario_capacity, strategy_short) %>%
-#   summarize(value2 = round(baseline, 2))
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + .02
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_capacity, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_capacity, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 nitrogen_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(.75), lwd = .5,
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  # geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-  #           size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1), 
+            vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", NO[x], ")")),
@@ -204,24 +261,42 @@ sample <- data %>%
 
 sample$value = sample$value / 1e6
 
-min_value = min(round(sample$value,2))
-max_value = max(round(sample$value,2)) + .25
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
-# totals <- sample %>%
-#   group_by(scenario_capacity, strategy_short) %>%
-#   summarize(value2 = round(baseline, 2))
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + 1
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_capacity, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_capacity, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 suplher_dioxide = ggplot(sample,
                           aes(x=strategy_short, y=baseline, fill=income)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(.75), lwd = .5,
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  # geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-  #           size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1), 
+            vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", SO[x], ")")),
@@ -243,24 +318,42 @@ sample <- data %>%
 
 sample$value = sample$value / 1e6
 
-min_value = min(round(sample$value,2))
-max_value = max(round(sample$value,2)) + .25
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
-# totals <- sample %>%
-#   group_by(scenario_capacity, strategy_short) %>%
-#   summarize(value2 = round(baseline, 2))
+totals <- sample %>%
+  group_by(scenario_capacity, strategy_short) %>%
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + 1
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_capacity, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_capacity, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 pm10 = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
                 position = position_dodge(.75), lwd = .5,
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  # geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-  #           size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1), 
+            vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", PM[10], ")")),
@@ -276,7 +369,9 @@ ggarrange(
   energy,
   carbon_dioxide,
   labels = c("A", "B"),
-  ncol = 1, nrow = 2)
+  ncol = 1, nrow = 2,
+  common.legend = TRUE,
+  legend = 'bottom')
 
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'energy_emissions.png')
@@ -291,7 +386,9 @@ ggarrange(
   suplher_dioxide,
   pm10,
   labels = c("A", "B", "C"),
-  ncol = 1, nrow = 3)
+  ncol = 1, nrow = 3,
+  common.legend = TRUE,
+  legend = 'bottom')
 
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'health_emissions.png')
@@ -350,10 +447,18 @@ data$scenario_capacity = factor(data$scenario_capacity,
                                          '100 GB/Month'
                                 ))
 
+data$income = factor(data$income,
+                     levels=c('LIC',
+                              'LMIC',
+                              'UMIC',
+                              'HIC'
+                     ))
+
 data = data[complete.cases(data),]
 
 data = data %>%
-  group_by(income, scenario_adopt, scenario_capacity, strategy_short, strategy_power) %>%
+  group_by(income, 
+           scenario_adopt, scenario_capacity, strategy_short, strategy_power) %>%
   summarise(
     # total_energy_annual_demand_kwh = sum(total_energy_annual_demand_kwh),
     total_demand_carbon_tonnes = sum(total_demand_carbon_tonnes),
@@ -369,12 +474,40 @@ data$total_nitrogen_oxide_tonnes = data$total_nitrogen_oxide_tonnes / 1e6
 data$total_sulpher_dioxide_tonnes = data$total_sulpher_dioxide_tonnes / 1e6
 data$total_pm10_tonnes = data$total_pm10_tonnes / 1e6
 
-# data$scenario = NULL
-# data$strategy = NULL
-
 long <- data %>% 
   gather(type, value, -c(
-    scenario_adopt, scenario_capacity, strategy_short, strategy_power))
+  income, scenario_adopt, scenario_capacity, strategy_short, strategy_power))
+
+long$strategy_long <- paste(long$strategy_short, data$strategy_power)
+unique(long$strategy_long)
+long$strategy_long = factor(long$strategy_long,
+                     levels=c("4G (W) Baseline",
+                              "4G (W) Renewables",
+                              "4G (F) Baseline",
+                              "4G (F) Renewables",
+                              "5G (W) Baseline",
+                              "5G (W) Renewables",
+                              "5G (F) Baseline",
+                              "5G (F) Renewables"
+                     ),
+                     labels=c("4G (W)\nBaseline",
+                              "4G (W)\nRenewables",
+                              "4G (F)\nBaseline",
+                              "4G (F)\nRenewables",
+                              "5G (W)\nBaseline",
+                              "5G (W)\nRenewables",
+                              "5G (F)\nBaseline",
+                              "5G (F)\nRenewables"
+                     )
+                     )
+
+long$strategy_short = NULL
+long$strategy_power = NULL
+long$scenario_capacity = NULL
+
+# long <- data %>% 
+#   gather(type, value, -c(income, 
+#     scenario_adopt, strategy_long))
 
 long$type = factor(long$type,
                    levels=c("total_demand_carbon_tonnes",
@@ -391,11 +524,31 @@ long$type = factor(long$type,
 
 long = spread(long, scenario_adopt, value)
 
-ggplot(long, aes(x=strategy_short, y=baseline, fill=strategy_power)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=long, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+df_errorbar <- 
+  long |>
+  group_by(income, type, strategy_long) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(type, strategy_long) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
+
+ggplot(long, aes(x=strategy_long, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
+  geom_text(data = df_errorbar, 
+            aes(label = paste(round(baseline, 2),"")), size = 2,
+            # position = position_dodge(1), 
+            vjust =-.5, hjust =-.2, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title="Impact of Shifting Off-Grid Diesel Generators to Renewable Site Power",
@@ -406,12 +559,12 @@ ggplot(long, aes(x=strategy_short, y=baseline, fill=strategy_power)) +
   scale_fill_viridis_d() +
   facet_wrap(~type, scales = "free", labeller=label_parsed)
 
+
 path = file.path(folder, 'figures', 'global', 'power_strategies.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 path = file.path(folder, '..', 'reports', 'images', 'global', 'power_strategies.png')
 ggsave(path, units="in", width=8, height=6, dpi=300)
 while (!is.null(dev.list()))  dev.off()
-
 
 ############################
 ### Infra Sharing
@@ -462,9 +615,16 @@ data$scenario_sharing = factor(data$scenario_sharing,
                                         'SRN'
                                ))
 
+data$income = factor(data$income,
+                     levels=c('LIC',
+                              'LMIC',
+                              'UMIC',
+                              'HIC'
+                     ))
+
 data = data[complete.cases(data),]
 
-data <- select(data,
+data <- select(data, income, 
                scenario_adopt, scenario_sharing, strategy_short, #grid_type,
                total_energy_annual_demand_kwh,
                total_demand_carbon_tonnes,
@@ -473,7 +633,7 @@ data <- select(data,
                total_pm10_tonnes)
 
 data = data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>%
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>%
   summarise(
     total_energy_annual_demand_kwh = sum(total_energy_annual_demand_kwh),
     total_demand_carbon_tonnes = sum(total_demand_carbon_tonnes),
@@ -484,34 +644,56 @@ data = data %>%
 
 ############
 sample <- data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
   summarize(
     value = round(sum(total_energy_annual_demand_kwh)),
   )
 
 sample$value = sample$value / 1e12
 
-min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + .25
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value2 = round(
-    (baseline), 1))
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + 1
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_sharing, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_sharing, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
+
+# totals <- sample %>%
+#   group_by(scenario_sharing, strategy_short) %>%
+#   summarize(value2 = round(
+#     (baseline), 1))
 
 energy =
   ggplot(sample,
-         aes(x=strategy_short, y=baseline, fill=strategy_short)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+         aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-.5, hjust=.5) +
-  theme(legend.position = 'none',
+  geom_text(data = df_errorbar,
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1),
+            vjust =-.7, hjust =-.2, angle = 0) +
+  theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title = "Total Cell Site Energy Demand over 2020-2030 by Infrastructure Sharing Strategy",
        fill=NULL,
@@ -523,32 +705,49 @@ energy =
 
 ############
 sample <- data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
   summarize(
     value = round(sum(total_demand_carbon_tonnes)),
   )
 
 sample$value = sample$value / 1e9
 
-min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + .3
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value2 = round(
-    (baseline), 2))
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + .05
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_sharing, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_sharing, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 carbon_dioxide = ggplot(sample,
-                        aes(x=strategy_short, y=baseline, fill=strategy_short)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+  aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar,
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1),
+            vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", CO[2], ") by Infrastructure Sharing Strategy")),
@@ -569,7 +768,7 @@ carbon_dioxide = ggplot(sample,
 
 ############
 sample <- data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
   summarize(
     value = round(sum(total_nitrogen_oxide_tonnes)),
   )
@@ -584,16 +783,38 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value2 = round(baseline, 1))
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + 10
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_sharing, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_sharing, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 nitrogen_dioxide = ggplot(sample,
-                          aes(x=strategy_short, y=baseline, fill=strategy_short)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+  aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar,
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1),
+            vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", NO[x], ") by Infrastructure Sharing Strategy")),
@@ -607,31 +828,49 @@ nitrogen_dioxide = ggplot(sample,
 
 ############
 sample <- data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
   summarize(
     value = round(sum(total_sulpher_dioxide_tonnes)),
   )
 
 sample$value = sample$value / 1e6
 
-min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + 1
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value2 = round(baseline, 1))
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + 1
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_sharing, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_sharing, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 suplher_dioxide = ggplot(sample,
-                         aes(x=strategy_short, y=baseline, fill=strategy_short)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+   aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar,
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1),
+            vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", SO[x], ") by Infrastructure Sharing Strategy")),
@@ -646,31 +885,49 @@ suplher_dioxide = ggplot(sample,
 ############
 
 sample <- data %>%
-  group_by(scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
+  group_by(income, scenario_adopt, scenario_sharing, strategy_short) %>% #, grid_type
   summarize(
     value = round(sum(total_pm10_tonnes)),
   )
 
 sample$value = sample$value / 1e6
 
-min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + .3
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value2 = round(baseline, 1))
+  summarize(value = round(sum(baseline), 2))
+
+min_value = min(round(totals$value,2))
+max_value = max(round(totals$value,2)) + .5
+min_value[min_value > 0] = 0
+
+df_errorbar <- 
+  sample |>
+  group_by(income, scenario_sharing, strategy_short) |>
+  summarize(
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  ) |>
+  group_by(scenario_sharing, strategy_short) |>
+  summarize(
+    income = 'LIC', 
+    low = sum(low),
+    baseline = sum(baseline),
+    high = sum(high)
+  )
 
 pm10 = ggplot(sample,
-              aes(x=strategy_short, y=baseline, fill=strategy_short)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(data=sample, aes(y = baseline, ymin = low, ymax = high),
-                position = position_dodge(width = .9), lwd = 0.5,
+              aes(x=strategy_short, y=baseline, fill=income)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
+                lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(y=0, aes(strategy_short, value2, label = value2, color="#FF0000FF"),
-            size = 3, data = totals, vjust=-.5, hjust=.5) +
+  geom_text(data = df_errorbar,
+            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            # position = position_dodge(1),
+            vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Emissions over 2020-2030 (", PM[10], ") by Infrastructure Sharing Strategy")),
@@ -686,7 +943,9 @@ ggarrange(
   energy,
   carbon_dioxide,
   labels = c("A", "B"),
-  ncol = 1, nrow = 2)
+  ncol = 1, nrow = 2,
+  common.legend = TRUE,
+  legend = 'bottom')
 
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'energy_emissions_sharing.png')
@@ -701,7 +960,9 @@ ggarrange(
   suplher_dioxide,
   pm10,
   labels = c("A", "B", "C"),
-  ncol = 1, nrow = 3)
+  ncol = 1, nrow = 3,  
+  common.legend = TRUE,
+  legend = 'bottom')
 
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'health_emissions_sharing.png')

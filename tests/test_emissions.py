@@ -2,13 +2,13 @@ import pytest
 from cuba.emissions import assess_emissions
 
 
-def test_assess_emissions(setup_data_energy, setup_tech_lut,
+def test_assess_emissions(setup_country, setup_data_energy, setup_tech_lut,
     setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters):
     """
     Unit test.
 
     """
-    results = assess_emissions(setup_data_energy, setup_tech_lut,
+    results = assess_emissions(setup_country, setup_data_energy, setup_tech_lut,
         setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters)
 
     for result in results:
@@ -44,7 +44,7 @@ def test_assess_emissions(setup_data_energy, setup_tech_lut,
         2021
     ]
 
-    results = assess_emissions(setup_data_energy, setup_tech_lut,
+    results = assess_emissions(setup_country, setup_data_energy, setup_tech_lut,
         setup_on_grid_mix, setup_timesteps, setup_option, setup_country_parameters)
 
     total_carbon = []
@@ -86,7 +86,7 @@ def test_assess_emissions(setup_data_energy, setup_tech_lut,
         interim.append(item)
         new_energy_data = new_energy_data + interim
 
-    results = assess_emissions(new_energy_data, setup_tech_lut,
+    results = assess_emissions(setup_country, new_energy_data, setup_tech_lut,
         setup_on_grid_mix, [2020], setup_option, setup_country_parameters)
 
     for result in results:
