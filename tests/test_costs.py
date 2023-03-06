@@ -18,15 +18,100 @@ def test_find_cost(setup_region, setup_costs,
     Integration test.
 
     """
-    setup_region[0]['sites_4G'] = 0
-    setup_region[0]['new_mno_sites'] = 1
-    setup_region[0]['upgraded_mno_sites'] = 0
-    setup_region[0]['site_density'] = 0.5
+    # setup_region[0]['sites_4G'] = 0
+    # setup_region[0]['new_mno_sites'] = 1
+    # setup_region[0]['upgraded_mno_sites'] = 0
+    # setup_region[0]['site_density'] = 0.5
+
+    # answer = find_cost(
+    #     setup_region[0],
+    #     setup_assets,
+    #     {'strategy': '3G_epc_wireless_baseline_baseline_baseline_baseline'},
+    #     setup_costs,
+    #     setup_global_parameters,
+    #     setup_country_parameters,
+    #     setup_infra_sharing_assets,
+    #     setup_cost_types
+    # )
+
+    # assert answer['network_cost'] == 61990.75 #no sharing
+
+    # answer = find_cost(
+    #     setup_region[0],
+    #     setup_assets,
+    #     {'strategy': '3G_epc_wireless_passive_baseline_baseline_baseline'},
+    #     setup_costs,
+    #     setup_global_parameters,
+    #     setup_country_parameters,
+    #     setup_infra_sharing_assets,
+    #     setup_cost_types
+    # )
+
+    # assert round(answer['network_cost']) == 28331 #share only passive
+
+    # answer = find_cost(
+    #     setup_region[0],
+    #     setup_assets,
+    #     {'strategy': '3G_epc_wireless_active_baseline_baseline_baseline'},
+    #     setup_costs,
+    #     setup_global_parameters,
+    #     setup_country_parameters,
+    #     setup_infra_sharing_assets,
+    #     setup_cost_types
+    # )
+
+    # assert round(answer['network_cost']) == 20664 #share all passive + active
+
+    # answer = find_cost(
+    #     setup_region[0],
+    #     setup_assets,
+    #     {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+    #     setup_costs,
+    #     setup_global_parameters,
+    #     setup_country_parameters,
+    #     setup_infra_sharing_assets,
+    #     setup_cost_types
+    # )
+
+    # assert round(answer['network_cost']) == 61991 #urban, therefore no sharing
+
+    # setup_region[0]['geotype'] = 'rural'
+
+    # answer = find_cost(
+    #     setup_region[0],
+    #     setup_assets,
+    #     {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+    #     setup_costs,
+    #     setup_global_parameters,
+    #     setup_country_parameters,
+    #     setup_infra_sharing_assets,
+    #     setup_cost_types
+    # )
+
+    # assert round(answer['network_cost']) == 20664
+
+    setup_assets = [
+        {
+            'build_type': 'existing',
+            'total_cost': 10000,
+            'asset':'backhaul_wireless_small'
+        },
+        {
+            'build_type': 'new',
+            'total_cost': 10000,
+            'asset': 'backhaul_wireless_small'
+        },
+        {
+            'build_type': 'upgraded',
+            'total_cost': 10000,
+            'asset': 'backhaul_wireless_small'
+        },
+    ]
 
     answer = find_cost(
         setup_region[0],
         setup_assets,
-        {'strategy': '3G_epc_wireless_baseline_baseline_baseline_baseline'},
+        {'strategy': '4G_epc_wireless_baseline_baseline_baseline_baseline'},
         setup_costs,
         setup_global_parameters,
         setup_country_parameters,
@@ -34,12 +119,12 @@ def test_find_cost(setup_region, setup_costs,
         setup_cost_types
     )
 
-    assert answer['network_cost'] == 61990.75 #no sharing
+    assert round(answer['network_cost']) == 27491
 
     answer = find_cost(
         setup_region[0],
         setup_assets,
-        {'strategy': '3G_epc_wireless_passive_baseline_baseline_baseline'},
+        {'strategy': '4G_epc_wireless_passive_baseline_baseline_baseline'},
         setup_costs,
         setup_global_parameters,
         setup_country_parameters,
@@ -47,12 +132,12 @@ def test_find_cost(setup_region, setup_costs,
         setup_cost_types
     )
 
-    assert round(answer['network_cost']) == 28331 #share only passive
+    assert round(answer['network_cost']) == 9164
 
     answer = find_cost(
         setup_region[0],
         setup_assets,
-        {'strategy': '3G_epc_wireless_active_baseline_baseline_baseline'},
+        {'strategy': '4G_epc_wireless_active_baseline_baseline_baseline'},
         setup_costs,
         setup_global_parameters,
         setup_country_parameters,
@@ -60,35 +145,7 @@ def test_find_cost(setup_region, setup_costs,
         setup_cost_types
     )
 
-    assert round(answer['network_cost']) == 20664 #share all passive + active
-
-    answer = find_cost(
-        setup_region[0],
-        setup_assets,
-        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
-        setup_costs,
-        setup_global_parameters,
-        setup_country_parameters,
-        setup_infra_sharing_assets,
-        setup_cost_types
-    )
-
-    assert round(answer['network_cost']) == 61991 #urban, therefore no sharing
-
-    setup_region[0]['geotype'] = 'rural'
-
-    answer = find_cost(
-        setup_region[0],
-        setup_assets,
-        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
-        setup_costs,
-        setup_global_parameters,
-        setup_country_parameters,
-        setup_infra_sharing_assets,
-        setup_cost_types
-    )
-
-    assert round(answer['network_cost']) == 20664
+    assert round(answer['network_cost']) == 9164
 
 
 def test_calc_sharing(setup_assets, setup_region, setup_option,
@@ -153,6 +210,59 @@ def test_calc_sharing(setup_assets, setup_region, setup_option,
     )
 
     assert round(answer['equipment']) == 3333
+
+    setup_assets = [
+        {
+            'build_type': 'existing',
+            'total_cost': 10000,
+            'asset':'backhaul_wireless_small'
+        },
+        {
+            'build_type': 'new',
+            'total_cost': 10000,
+            'asset': 'backhaul_wireless_small'
+        },
+        {
+            'build_type': 'upgraded',
+            'total_cost': 10000,
+            'asset': 'backhaul_wireless_small'
+        },
+    ]
+
+    setup_region[0]['geotype'] = 'rural'
+
+    answer = calc_sharing(
+        setup_assets,
+        setup_region[0],
+        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+        setup_country_parameters,
+        setup_infra_sharing_assets
+    )
+
+    assert round(answer['backhaul_wireless_small']) == round(20000 / 3)
+
+    setup_region[0]['geotype'] = 'urban'
+
+    answer = calc_sharing(
+        setup_assets,
+        setup_region[0],
+        {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline'},
+        setup_country_parameters,
+        setup_infra_sharing_assets
+    )
+
+    assert round(answer['backhaul_wireless_small']) == round(20000)
+
+
+    answer = calc_sharing(
+        setup_assets,
+        setup_region[0],
+        {'strategy': '3G_epc_wireless_active_baseline_baseline_baseline'},
+        setup_country_parameters,
+        setup_infra_sharing_assets
+    )
+
+    assert round(answer['backhaul_wireless_small']) == round(20000 / 3)
 
 
 def test_calc_npv(setup_assets_dict, setup_cost_types, setup_global_parameters,

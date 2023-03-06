@@ -136,11 +136,14 @@ def get_backhaul_dist(country, region):
         (country['backhaul_fiber_perc']/100)
     )
     node_density_km2 = nodes / region['area_km2']
-
+    # print(region['GID_0'], nodes, region['area_km2'], node_density_km2)
     if node_density_km2 > 0:
         ave_distance_to_a_node_m = (math.sqrt(1/node_density_km2) / 2) * 1000
     else:
-        ave_distance_to_a_node_m = round(math.sqrt(region['area_km2']) * 1000)
+        ave_distance_to_a_node_m = round(math.sqrt(region['area_km2']) * 1000) / 2
+
+    # if ave_distance_to_a_node_m > 10000:
+    #     ave_distance_to_a_node_m = 10000
 
     return ave_distance_to_a_node_m
 
@@ -157,25 +160,38 @@ def calc_assets(region, option, asset_structure, costs, build_type):
     total_assets = []
 
     for asset_name1, quantity in asset_structure.items():
+
         if asset_name1 == 'site_rental':
             asset_name1 = asset_name1 + '_' + geotype
 
+        backhaul_units = 0
         if asset_name1 == 'backhaul' and new_backhaul == 0:
             quantity = math.ceil(quantity['quantity'])
             cost_per_unit = 0
-            total_cost = 0
+            backhaul_units = 0
         elif asset_name1 == 'backhaul' and new_backhaul > 0:
             backhaul_dist_m = math.ceil(quantity['backhaul_dist_m'])
-            quantity, backhaul_name = estimate_backhaul_type(
+            quantity = quantity['quantity']
+            # print(asset_name1, backhaul, backhaul_dist_m, quantity)
+            # if backhaul == 'fiber' and backhaul_dist_m > 50000:
+            #     backhaul = 'wireless'
+            # print(asset_name1, backhaul, backhaul_dist_m, quantity)
+            backhaul_units, backhaul_name = estimate_backhaul_type(
                 backhaul,
                 backhaul_dist_m,
                 geotype)
             cost_per_unit = costs[backhaul_name]
             asset_name1 = asset_name1 + '_' + backhaul_name
+
+            if  backhaul == 'fiber':
+                #cost = cost_per_meter * number_of_sites * backaul_length_m
+                total_cost = cost_per_unit * quantity * backhaul_units
+                # print('fiber', backhaul_dist_m, cost_per_unit, quantity, backhaul_units, total_cost)
             if backhaul == 'wireless':
-                total_cost = cost_per_unit * quantity
-            elif backhaul == 'fiber':
-                total_cost = cost_per_unit * quantity * backhaul_dist_m
+                #cost = cost_per_backhaul_unit * number_of_sites * number_of_backhaul_units (e.g., 2 per site)
+                total_cost = cost_per_unit * quantity * backhaul_units
+                # print('wireless', backhaul_dist_m, cost_per_unit, quantity, backhaul_units, total_cost)
+
         else:
             cost_per_unit = costs[asset_name1]
             total_cost = cost_per_unit * quantity
@@ -191,6 +207,7 @@ def calc_assets(region, option, asset_structure, costs, build_type):
             'asset': asset_name1,
             'quantity': quantity,
             'cost_per_unit': cost_per_unit,
+            'backhaul_units': backhaul_units,
             'total_cost': total_cost,
             'build_type': build_type,
             'ownership': 'mno',

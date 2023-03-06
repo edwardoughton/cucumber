@@ -40,18 +40,23 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 OUTPUT = os.path.join(BASE_PATH, '..', 'results', 'model_results')
 
 
-def read_capacity_lut(path):
+def read_capacity_lut(path, global_parameters):
     """
 
     """
+    ci_global = global_parameters['confidence']
+
     capacity_lut = {}
 
     with open(path, 'r') as capacity_lookup_file:
         reader = csv.DictReader(capacity_lookup_file)
-        for row in reader:
+        for idx, row in enumerate(reader):
 
+            # if not row['confidence_interval'] == str(ci_global[0]):
+            #     continue
             if float(row["capacity_mbps_km2"]) <= 0:
                 continue
+
             environment = row["environment"].lower()
             ant_type = row["ant_type"]
             frequency_GHz = str(int(float(row["frequency_GHz"]) * 1e3))
@@ -288,14 +293,14 @@ if __name__ == '__main__':
     TIMESTEPS = [t for t in range(BASE_YEAR, END_YEAR + 1, TIMESTEP_INCREMENT)]
 
     path = os.path.join(DATA_RAW, 'pysim5g', 'capacity_lut_by_frequency.csv')
-    capacity_lut = read_capacity_lut(path)
+    capacity_lut = read_capacity_lut(path, GLOBAL_PARAMETERS)
 
     country_parameter_lut = load_country_parameters()
 
     decision_options = [
-        'technology_options',
-        # 'business_model_options',
-        # 'policy_options',
+        # 'technology_options',
+        'business_model_options',
+        # # 'policy_options',
         # 'power_options',
         # 'business_model_power_options',
     ]
@@ -304,15 +309,12 @@ if __name__ == '__main__':
 
     for decision_option in decision_options:
 
-        # print('Working on {}'.format(decision_option))
-
         options = OPTIONS[decision_option]#[:1]
 
         failures = []
 
         for country in tqdm(countries):#[::-1]:#[:1]:
 
-            # try:
             regional_annual_demand = []
             regional_results = []
             regional_cost_structure = []
@@ -322,18 +324,13 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            if not iso3 == "GBR":
-                continue
+            # if not iso3 == "AUS":
+            #     continue
 
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
             if not os.path.exists(OUTPUT_COUNTRY):
                 os.makedirs(OUTPUT_COUNTRY)
-
-            # if not iso3 == 'BRA':
-            #     continue
-
-            # print('-Working on {}'.format(iso3))
 
             country_parameters = country_parameter_lut[iso3]
 
@@ -346,13 +343,6 @@ if __name__ == '__main__':
             print('--Working on {} in {}'.format(decision_option, iso3))
 
             for option in options:
-
-                # print('Working on {} and {}'.format(option['scenario'], option['strategy']))
-
-                # filename = 'national_market_cost_results_{}.csv'.format(decision_option)
-                # path_out = os.path.join(OUTPUT_COUNTRY, filename)
-                # if os.path.exists(path_out):
-                #     continue
 
                 confidence_intervals = GLOBAL_PARAMETERS['confidence']
 
@@ -368,10 +358,15 @@ if __name__ == '__main__':
 
                 for ci in confidence_intervals:
 
-                    # print('CI: {}'.format(ci))
                     filename = 'decile_data.csv'
                     path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
                     data_initial = pd.read_csv(path_out)#[:1]
+
+                    # only serve those areas over 10 persons per km
+                    data_initial = data_initial[data_initial['population_km2'] > 10]
+
+                    # data_initial = data_initial[data_initial['decile'] == 3]
+
                     data_initial = data_initial.to_dict('records')
 
                     data_demand, annual_demand = estimate_demand(
@@ -418,15 +413,15 @@ if __name__ == '__main__':
                         ENERGY_DEMAND,
                     )
 
-                    # data_emissions = assess_emissions(
-                    #     country,
-                    #     data_energy,
-                    #     tech_lut,
-                    #     on_grid_mix,
-                    #     TIMESTEPS,
-                    #     option,
-                    #     country_parameters
-                    # )
+                    data_emissions = assess_emissions(
+                        country,
+                        data_energy,
+                        tech_lut,
+                        on_grid_mix,
+                        TIMESTEPS,
+                        option,
+                        country_parameters
+                    )
 
                     # final_results = allocate_deciles(data_assess)
 
@@ -435,7 +430,7 @@ if __name__ == '__main__':
                     for key, value in assets.items():
                         all_assets = all_assets + value
                     regional_energy_demand = regional_energy_demand + data_energy
-                    # regional_emissions = regional_emissions + data_emissions
+                    regional_emissions = regional_emissions + data_emissions
 
             all_results = all_results + regional_results
 
@@ -451,38 +446,35 @@ if __name__ == '__main__':
             write_energy_aggregated(regional_energy_demand, regional_annual_demand,
                 OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+            write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
-            #     OUTPUT_COUNTRY, decision_option)
+            write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+                OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+            write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
 
-            # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+            write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+                decision_option)
 
-            # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
+            write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
-            # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
-            #                 GLOBAL_PARAMETERS, COSTS, decision_option)
+            write_inputs(OUTPUT_COUNTRY, country, country_parameters,
+                            GLOBAL_PARAMETERS, COSTS, decision_option)
 
-            # generate_percentages(iso3, decision_option)
+            generate_percentages(iso3, decision_option)
 
-        # except:
+        if decision_option == 'technology_options':
+            collect_results('decile_market_cost_results_technology_options.csv')
+            collect_results('national_market_cost_results_technology_options.csv')
+            collect_results('emissions_technology_options.csv')
+        elif decision_option == 'business_model_options':
+            collect_results('national_market_cost_results_business_model_options.csv')
+        elif decision_option == 'policy_options':
+            collect_results('national_market_cost_results_policy_options.csv')
+        elif decision_option == 'power_options':
+            collect_results('power_emissions_power_options.csv')
+        elif decision_option == 'business_model_power_options':
+            collect_results('emissions_national_business_model_power_options.csv')
 
-        #     failures.append(country['iso3'])
-        #     print(failures)
-
-        # print(failures)
-
-    # collect_results('national_market_cost_results_technology_options.csv')
-    # collect_results('national_market_cost_results_business_model_options.csv')
-    # collect_results('national_market_cost_results_policy_options.csv')
-    # collect_results('emissions_technology_options.csv')
-    # collect_results('power_emissions_power_options.csv')
-    # collect_results('emissions_national_business_model_power_options.csv')
-
-    # write_results(all_results, OUTPUT, 'all_options_all_countries')
-
-    # print('Completed model run')
+    print('Completed model run')

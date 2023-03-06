@@ -346,6 +346,7 @@ def discount_admin_cost(cost, timestep, global_parameters):
 def calculate_total_market_costs(regions, option, country_parameters):
     """
     Calculate the costs for all Mobile Network Operators (MNOs).
+
     """
     output = []
 

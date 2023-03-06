@@ -47,6 +47,72 @@ def test_estimate_assets(setup_country, setup_region, setup_costs,
         if result['asset'] == 'core_node':
             assert result['quantity'] == 2
 
+    setup_region[0]['area_km2'] = 5000
+    setup_region[0]['sites_4G'] = 0
+    setup_region[0]['existing_mno_sites'] = 1
+    setup_region[0]['new_mno_sites'] = 10
+    setup_region[0]['upgraded_mno_sites'] = 0
+    setup_region[0]['site_density'] = 0.5
+    setup_region[0]['backhaul_new'] = 10
+    setup_region[0]['scenario'] = 'S1_50_50_50'
+    setup_region[0]['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['confidence'] = [50]
+
+    results = estimate_assets(
+        setup_country,
+        setup_region[0],
+        {'scenario': 'S1_50_50_50',
+        'strategy': '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+    )
+    total_cost_new = 0
+    for result in results:
+
+        cost = result['cost_per_unit'] * result['quantity'] #* result['backhaul_units']
+        if 'backhaul' in result['asset']:
+            cost = cost * result['backhaul_units']
+        if 'existing' == result['build_type']:
+            continue
+
+        total_cost_new += cost
+
+    assert total_cost_new == 4705600
+
+    setup_region[0]['area_km2'] = 100
+    setup_region[0]['sites_4G'] = 0
+    setup_region[0]['existing_mno_sites'] = 1
+    setup_region[0]['new_mno_sites'] = 10
+    setup_region[0]['upgraded_mno_sites'] = 0
+    setup_region[0]['site_density'] = 0.5
+    setup_region[0]['backhaul_new'] = 10
+    setup_region[0]['scenario'] = 'S1_50_50_50'
+    setup_region[0]['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['confidence'] = [50]
+
+    results = estimate_assets(
+        setup_country,
+        setup_region[0],
+        {'scenario': 'S1_50_50_50',
+        'strategy': '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'},
+        setup_costs,
+        setup_global_parameters,
+        setup_country_parameters,
+    )
+    total_cost_new = 0
+    for result in results:
+
+        cost = result['cost_per_unit'] * result['quantity']
+        if 'backhaul' in result['asset']:
+            cost = cost * result['backhaul_units']
+        if 'existing' == result['build_type']:
+            continue
+
+        total_cost_new += cost
+
+    assert total_cost_new == 1270000
+
 
 def test_upgrade_site(setup_country, setup_region):
     """
@@ -62,7 +128,7 @@ def test_upgrade_site(setup_country, setup_region):
     assert cost_structure['site_rental'] == 10
     assert cost_structure['operation_and_maintenance'] == 10
     assert cost_structure['backhaul']['quantity'] == 10
-    assert cost_structure['backhaul']['backhaul_dist_m'] == 1414
+    assert cost_structure['backhaul']['backhaul_dist_m'] == 707.0#1414
 
 
 def test_greenfield_site(setup_country, setup_region):
@@ -80,7 +146,7 @@ def test_greenfield_site(setup_country, setup_region):
     assert cost_structure['site_rental'] == 10
     assert cost_structure['operation_and_maintenance'] == 10
     assert cost_structure['backhaul']['quantity'] == 10
-    assert cost_structure['backhaul']['backhaul_dist_m'] == 1414
+    assert cost_structure['backhaul']['backhaul_dist_m'] == 707.0#1414
 
 
 def test_existing_site(setup_country, setup_region):
@@ -123,7 +189,7 @@ def test_calc_assets(setup_region, setup_option, setup_costs):
 
     assert assets[0]['asset'] == 'backhaul_wireless_small'
     assert assets[0]['cost_per_unit'] == 10000
-    assert assets[0]['total_cost'] == 10000
+    assert assets[0]['total_cost'] == 10000 #1 new site needs 2 backhaul units to work
 
     assets = calc_assets(setup_region[0], setup_option, asset_structure,
         setup_costs, 'upgraded')
@@ -144,7 +210,7 @@ def test_calc_assets(setup_region, setup_option, setup_costs):
 
     assert assets[0]['asset'] == 'backhaul_fiber_urban_m'
     assert assets[0]['cost_per_unit'] == 10
-    assert assets[0]['total_cost'] == 40000000
+    assert assets[0]['total_cost'] == 200000
 
     assets = calc_assets(setup_region[0], setup_option, {'equipment':1},
         setup_costs, 'new')
@@ -174,6 +240,21 @@ def test_calc_assets(setup_region, setup_option, setup_costs):
     assert assets[0]['cost_per_unit'] == 9600
     assert assets[0]['total_cost'] == 9600
 
+    setup_option['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+
+    asset_structure = {
+        'backhaul': {
+            'quantity': 10,
+            'backhaul_dist_m': 20000
+        }
+    }
+
+    assets = calc_assets(setup_region[0], setup_option, asset_structure,
+        setup_costs, 'upgraded')
+
+    assert assets[0]['total_cost'] == 2000000 #20000 * 10 * 10
+    assert assets[0]['asset'] == 'backhaul_fiber_urban_m' #backhaul_wireless_medium
+
 
 def test_get_backhaul_dist(setup_country, setup_region):
 
@@ -181,7 +262,7 @@ def test_get_backhaul_dist(setup_country, setup_region):
     assert get_backhaul_dist(setup_country, setup_region[0]) == 250
 
     setup_region[0]['existing_mno_sites'] = 0
-    assert get_backhaul_dist(setup_country, setup_region[0]) == 1414
+    assert get_backhaul_dist(setup_country, setup_region[0]) == 707
 
 
 def test_estimate_backhaul_type():

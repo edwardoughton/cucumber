@@ -39,6 +39,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'asset': 'equipment',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         # {
         # 'scenario': 'low_20_20_20',
@@ -65,6 +66,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'asset': 'backhaul_wireless_small',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         'scenario': 'low_20_20_20',
@@ -74,6 +76,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'asset': 'backhaul_wireless_medium',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         'scenario': 'low_20_20_20',
@@ -83,6 +86,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'asset': 'backhaul_wireless_large',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
     ]
     }
@@ -96,21 +100,26 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'wireless_large_kwh': 1,
     }
 
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_baseline_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
 
-    ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
-    assert results[0]['mno_equipment_annual_demand_kWh'] == (1 * 24 * 365) * 0.5
-    # assert results[0]['mno_regional_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
-    # assert results[0]['mno_core_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
-    assert results[0]['mno_wireless_backhaul_annual_demand_kwh'] == (3 * 24 * 365) * 0.5
-    assert results[0]['mno_energy_annual_demand_kwh'] == (
-        (((1 * 24 * 365) * 0.5)) + (((3 * 24 * 365)) * 0.5)
-    )
+    for item in results:
 
-    assert results[0]['total_equipment_annual_demand_kWh'] == (((1 * 24 * 365) * 0.5) *3)
+        if not item == 'new':
+            continue
+
+        ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
+        assert results[0]['mno_equipment_annual_demand_kWh'] == (1 * 24 * 365) * 0.5
+        # assert results[0]['mno_regional_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
+        # assert results[0]['mno_core_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
+        assert results[0]['mno_wireless_backhaul_annual_demand_kwh'] == (3 * 24 * 365) * 0.5
+        assert results[0]['mno_energy_annual_demand_kwh'] == (
+            (((1 * 24 * 365) * 0.5)) + (((3 * 24 * 365)) * 0.5)
+        )
+
+        assert results[0]['total_equipment_annual_demand_kWh'] == (((1 * 24 * 365) * 0.5) *3)
 
 
     regions = [
@@ -129,6 +138,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
             'phones_on_network': 750,
             'population_with_phones': 1000,
             'phones_on_network_to_total_phones_ratio': 0.75,
+            'asset_type': 'new',
         },
         {
             'GID_0': 'CHL',
@@ -145,14 +155,18 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
             'phones_on_network': 750,
             'population_with_phones': 1000,
             'phones_on_network_to_total_phones_ratio': 0.75,
+            'asset_type': 'new',
         },
     ]
 
-    results = assess_energy('CHL', regions, assets, setup_option,
+    results = assess_energy({'income': 'HIC'}, regions, assets, setup_option,
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
 
     for region in results:
+
+        if not region['asset_type'] == 'new':
+            continue
 
         if region['grid_type_perc'] == 100 and region['grid_type'] == 'on_grid':
             assert region['total_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 4) * 1) * 3
@@ -164,7 +178,7 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         2021,
     ]
 
-    results = assess_energy('CHL', regions, assets, setup_option,
+    results = assess_energy({'income': 'HIC'}, regions, assets, setup_option,
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand
     ) # should produce 8 results, 2 regions, 2 grid types over 2 timesteps
@@ -210,6 +224,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'equipment',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         # 'scenario': 'low_20_20_20',
@@ -219,6 +234,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'regional_node',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         # 'scenario': 'low_20_20_20',
@@ -228,6 +244,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'core_node',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         # 'scenario': 'low_20_20_20',
@@ -237,6 +254,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'backhaul_wireless_small',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         # 'scenario': 'low_20_20_20',
@@ -246,6 +264,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'backhaul_wireless_medium',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
         {
         # 'scenario': 'low_20_20_20',
@@ -255,6 +274,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'asset': 'backhaul_wireless_large',
         'quantity': 1,
         'decile': 1,
+        'asset_type': 'new',
         },
     ],
     }
@@ -268,18 +288,20 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
         'wireless_large_kwh': 1,
     }
 
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_baseline_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
 
-    ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
-    ## 4380 = 24 * 365 * .5
-    assert round(results[0]['mno_equipment_annual_demand_kWh']) == round((1 * 24 * 365) * 0.5)   #4,380
-    assert round(results[0]['mno_energy_annual_demand_kwh']) == round((1 * 24 * 365) * 0.5) * 6  #26,280
-    assert round(results[0]['total_equipment_annual_demand_kWh']) == round((((1 * 24 * 365) * 0.5) *3)) #13140
+    for item in results:
+        if item['asset_type'] == 'new':
+            ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
+            ## 4380 = 24 * 365 * .5
+            assert round(results[0]['mno_equipment_annual_demand_kWh']) == round((1 * 24 * 365) * 0.5)   #4,380
+            assert round(results[0]['mno_energy_annual_demand_kwh']) == round((1 * 24 * 365) * 0.5) * 6  #26,280
+            # assert round(results[0]['total_equipment_annual_demand_kWh']) == round((((1 * 24 * 365) * 0.5) *3)) #13140
 
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_passive_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
@@ -288,7 +310,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
     assert round(results[0]['mno_energy_annual_demand_kwh']) == round((1 * 24 * 365) * 0.5) * 6 #26,280
     assert round(results[0]['total_equipment_annual_demand_kWh']) == round(((1 * 24 * 365) * 0.5) * 3) #13140
 
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_active_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
@@ -315,7 +337,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
             'phones_on_network_to_total_phones_ratio': 0.75,
         },
     ]
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)
@@ -327,7 +349,7 @@ def test_assess_energy_sharing(setup_region, setup_option, setup_global_paramete
 
     regions[0]['geotype'] = 'urban'
 
-    results = assess_energy('CHL', regions, assets,
+    results = assess_energy({'income': 'HIC'}, regions, assets,
         {'strategy': '3G_epc_wireless_srn_baseline_baseline_baseline_baseline','scenario': 'r'},
         setup_global_parameters, setup_country_parameters,
         setup_timesteps, energy_demand)

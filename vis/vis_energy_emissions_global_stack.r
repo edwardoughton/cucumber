@@ -10,7 +10,7 @@ data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
 data$GID_0 = NULL
 
 data = data %>%
-  group_by(income, scenario, strategy, grid_type) %>%
+  group_by(income, scenario, strategy, asset_type, grid_type) %>%
   summarise(
     total_energy_annual_demand_kwh = sum(total_energy_annual_demand_kwh),
     total_demand_carbon_tonnes = sum(total_demand_carbon_tonnes),
@@ -91,10 +91,6 @@ totals <- sample %>%
   summarize(value2 = round(
     sum(baseline), 2))
 
-min_value = min(round(totals$value2,1))
-max_value = max(round(totals$value2,1)) + 1
-min_value[min_value > 0] = 0
-
 df_errorbar <- 
   sample |>
   group_by(income, scenario_capacity, strategy_short) |>
@@ -111,6 +107,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 energy = 
   ggplot(sample, aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -119,7 +119,7 @@ energy =
                 show.legend = FALSE, width=0.1,  color="#FF0000FF"
                 ) +
   geom_text(data = df_errorbar, 
-            aes(label = paste(round(baseline, 1),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1), 
             vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'bottom',
@@ -148,10 +148,6 @@ totals <- sample %>%
   summarize(value = round(
     sum(baseline), 2))
 
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + .05
-min_value[min_value > 0] = 0
-
 df_errorbar <- 
   sample |>
   group_by(income, scenario_capacity, strategy_short) |>
@@ -168,6 +164,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 carbon_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -175,7 +175,7 @@ carbon_dioxide = ggplot(sample,
                 lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar, 
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1), 
             vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'bottom',
@@ -211,10 +211,6 @@ totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
   summarize(value = round(sum(baseline), 2))
 
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + .02
-min_value[min_value > 0] = 0
-
 df_errorbar <- 
   sample |>
   group_by(income, scenario_capacity, strategy_short) |>
@@ -231,6 +227,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 nitrogen_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -238,7 +238,7 @@ nitrogen_dioxide = ggplot(sample,
                 lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar, 
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1), 
             vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'none',
@@ -267,10 +267,6 @@ totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
   summarize(value = round(sum(baseline), 2))
 
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + 1
-min_value[min_value > 0] = 0
-
 df_errorbar <- 
   sample |>
   group_by(income, scenario_capacity, strategy_short) |>
@@ -287,6 +283,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 suplher_dioxide = ggplot(sample,
                           aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -294,7 +294,7 @@ suplher_dioxide = ggplot(sample,
                 lwd = .5, #position = position_dodge(.75), 
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar, 
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1), 
             vjust =-.7, hjust =-.2, angle = 0)+
   theme(legend.position = 'none',
@@ -324,10 +324,6 @@ totals <- sample %>%
   group_by(scenario_capacity, strategy_short) %>%
   summarize(value = round(sum(baseline), 2))
 
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + 1
-min_value[min_value > 0] = 0
-
 df_errorbar <- 
   sample |>
   group_by(income, scenario_capacity, strategy_short) |>
@@ -344,6 +340,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 pm10 = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -351,7 +351,7 @@ pm10 = ggplot(sample,
                 position = position_dodge(.75), lwd = .5,
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar, 
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1), 
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
@@ -655,11 +655,7 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value = round(sum(baseline), 2))
-
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + 1
-min_value[min_value > 0] = 0
+  summarize(value = round(sum(baseline), 1))
 
 df_errorbar <- 
   sample |>
@@ -677,6 +673,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 # totals <- sample %>%
 #   group_by(scenario_sharing, strategy_short) %>%
 #   summarize(value2 = round(
@@ -690,7 +690,7 @@ energy =
                 lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar,
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1),
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'bottom',
@@ -716,11 +716,7 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value = round(sum(baseline), 2))
-
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + .05
-min_value[min_value > 0] = 0
+  summarize(value = round(sum(baseline), 1))
 
 df_errorbar <- 
   sample |>
@@ -738,6 +734,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 carbon_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -745,7 +745,7 @@ carbon_dioxide = ggplot(sample,
                 lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar,
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1),
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
@@ -775,19 +775,11 @@ sample <- data %>%
 
 sample$value = sample$value / 1e3
 
-min_value = min(round(sample$value))
-max_value = max(round(sample$value)) + 10
-min_value[min_value > 0] = 0
-
 sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value = round(sum(baseline), 2))
-
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + 10
-min_value[min_value > 0] = 0
+  summarize(value = round(sum(baseline), 1))
 
 df_errorbar <- 
   sample |>
@@ -805,6 +797,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 nitrogen_dioxide = ggplot(sample,
   aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -812,7 +808,7 @@ nitrogen_dioxide = ggplot(sample,
                 lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar,
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1),
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
@@ -839,11 +835,7 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value = round(sum(baseline), 2))
-
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + 1
-min_value[min_value > 0] = 0
+  summarize(value = round(sum(baseline), 1))
 
 df_errorbar <- 
   sample |>
@@ -861,6 +853,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 suplher_dioxide = ggplot(sample,
    aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -868,7 +864,7 @@ suplher_dioxide = ggplot(sample,
                 lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar,
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1),
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',
@@ -896,11 +892,7 @@ sample = spread(sample, scenario_adopt, value)
 
 totals <- sample %>%
   group_by(scenario_sharing, strategy_short) %>%
-  summarize(value = round(sum(baseline), 2))
-
-min_value = min(round(totals$value,2))
-max_value = max(round(totals$value,2)) + .5
-min_value[min_value > 0] = 0
+  summarize(value = round(sum(baseline), 1))
 
 df_errorbar <- 
   sample |>
@@ -918,6 +910,10 @@ df_errorbar <-
     high = sum(high)
   )
 
+min_value = min(round(df_errorbar$low,3))
+max_value = max(round(df_errorbar$high,3)) + .01
+min_value[min_value > 0] = 0
+
 pm10 = ggplot(sample,
               aes(x=strategy_short, y=baseline, fill=income)) +
   geom_bar(stat="identity", position='stack') +
@@ -925,7 +921,7 @@ pm10 = ggplot(sample,
                 lwd = 0.5, #position = position_dodge(width = .9),
                 show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   geom_text(data = df_errorbar,
-            aes(label = paste(round(baseline, 2),"")), size = 2.5,
+            aes(label = paste(round(baseline, 2),"")), size = 2,#.25,
             # position = position_dodge(1),
             vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'none',

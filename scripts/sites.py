@@ -47,7 +47,7 @@ def process_unconstrained_site_estimation(country):
     path = os.path.join(DATA_INTERMEDIATE, iso3, filename)
     regional_data = pd.read_csv(path)
 
-    path = os.path.join(DATA_RAW, 'site_counts', 'hybrid_site_data.csv')
+    path = os.path.join(DATA_RAW, 'site_counts', 'hybrid_site_data_v3.csv') #hybrid_site_data_v2
     site_data = pd.read_csv(path, encoding = "ISO-8859-1")
 
     population = regional_data['population'].sum()

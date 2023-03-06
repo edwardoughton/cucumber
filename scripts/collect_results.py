@@ -22,7 +22,13 @@ def collect_results(filename):
     Collect results.
 
     """
-    countries = os.listdir(RESULTS)
+    print('Working on {}'.format(filename))
+
+    countries = [
+        name for name in os.listdir(RESULTS) if os.path.isdir(
+                os.path.join(RESULTS, name)
+            )
+        ]
 
     output = []
 
@@ -31,7 +37,8 @@ def collect_results(filename):
         # if not iso3 == 'GBR':
         #     continue
 
-        items = os.listdir(os.path.join(RESULTS, iso3))
+        path_in = os.path.join(RESULTS, iso3)
+        items = os.listdir(path_in)
 
         for item in items:
 
@@ -57,9 +64,10 @@ def collect_results(filename):
 
 if __name__ == "__main__":
 
-    # collect_results('national_market_cost_results_technology_options.csv')
+    collect_results('decile_market_cost_results_technology_options.csv')
+    collect_results('national_market_cost_results_technology_options.csv')
     # collect_results('national_market_cost_results_business_model_options.csv')
     # collect_results('national_market_cost_results_policy_options.csv')
     # collect_results('emissions_technology_options.csv')
     # collect_results('power_emissions_power_options.csv')
-    collect_results('emissions_national_business_model_power_options.csv')
+    # collect_results('emissions_national_business_model_power_options.csv')

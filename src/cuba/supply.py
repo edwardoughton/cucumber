@@ -290,7 +290,7 @@ def find_frequencies(country):
                 },
                 {
                     'frequency': 3500,
-                    'bandwidth': '1x50',
+                    'bandwidth': '1x40',
                 },
             ],
         }
@@ -313,7 +313,7 @@ def find_frequencies(country):
                 },
                 {
                     'frequency': 3500,
-                    'bandwidth': '1x50',
+                    'bandwidth': '1x40',
                 },
             ],
         }
@@ -353,7 +353,7 @@ def find_frequencies(country):
                 },
                 {
                     'frequency': 3500,
-                    'bandwidth': '1x50',
+                    'bandwidth': '1x40',
                 },
             ],
         }
@@ -479,16 +479,28 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
     #get the number of networks in the area
     networks = country_parameters['networks'][sharing + '_' + geotype]
 
-    region['existing_mno_sites'] = (region['total_estimated_sites'] / networks)
+    # if sharing == 'active':
+    #     networks = 2
+    # if sharing == 'src' and geotype == 'rural':
+    #     networks = 2
 
+    # networks = 4
+    region['existing_mno_sites'] = math.ceil(region['total_estimated_sites'] / networks)
+    # print(region['existing_mno_sites'])
     #get the number of existing 4G sites
-    existing_4G_sites = math.ceil(region['total_estimated_sites_4G'] / networks )
+    existing_4G_sites = math.ceil(region['total_estimated_sites_4G'] / networks)
+
+    # if sharing in ['active', 'src']:
+    #     if total_sites_required > region['existing_mno_sites']:
+    #         print(math.ceil(region['total_estimated_sites'] / networks))
+    #         # print(math.ceil(region['total_estimated_sites'] / networks))
+    #         print(sharing, geotype, total_sites_required,  region['existing_mno_sites'])
 
     if total_sites_required > region['existing_mno_sites']:
 
         region['new_mno_sites'] = (int(round(total_sites_required -
             region['existing_mno_sites'])))
-
+        # print(region['new_mno_sites'])
         if region['existing_mno_sites'] > 0:
             if generation == '4G' and existing_4G_sites > 0 :
                 region['upgraded_mno_sites'] = (region['existing_mno_sites'] -
@@ -506,7 +518,7 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
             region['upgraded_mno_sites'] = to_upgrade if to_upgrade >= 0 else 0
         else:
             region['upgraded_mno_sites'] = total_sites_required
-    # print(region)
+
     return region
 
 

@@ -762,8 +762,8 @@ def forecast_linear(country, historical_data, start_point, end_point, horizon):
             else:
                 penetration = penetration * (1 + (subs_growth/100))
 
-            if penetration > 90:
-                penetration = 90
+            if penetration > 95:
+                penetration = 95
 
             if year not in [item['year'] for item in scenario_data]:
 
@@ -929,12 +929,12 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
 
             # smartphone_growth = country['sp_growth_{}_{}'.format(scenario, settlement_type)]
             smartphone_growth = country['sp_growth_{}'.format(scenario)]
+
             seen_years = set()
 
             for item in data:
 
                 if not item['settlement_type'].lower() == settlement_type:
-
                     continue
 
                 for year in range(start_point, end_point + 1):
@@ -945,6 +945,24 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
                     if year == start_point:
 
                         penetration = item['smartphone_penetration']
+
+                        if settlement_type == 'urban' and country['income'] == 'LIC':
+                            penetration = penetration * 1.1
+                        elif settlement_type == 'urban' and country['income'] == 'LMIC':
+                            penetration = penetration * 1.1
+                        elif settlement_type == 'urban' and country['income'] == 'UMIC':
+                            penetration = penetration * 1.1
+                        elif settlement_type == 'urban' and country['income'] == 'HIC':
+                            penetration = penetration * 1.1
+
+                        if settlement_type == 'rural' and country['income'] == 'LIC':
+                            penetration = penetration * .5
+                        elif settlement_type == 'rural' and country['income'] == 'LMIC':
+                            penetration = penetration * .6
+                        elif settlement_type == 'rural' and country['income'] == 'UMIC':
+                            penetration = penetration * .7
+                        elif settlement_type == 'rural' and country['income'] == 'HIC':
+                            penetration = penetration * .8
 
                     else:
 
@@ -974,13 +992,13 @@ if __name__ == '__main__':
 
     for country in countries:#[:1]:
 
-        if not country['iso3'] == 'KEN':
-            continue
+        # if not country['iso3'] == 'KEN':
+        #     continue
 
         # if country['iso3'] == 'MDV': #MDV has it's own set of scripts
         #     continue #see -> ~/qubic/scripts/MDV/
 
-        # if not country['iso3'] == 'GBR':
+        # if not country['iso3'] == 'ECU':
         #     continue
 
         print('----')

@@ -36,6 +36,7 @@ def generate_percentages(iso3, decision_option):
 
         if os.path.exists(path):
             data = pd.read_csv(path)
+            # print(data.columns)
             data = process_technology_data(data)
             filename = 'percentages_technologies_{}.csv'.format(iso3)
             path = os.path.join(OUTPUT, filename)

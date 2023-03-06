@@ -14,7 +14,7 @@ def test_assess_emissions(setup_country, setup_data_energy, setup_tech_lut,
     for result in results:
 
         if result['grid_type'] == 'on_grid':
-            print(result)
+
             assert result['mno_demand_carbon_tonnes'] == 30 / 1e3
             assert result['mno_nitrogen_oxide_tonnes'] == 30 / 1e3
             assert result['mno_sulpher_dioxide_tonnes'] == 30 / 1e3
