@@ -55,7 +55,7 @@ def find_cost(region, assets, option, costs, global_parameters,
         network_cost += v
 
     region['network_cost'] = network_cost
-
+    # print(round(network_cost/1e6))
     return region
 
 
@@ -155,6 +155,8 @@ def aggregate_costs(cost_by_asset):
 
     backhaul_fronthaul = [
         'backhaul',
+        'fiber',
+        'wireless',
     ]
 
     civils = [
@@ -177,7 +179,7 @@ def aggregate_costs(cost_by_asset):
     for key, value in cost_by_asset.items():
         if key in ran:
             ran_cost += value
-        if key.startswith('backhaul'):
+        if key.startswith(('backhaul','wireless','fiber')):
             if key.split('_')[0] in backhaul_fronthaul:
                 backhaul_fronthaul_cost += value
         if key in civils:

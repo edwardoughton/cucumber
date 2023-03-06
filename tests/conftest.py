@@ -281,6 +281,12 @@ def setup_infra_sharing_assets():
         'installation',
         'site_rental',
         'backhaul',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
     'active': [
         'equipment',
@@ -290,6 +296,12 @@ def setup_infra_sharing_assets():
         'operation_and_maintenance',
         'power',
         'backhaul',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
     'srn': [
         'equipment',
@@ -299,10 +311,12 @@ def setup_infra_sharing_assets():
         'operation_and_maintenance',
         'power',
         'backhaul',
-        # 'regional_edge',
-        # 'regional_node',
-        # 'core_edge',
-        # 'core_node',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
 }
 
@@ -317,6 +331,12 @@ def setup_cost_types():
     'operation_and_maintenance': 'opex',
     'power': 'opex',
     'backhaul': 'capex_and_opex',
+    'backhaul_fiber_urban_m': 'capex_and_opex',
+    'backhaul_fiber_suburban_m': 'capex_and_opex',
+    'backhaul_fiber_rural_m': 'capex_and_opex',
+    'backhaul_wireless_small': 'capex_and_opex',
+    'backhaul_wireless_medium': 'capex_and_opex',
+    'backhaul_wireless_large': 'capex_and_opex',
     'regional_node': 'capex_and_opex',
     'regional_edge': 'capex_and_opex',
     'core_node': 'capex_and_opex',
@@ -340,7 +360,7 @@ def setup_assets():
             'cost_per_unit': 10000, 'total_cost': 10000, 'build_type': 'upgraded'
         },
         {
-            'GID_id': 'MWI.1.1.1_1', 'asset': 'backhaul', 'quantity': 2000,
+            'GID_id': 'MWI.1.1.1_1', 'asset': 'backhaul_wireless_small', 'quantity': 2000,
             'cost_per_unit': 10, 'total_cost': 20000, 'build_type': 'upgraded'
         },
         {
@@ -357,7 +377,7 @@ def setup_assets():
 @fixture(scope='function')
 def setup_assets_dict():
     return {
-        'wireless_small': 10000,
+        'backhaul_wireless_small': 10000,
         'core_node': 10000,
         'site_rental_rural': 10000,
         'equipment': 10000,
@@ -453,6 +473,7 @@ def setup_data_energy():
             'total_new_sites': 231,
             'grid_type_perc': 8.142493638676845,
             'grid_type': 'on_grid',
+            'asset_type': 'new',
             'mno_energy_annual_demand_kwh': 30,
             'mno_equipment_annual_demand_kWh': 10,
             'mno_regional_nodes_annual_demand_kwh': 10,
@@ -476,6 +497,7 @@ def setup_data_energy():
             'total_new_sites': 231,
             'grid_type_perc': 91.85750636132316,
             'grid_type': 'grid_other',
+            'asset_type': 'new',
             'mno_energy_annual_demand_kwh': 30,
             'mno_equipment_annual_demand_kWh': 10,
             'mno_regional_nodes_annual_demand_kwh': 10,
@@ -499,6 +521,7 @@ def setup_data_energy():
             'total_new_sites': 231,
             'grid_type_perc': 8.142493638676845,
             'grid_type': 'on_grid',
+            'asset_type': 'new',
             'mno_energy_annual_demand_kwh': 30,
             'mno_equipment_annual_demand_kWh': 10,
             'mno_regional_nodes_annual_demand_kwh': 10,
@@ -522,6 +545,7 @@ def setup_data_energy():
             'total_new_sites': 231,
             'grid_type_perc': 91.85750636132316,
             'grid_type': 'grid_other',
+            'asset_type': 'new',
             'mno_energy_annual_demand_kwh': 30,
             'mno_equipment_annual_demand_kWh': 10,
             'mno_regional_nodes_annual_demand_kwh': 10,

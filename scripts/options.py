@@ -29,11 +29,16 @@ def generate_tech_options():
     output = []
 
     scenarios = [
+                'low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50','baseline_50_50_50', 'high_50_50_50',
+                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
                 # 'low_100_100_100', 'baseline_100_100_100','high_100_100_100',
-                # 'low_50_50_50',
-                'baseline_50_50_50',
-                # 'high_50_50_50',
+                # 'low_50_50_50','baseline_50_50_50', 'high_50_50_50',
                 # 'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                # 'low_10_10_10', 'baseline_10_10_10', 'high_10_10_10',
+                # 'low_60_60_60','baseline_60_60_60', 'high_60_60_60',
+                # 'low_40_40_40', 'baseline_40_40_40', 'high_40_40_40',
+                # 'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc', '5G_nsa'] #'3G_umts',
     backhaul_types = ['wireless', 'fiber']
@@ -75,8 +80,11 @@ def generate_business_model_options():
     """
     output = []
 
-    scenarios = ['low_100_100_100', 'baseline_100_100_100','high_100_100_100',
-                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
+    scenarios = [
+                'low_100_100_100', 'baseline_100_100_100','high_100_100_100',
+                'low_50_50_50',
+                'baseline_50_50_50',
+                'high_50_50_50',
                 'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
                 ]
     generation_core_types = ['4G_epc'] #'3G_umts', , '5G_nsa'
@@ -308,12 +316,12 @@ COSTS = {
     'site_rental_urban': 10000,
     'site_rental_suburban': 5000,
     'site_rental_rural': 3000,
-    'fiber_urban_m': 25,
-    'fiber_suburban_m': 15,
-    'fiber_rural_m': 10,
-    'wireless_small': 15000,
-    'wireless_medium': 20000,
-    'wireless_large': 45000,
+    'fiber_urban_m': 20,
+    'fiber_suburban_m': 10,
+    'fiber_rural_m': 5,
+    'wireless_small': 40000,
+    'wireless_medium': 60000,
+    'wireless_large': 80000,
     # 'core_node': 500000,
     # 'core_edge': 25,
     # 'regional_node': 200000,
@@ -339,6 +347,12 @@ INFRA_SHARING_ASSETS = {
         'installation',
         'site_rental',
         'backhaul',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
     'active': [
         'equipment',
@@ -348,6 +362,12 @@ INFRA_SHARING_ASSETS = {
         'operation_and_maintenance',
         'power',
         'backhaul',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
     'srn': [
         'equipment',
@@ -357,10 +377,12 @@ INFRA_SHARING_ASSETS = {
         'operation_and_maintenance',
         'power',
         'backhaul',
-        # 'regional_edge',
-        # 'regional_node',
-        # 'core_edge',
-        # 'core_node',
+        'backhaul_fiber_urban_m',
+        'backhaul_fiber_suburban_m',
+        'backhaul_fiber_rural_m',
+        'backhaul_wireless_small',
+        'backhaul_wireless_medium',
+        'backhaul_wireless_large',
     ],
 }
 
@@ -373,6 +395,12 @@ COST_TYPES = {
     'operation_and_maintenance': 'opex',
     'power': 'opex',
     'backhaul': 'capex_and_opex',
+    'backhaul_fiber_urban_m': 'capex_and_opex',
+    'backhaul_fiber_suburban_m': 'capex_and_opex',
+    'backhaul_fiber_rural_m': 'capex_and_opex',
+    'backhaul_wireless_small': 'capex_and_opex',
+    'backhaul_wireless_medium': 'capex_and_opex',
+    'backhaul_wireless_large': 'capex_and_opex',
     'regional_node': 'capex_and_opex',
     'regional_edge': 'capex_and_opex',
     'core_node': 'capex_and_opex',
