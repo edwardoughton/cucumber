@@ -7,6 +7,7 @@ Date: June 2021
 import math
 from itertools import tee
 import collections, functools, operator
+import pandas as pd
 
 
 def find_cost(region, assets, option, costs, global_parameters,
@@ -44,10 +45,10 @@ def find_cost(region, assets, option, costs, global_parameters,
     regional_asset_cost = calc_sharing(assets, region, option,
         country_parameters, infra_sharing_assets)
 
-    regional_asset_cost = calc_npv(regional_asset_cost, cost_types, global_parameters,
-        country_parameters)
+    regional_asset_cost = calc_pv(region, regional_asset_cost, cost_types,
+        global_parameters, country_parameters)
 
-    aggregated_cost = aggregate_costs(regional_asset_cost)
+    aggregated_cost = aggregate_costs(regional_asset_cost, global_parameters)
 
     network_cost = 0
     for k, v in aggregated_cost.items():
@@ -55,7 +56,7 @@ def find_cost(region, assets, option, costs, global_parameters,
         network_cost += v
 
     region['network_cost'] = network_cost
-    # print(round(network_cost/1e6))
+
     return region
 
 
@@ -81,13 +82,20 @@ def calc_sharing(assets, region, option, country_parameters, infra_sharing_asset
     for key in list(all_keys):
         value = 0
         for item in assets:
-            if item['build_type'] == 'existing':
-                continue
             if key == item['asset']:
                 value += item['total_cost']
 
+        if key in ['operation_and_maintenance']:
+            cost_structure[key] = value
+            continue
+
+        if key.startswith("site_rental"):
+            cost_structure[key] = value
+            continue
+
         if not key in shared_assets:
             cost_structure[key] = value
+
         else:
             if sharing == 'srn':
                 if geotype == 'urban' or geotype == 'suburban':
@@ -100,13 +108,13 @@ def calc_sharing(assets, region, option, country_parameters, infra_sharing_asset
     return cost_structure
 
 
-def calc_npv(assets, cost_types, global_parameters, country_parameters):
+def calc_pv(region, assets, cost_types,
+    global_parameters, country_parameters):
     """
-    Add the time dimension and get the Net Present Value (NPV).
+    Add the time dimension and get the Present Value (PV).
 
     """
     cost_by_asset = []
-
     total_cost = 0
 
     for asset_name1, cost in assets.items():
@@ -126,9 +134,6 @@ def calc_npv(assets, cost_types, global_parameters, country_parameters):
 
                     cost = discount_opex(cost, global_parameters, country_parameters)
 
-                else:
-                    return 'Did not recognize cost type'
-
                 total_cost += cost
 
                 cost_by_asset.append({
@@ -141,7 +146,7 @@ def calc_npv(assets, cost_types, global_parameters, country_parameters):
     return cost_by_asset
 
 
-def aggregate_costs(cost_by_asset):
+def aggregate_costs(cost_by_asset, global_parameters):
     """
     Aggregate the costs.
 
@@ -149,6 +154,9 @@ def aggregate_costs(cost_by_asset):
     ran = [
         'equipment',
         'site_rental',
+        'site_rental_urban',
+        'site_rental_suburban',
+        'site_rental_rural',
         'operation_and_maintenance',
         'power',
     ]
@@ -171,6 +179,7 @@ def aggregate_costs(cost_by_asset):
         'core_edge',
     ]
 
+
     ran_cost = 0
     backhaul_fronthaul_cost = 0
     civils_cost = 0
@@ -188,10 +197,10 @@ def aggregate_costs(cost_by_asset):
             core_cost += value
 
     aggregated_cost = {
-        'ran': ran_cost,
-        'backhaul_fronthaul': backhaul_fronthaul_cost,
-        'civils': civils_cost,
-        'core_network': core_cost,
+        'ran': round(ran_cost),
+        'backhaul_fronthaul': round(backhaul_fronthaul_cost),
+        'civils': round(civils_cost),
+        'core_network': round(ran_cost*(global_parameters['core_perc_of_ran']/100)),
     }
 
     return aggregated_cost

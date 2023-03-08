@@ -14,8 +14,8 @@ import geopandas
 from collections import OrderedDict
 from tqdm import tqdm
 
-from options import (OPTIONS, GLOBAL_PARAMETERS, COSTS, INFRA_SHARING_ASSETS,
-    COST_TYPES, ENERGY_DEMAND, TECH_LUT)
+from options import (OPTIONS, GLOBAL_PARAMETERS, COSTS, INFRA_SHARING_ASSETS, COST_TYPES,
+    ENERGY_DEMAND, TECH_LUT)
 from cuba.demand import estimate_demand
 from cuba.supply import estimate_supply
 from cuba.assess import assess
@@ -298,9 +298,9 @@ if __name__ == '__main__':
     country_parameter_lut = load_country_parameters()
 
     decision_options = [
-        # 'technology_options',
-        'business_model_options',
-        # # 'policy_options',
+        'technology_options',
+        # 'business_model_options',
+        # 'policy_options',
         # 'power_options',
         # 'business_model_power_options',
     ]
@@ -365,7 +365,7 @@ if __name__ == '__main__':
                     # only serve those areas over 10 persons per km
                     data_initial = data_initial[data_initial['population_km2'] > 10]
 
-                    # data_initial = data_initial[data_initial['decile'] == 3]
+                    # data_initial = data_initial[data_initial['decile'] == 4]
 
                     data_initial = data_initial.to_dict('records')
 
@@ -401,7 +401,7 @@ if __name__ == '__main__':
                         country_parameters,
                         TIMESTEPS
                     )
-
+                    # print(option['strategy'], round(data_assess[0]['total_market_cost']/1e9,3))
                     data_energy = assess_energy(
                         country,
                         data_assess,

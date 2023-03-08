@@ -80,37 +80,19 @@ def estimate_demand(country, country_parameters, regions, option, global_paramet
                 country_parameters
             )
 
-            # year_gender = '{}_{}'.format(timestep, 'female')
-            # region['penetration_female'] = penetration_lut[year_gender]
-            # year_gender = '{}_{}'.format(timestep, 'male')
-            # region['penetration_male'] = penetration_lut[year_gender]
             region['penetration'] = (penetration_lut[timestep] / 100)
 
             #Number of cell phones per member of the population.
             region['population_with_phones'] = (
                 region['population_total'] * region['penetration'])
-            # region['population_with_phones_f_over_10'] = (
-            #     (region['population_f_over_10']) *
-            #     (region['penetration'] / 100))
-            # region['population_with_phones_m_over_10'] = (
-            #     (region['population_m_over_10']) *
-            #     (region['penetration'] / 100))
 
             #Total number of phones on the network being modeled.
             region['phones_on_network'] = (
                 region['population_with_phones'] / networks)
-            # region['phones_on_network_f_over_10'] = (
-            #     (region['population_with_phones_f_over_10']) / networks)
-            # region['phones_on_network_m_over_10'] = (
-            #     (region['population_with_phones_m_over_10']) / networks)
 
             #get phone density
             region['phone_density_on_network_km2'] = (
                 region['phones_on_network'] / region['area_km2'])
-            # region['phone_density_on_network_km2_f_over_10'] = (
-            #     region['phones_on_network_f_over_10'] / region['area_km2'])
-            # region['phone_density_on_network_km2_m_over_10'] = (
-            #     region['phones_on_network_m_over_10'] / region['area_km2'])
 
             #add regional smartphone penetration
             region['smartphone_penetration'] = smartphone_lut[geotype_sps][timestep]
@@ -120,12 +102,6 @@ def estimate_demand(country, country_parameters, regions, option, global_paramet
             region['population_with_smartphones'] = (
                 region['population_with_phones'] *
                 (region['smartphone_penetration'] / 100))
-            # region['population_with_smartphones_f_over_10'] = (
-            #     region['population_with_phones_f_over_10'] *
-            #     (region['smartphone_penetration'] / 100))
-            # region['population_with_smartphones_m_over_10'] = (
-            #     region['population_with_phones_m_over_10'] *
-            #     (region['smartphone_penetration'] / 100))
 
             #phones : int
             #Total number of smartphones on the network being modeled.
@@ -144,7 +120,6 @@ def estimate_demand(country, country_parameters, regions, option, global_paramet
             demand_mbps_km2.append(
                 (region['smartphones_on_network'] *
                 scenario_per_user_mbps / #User demand in Mbps
-                # global_parameters['overbooking_factor'] /
                 region['area_km2']
                 ))
 
@@ -165,23 +140,15 @@ def estimate_demand(country, country_parameters, regions, option, global_paramet
                 'confidence': global_parameters['confidence'][0],
                 'year': timestep,
                 'population': region['population_total'],
-                # 'population_f_over_10': region['population_f_over_10'],
-                # 'population_m_over_10': region['population_m_over_10'],
                 'area_km2': region['area_km2'],
                 'population_km2': region['population_km2'],
                 'geotype': region['geotype'].split(' ')[0],
                 'arpu_discounted_monthly': region['arpu_discounted_monthly'],
-                # 'penetration_female': region['penetration_female'],
-                # 'penetration_male': region['penetration_male'],
                 'penetration': region['penetration'],
                 'population_with_phones': region['population_with_phones'],
-                # 'population_with_phones_f_over_10': region['population_with_phones_f_over_10'],
-                # 'population_with_phones_m_over_10': region['population_with_phones_m_over_10'],
                 'phones_on_network': region['phones_on_network'],
                 'smartphone_penetration': region['smartphone_penetration'],
                 'population_with_smartphones': region['population_with_smartphones'],
-                # 'population_with_smartphones_f_over_10': region['population_with_smartphones_f_over_10'],
-                # 'population_with_smartphones_m_over_10': region['population_with_smartphones_m_over_10'],
                 'smartphones_on_network': region['smartphones_on_network'],
                 'revenue': annual_revenue,
             })

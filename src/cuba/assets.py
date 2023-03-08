@@ -82,7 +82,7 @@ def upgrade_sites(upgraded_sites, country, region):
     return assets
 
 
-def greenfield_sites(new_sites, country, region): #, core_lut
+def greenfield_sites(new_sites, country, region):
     """
     Asset structure for greenfield sites.
 
@@ -97,8 +97,6 @@ def greenfield_sites(new_sites, country, region): #, core_lut
             'quantity': new_sites,
             'backhaul_dist_m': get_backhaul_dist(country, region)
         },
-        # 'backhaul': new_sites,
-        # 'backhaul_dist_m': get_backhaul_dist(country, region),
     }
 
     return assets
@@ -110,16 +108,8 @@ def existing_sites(existing_sites, country, region):
 
     """
     assets = {
-        'equipment': existing_sites,
-        'installation': existing_sites,
         'site_rental': existing_sites,
         'operation_and_maintenance': existing_sites,
-        'backhaul': {
-            'quantity': existing_sites,
-            'backhaul_dist_m': get_backhaul_dist(country, region)
-        },
-        # 'backhaul': existing_sites,
-        # 'backhaul_dist_m': get_backhaul_dist(country, region),
     }
 
     return assets
@@ -136,14 +126,11 @@ def get_backhaul_dist(country, region):
         (country['backhaul_fiber_perc']/100)
     )
     node_density_km2 = nodes / region['area_km2']
-    # print(region['GID_0'], nodes, region['area_km2'], node_density_km2)
+
     if node_density_km2 > 0:
         ave_distance_to_a_node_m = (math.sqrt(1/node_density_km2) / 2) * 1000
     else:
         ave_distance_to_a_node_m = round(math.sqrt(region['area_km2']) * 1000) / 2
-
-    # if ave_distance_to_a_node_m > 10000:
-    #     ave_distance_to_a_node_m = 10000
 
     return ave_distance_to_a_node_m
 
@@ -166,16 +153,11 @@ def calc_assets(region, option, asset_structure, costs, build_type):
 
         backhaul_units = 0
         if asset_name1 == 'backhaul' and new_backhaul == 0:
-            quantity = math.ceil(quantity['quantity'])
+            quantity = 0
             cost_per_unit = 0
-            backhaul_units = 0
         elif asset_name1 == 'backhaul' and new_backhaul > 0:
             backhaul_dist_m = math.ceil(quantity['backhaul_dist_m'])
             quantity = quantity['quantity']
-            # print(asset_name1, backhaul, backhaul_dist_m, quantity)
-            # if backhaul == 'fiber' and backhaul_dist_m > 50000:
-            #     backhaul = 'wireless'
-            # print(asset_name1, backhaul, backhaul_dist_m, quantity)
             backhaul_units, backhaul_name = estimate_backhaul_type(
                 backhaul,
                 backhaul_dist_m,
@@ -186,22 +168,16 @@ def calc_assets(region, option, asset_structure, costs, build_type):
             if  backhaul == 'fiber':
                 #cost = cost_per_meter * number_of_sites * backaul_length_m
                 total_cost = cost_per_unit * quantity * backhaul_units
-                # print('fiber', backhaul_dist_m, cost_per_unit, quantity, backhaul_units, total_cost)
             if backhaul == 'wireless':
                 #cost = cost_per_backhaul_unit * number_of_sites * number_of_backhaul_units (e.g., 2 per site)
                 total_cost = cost_per_unit * quantity * backhaul_units
-                # print('wireless', backhaul_dist_m, cost_per_unit, quantity, backhaul_units, total_cost)
-
         else:
             cost_per_unit = costs[asset_name1]
             total_cost = cost_per_unit * quantity
 
-        if build_type == 'existing':
-            total_cost = 0
-
         total_assets.append({
             'scenario': region['scenario'],
-            'strategy': region['strategy'],
+            'strategy': option['strategy'],
             'confidence': region['confidence'],
             'decile': region['decile'],
             'asset': asset_name1,
