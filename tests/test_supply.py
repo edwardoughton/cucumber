@@ -23,7 +23,7 @@ def test_find_site_density(
         setup_country,
         {'demand_mbps_km2': 100000,
         'geotype': 'urban'},
-        setup_option, #4G using 800 + 1800
+        setup_option,
         setup_global_parameters,
         setup_lookup,
         setup_ci,
@@ -53,7 +53,7 @@ def test_find_site_density(
         setup_ci
     )
 
-    assert round(answer, 1) == 0.3 #0.05
+    assert round(answer, 1) == 0.3
 
     answer = find_site_density(
         setup_country,
@@ -65,7 +65,7 @@ def test_find_site_density(
         setup_ci
     )
 
-    assert round(answer, 1) == .2 #0.02
+    assert round(answer, 1) == .2
 
 
 def test_estimate_site_upgrades(
@@ -77,12 +77,12 @@ def test_estimate_site_upgrades(
     #total sites across all opterators
     setup_region[0]['total_estimated_sites'] = 100
     setup_region[0]['total_estimated_sites_4G'] = 0
+    setup_region[0]['total_sites_required'] = 100
 
     #100 sites in total across two operators, hence 50 existing sites for this MNO
     answer = estimate_site_upgrades(
         setup_region[0],
         '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline',
-        100, #100 sites required for this MNO
         {'networks': {'baseline_urban': 2}}
     )
 
@@ -93,12 +93,12 @@ def test_estimate_site_upgrades(
     #total sites across all operators
     setup_region[0]['total_estimated_sites'] = 200
     setup_region[0]['total_estimated_sites_4G'] = 50
+    setup_region[0]['total_sites_required'] = 100
 
     #200 sites in total across two operators, hence 100 existing sites for this MNO
     #100 sites required, hence no new sites or no new upgrades
     answer = estimate_site_upgrades(setup_region[0],
         '4G_epc_wireless_baseline_baseline_baseline_baseline',
-        100, #100 sites required for this MNO
         {'networks': {'baseline_urban': 2}}
     )
 
@@ -109,11 +109,11 @@ def test_estimate_site_upgrades(
     #total sites across all operators
     setup_region[0]['total_estimated_sites'] = 0
     setup_region[0]['total_estimated_sites_4G'] = 0
+    setup_region[0]['total_sites_required'] = 100
 
     #100 sites in total across two operators, hence 50 existing sites for this MNO
     answer = estimate_site_upgrades(setup_region[0],
         '4G_epc_wireless_baseline_baseline_baseline_baseline',
-        100, #100 sites required for this MNO
         {'networks': {'baseline_urban': 2}}
     )
 
@@ -124,11 +124,11 @@ def test_estimate_site_upgrades(
     #total sites across all operators
     setup_region[0]['total_estimated_sites'] = 100
     setup_region[0]['total_estimated_sites_4G'] = 0
+    setup_region[0]['total_sites_required'] = 100
 
     #100 sites in total across two operators, hence 50 existing sites for this MNO
     answer = estimate_site_upgrades(setup_region[0],
         '4G_epc_wireless_baseline_baseline_baseline_baseline',
-        100, #100 sites required for this MNO
         {'networks': {'baseline_urban': 10}}
     )
 
@@ -139,6 +139,7 @@ def test_estimate_site_upgrades(
     #total sites across all operators
     setup_region[0]['total_estimated_sites'] = 100
     setup_region[0]['total_estimated_sites_4G'] = 50
+    setup_region[0]['total_sites_required'] = 100
 
     #100 sites in total across two operators
     #Hence 50 existing sites for this MNO (all techs, 2G-4G)
@@ -146,7 +147,6 @@ def test_estimate_site_upgrades(
     #So we need to upgrade
     answer = estimate_site_upgrades(setup_region[0],
         '4G_epc_wireless_baseline_baseline_baseline_baseline',
-        100, #100 sites required for this MNO
         {'networks': {'baseline_urban': 2}}
     )
     #the MNO has 50 current sites for all techs (of which 25 are 4G)
@@ -159,11 +159,11 @@ def test_estimate_site_upgrades(
     #total sites across all operators
     setup_region[0]['total_estimated_sites'] = 100
     setup_region[0]['total_estimated_sites_4G'] = 100
+    setup_region[0]['total_sites_required'] = 50
 
     #100 sites in total across two operators, hence 50 existing sites for this MNO
     answer = estimate_site_upgrades(setup_region[0],
         '5g_nsa_wireless_baseline_baseline_baseline_baseline',
-        50, #100 sites required for this MNO
         {'networks': {'baseline_urban': 2}}
     )
 
@@ -179,7 +179,6 @@ def test_estimate_supply(
     setup_global_parameters,
     setup_country_parameters,
     setup_costs,
-    # setup_core_lut,
     setup_ci,
     setup_infra_sharing_assets,
     setup_cost_types,

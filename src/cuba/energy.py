@@ -8,25 +8,25 @@ June 2021
 """
 
 def assess_energy(country, regions, assets, option, global_parameters,
-    country_parameters, timesteps, energy_demand): #, tech_lut, on_grid_mix
+    country_parameters, timesteps, energy_demand):
     """
     For each region, calculate energy consumption and associated emissions.
 
     Parameters
     ----------
-    # country : dict
-    #     Country information.
-    # regions : dataframe
-    #     Geopandas dataframe of all regions.
-    # option : dict
-    #     Contains the scenario and strategy. The strategy string controls
-    #     the strategy variants being testes in the model and is defined based
-    #     on the type of technology generation, core and backhaul, and the level
-    #     of sharing, subsidy, spectrum and tax.
-    # global_parameters : dict
-    #     All global model parameters.
-    # country_parameters : dict
-    #     All country specific parameters.
+    country : dict
+        Country information.
+    regions : dataframe
+        Geopandas dataframe of all regions.
+    option : dict
+        Contains the scenario and strategy. The strategy string controls
+        the strategy variants being testes in the model and is defined based
+        on the type of technology generation, core and backhaul, and the level
+        of sharing, subsidy, spectrum and tax.
+    global_parameters : dict
+        All global model parameters.
+    country_parameters : dict
+        All country specific parameters.
 
     Returns
     -------
@@ -37,9 +37,6 @@ def assess_energy(country, regions, assets, option, global_parameters,
     output = []
 
     for region in regions:
-
-        # if not region['GID_id'] == 'COL.14.12_1':
-        #     continue
 
         geotype = region['geotype'].split(' ')[0]
         sharing = option['strategy'].split('_')[3]
@@ -169,7 +166,6 @@ def assess_energy(country, regions, assets, option, global_parameters,
                         'grid_type_perc': region[grid_type_handle],
                         'grid_type': grid_type,
                         'network_division': network_division,
-
                         'mno_energy_annual_demand_kwh': elec_demand,
                         'mno_equipment_annual_demand_kWh': equip_demand,
                         'mno_regional_nodes_annual_demand_kwh': regional_nodes_demand,

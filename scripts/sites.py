@@ -128,7 +128,8 @@ def process_unconstrained_site_estimation(country):
         if region['population'] == None:
             continue
 
-        covered_pop_so_far += region['population']
+        covered_pop_so_far_2G += region['population']
+        covered_pop_so_far_4G += region['population']
 
     output = pd.DataFrame(output)
     folder = os.path.join(DATA_INTERMEDIATE, iso3, 'sites')
@@ -535,7 +536,7 @@ if __name__ == "__main__":
         # if not country['iso3'] in ['BRA', 'CAN', 'DNK', 'EGY', 'JPN', 'KEN', 'MLT', 'PHL', 'RUS', 'ARE','URY']:
         #     continue
 
-        # if not country['iso3'] == 'GBR':
+        # if not country['iso3'] == 'AFG':
         #     continue
 
         print('--Working on {}'.format(country['iso3']))

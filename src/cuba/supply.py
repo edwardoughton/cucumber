@@ -16,8 +16,8 @@ from cuba.costs import find_cost
 
 def estimate_supply(country, regions, capacity_lut, option,
     global_parameters, country_parameters,
-    costs, #core_lut,
-    ci, infra_sharing_options, cost_types):
+    costs, ci, infra_sharing_options, cost_types
+    ):
     """
     For each region, find the least-cost design and estimate
     the required investment for for the single network being modeled.
@@ -65,9 +65,6 @@ def estimate_supply(country, regions, capacity_lut, option,
 
     for region in regions:
 
-        # if not region['GID_id'] == 'COL.14.12_1':
-        #     continue
-
         region['scenario'] = option['scenario']
         region['strategy'] = option['strategy']
         region['confidence'] = ci
@@ -77,13 +74,12 @@ def estimate_supply(country, regions, capacity_lut, option,
 
         if region['mno_site_density'] > 0:
 
-            total_sites_required = math.ceil(region['mno_site_density'] *
+            region['total_sites_required'] = math.ceil(region['mno_site_density'] *
                 region['area_km2'])
 
             region = estimate_site_upgrades(
                 region,
                 option['strategy'],
-                total_sites_required,
                 country_parameters
             )
 
@@ -124,12 +120,11 @@ def estimate_supply(country, regions, capacity_lut, option,
 
         output_regions.append(region)
         output_assets[region['decile']] = assets
-        # output_assets = output_assets + assets
 
     return output_regions, output_assets
 
 
-def find_site_density(country, region, option, global_parameters, #country_parameters,
+def find_site_density(country, region, option, global_parameters,
     capacity_lut, ci):
     """
     For a given region, estimate the number of needed sites.
@@ -230,9 +225,6 @@ def find_site_density(country, region, option, global_parameters, #country_param
     max_density, max_capacity = density_lut[-1]
     min_density, min_capacity = density_lut[0]
 
-    # max_capacity = max_capacity * bandwidth
-    # min_capacity = min_capacity * bandwidth
-
     if demand > max_capacity:
 
         return max_density
@@ -247,9 +239,6 @@ def find_site_density(country, region, option, global_parameters, #country_param
 
             lower_density, lower_capacity  = a
             upper_density, upper_capacity  = b
-
-            # lower_capacity = lower_capacity * bandwidth
-            # upper_capacity = upper_capacity * bandwidth
 
             if lower_capacity <= demand < upper_capacity:
 
@@ -406,15 +395,6 @@ def lookup_capacity(capacity_lut, env, ant_type, frequency,
         Returns a list of site density to capacity tuples.
 
     """
-    # if frequency == '850':
-    #     frequency = '800'
-    # if frequency == '1700':
-    #     frequency = '1800'
-    # if frequency == '1900':
-    #     frequency = '1800'
-    # if frequency == '2600':
-    #     frequency = '2100'
-
     if (env, ant_type, frequency, generation, ci) not in capacity_lut:
         raise KeyError("Combination %s not found in lookup table",
                        (env, ant_type, frequency, generation, ci))
@@ -447,8 +427,7 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def estimate_site_upgrades(region, strategy, total_sites_required,
-    country_parameters):
+def estimate_site_upgrades(region, strategy, country_parameters):
     """
     Estimate the number of greenfield sites and brownfield upgrades for the
     single network being modeled.
@@ -461,8 +440,6 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
         Controls the strategy variants being tested in the model and is
         defined based on the type of technology generation, core and
         backhaul, and the level of sharing, subsidy, spectrum and tax.
-    total_sites_required : int
-        Number of sites needed to meet demand.
     country_parameters : dict
         All country specific parameters.
 
@@ -479,28 +456,14 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
     #get the number of networks in the area
     networks = country_parameters['networks'][sharing + '_' + geotype]
 
-    # if sharing == 'active':
-    #     networks = 2
-    # if sharing == 'src' and geotype == 'rural':
-    #     networks = 2
-
-    # networks = 4
     region['existing_mno_sites'] = math.ceil(region['total_estimated_sites'] / networks)
-    # print(region['existing_mno_sites'])
+
     #get the number of existing 4G sites
     existing_4G_sites = math.ceil(region['total_estimated_sites_4G'] / networks)
 
-    # if sharing in ['active', 'src']:
-    #     if total_sites_required > region['existing_mno_sites']:
-    #         print(math.ceil(region['total_estimated_sites'] / networks))
-    #         # print(math.ceil(region['total_estimated_sites'] / networks))
-    #         print(sharing, geotype, total_sites_required,  region['existing_mno_sites'])
-
-    if total_sites_required > region['existing_mno_sites']:
-
-        region['new_mno_sites'] = (int(round(total_sites_required -
+    if region['total_sites_required'] > region['existing_mno_sites']:
+        region['new_mno_sites'] = (int(round(region['total_sites_required'] -
             region['existing_mno_sites'])))
-        # print(region['new_mno_sites'])
         if region['existing_mno_sites'] > 0:
             if generation == '4G' and existing_4G_sites > 0 :
                 region['upgraded_mno_sites'] = (region['existing_mno_sites'] -
@@ -512,12 +475,11 @@ def estimate_site_upgrades(region, strategy, total_sites_required,
 
     else:
         region['new_mno_sites'] = 0
-
         if generation == '4G' and existing_4G_sites > 0 :
-            to_upgrade = total_sites_required - existing_4G_sites
+            to_upgrade = region['total_sites_required'] - existing_4G_sites
             region['upgraded_mno_sites'] = to_upgrade if to_upgrade >= 0 else 0
         else:
-            region['upgraded_mno_sites'] = total_sites_required
+            region['upgraded_mno_sites'] = region['total_sites_required']
 
     return region
 
@@ -550,20 +512,20 @@ def estimate_backhaul_upgrades(region, strategy, country_parameters):
 
     if backhaul == 'fiber':
 
-        existing_fiber = region['backhaul_fiber'] / networks
+        region['backhaul_existing'] = region['backhaul_fiber'] / networks
 
-        if existing_fiber < all_mno_sites:
-            region['backhaul_new'] =  math.ceil(all_mno_sites - existing_fiber)
+        if region['backhaul_existing'] < all_mno_sites:
+            region['backhaul_new'] =  math.ceil(all_mno_sites - region['backhaul_existing'])
         else:
             region['backhaul_new'] = 0
 
     elif backhaul == 'wireless':
 
-        existing_backhaul = (region['backhaul_wireless'] +
+        region['backhaul_existing'] = (region['backhaul_wireless'] +
             region['backhaul_fiber']) / networks
 
-        if existing_backhaul < all_mno_sites:
-            region['backhaul_new'] =  math.ceil(all_mno_sites - existing_backhaul)
+        if region['backhaul_existing'] < all_mno_sites:
+            region['backhaul_new'] =  math.ceil(all_mno_sites - region['backhaul_existing'])
         else:
             region['backhaul_new'] = 0
 

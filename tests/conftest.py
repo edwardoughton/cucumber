@@ -62,6 +62,7 @@ def setup_global_parameters():
     return {
         'traffic_in_the_busy_hour_perc': 15,
         'opex_percentage_of_capex': 10,
+        'core_perc_of_ran': 10,
         'overbooking_factor': 100,
         'return_period': 2,
         'discount_rate': 5,

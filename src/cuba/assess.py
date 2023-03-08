@@ -41,7 +41,7 @@ def assess(country, regions, option, global_parameters, country_parameters, time
     for region in regions:
 
         # add administration cost
-        region = get_administration_cost(region, country_parameters,
+        region['administration'] = get_administration_cost(region, country_parameters,
             global_parameters, timesteps)
 
         # npv spectrum cost
@@ -123,9 +123,7 @@ def get_administration_cost(region, country_parameters, global_parameters, times
 
         costs.append(discounted_cost)
 
-    region['administration'] = sum(costs)
-
-    return region
+    return sum(costs)
 
 
 def allocate_available_excess(region):
@@ -156,35 +154,30 @@ def get_spectrum_costs(region, strategy, global_parameters, country_parameters):
             {
                 'frequency': 1900,
                 'bandwidth': '2x10',
-                # 'status': 'active',
             },
         ],
         '4G': [
             {
                 'frequency': 850,
                 'bandwidth': '2x10',
-                # 'status': 'active',
             },
             {
                 'frequency': 1700,
                 'bandwidth': '2x10',
-                # 'status': 'active',
             },
         ],
         '5G': [
             {
                 'frequency': 700,
                 'bandwidth': '2x10',
-                # 'status': 'inactive',
             },
             {
                 'frequency': 3500,
                 'bandwidth': ' 1x40',
-                # 'status': 'inactive',
             },
         ]
     }
-    # frequencies = country_parameters['frequencies']
+
     generation = strategy.split('_')[0]
     frequencies = frequencies[generation]
 
@@ -211,9 +204,6 @@ def get_spectrum_costs(region, strategy, global_parameters, country_parameters):
     all_costs = []
 
     for frequency in frequencies:
-
-        # if frequency['status'] == 'active':
-        #     continue
 
         channel_number = int(frequency['bandwidth'].split('x')[0])
         channel_bandwidth = int(frequency['bandwidth'].split('x')[1])
