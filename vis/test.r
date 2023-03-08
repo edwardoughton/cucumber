@@ -15,6 +15,14 @@ data$scenario_capacity[grep("25_25_25", data$scenario)] = '25 GB/Month'
 data$scenario_capacity[grep("50_50_50", data$scenario)] = '50 GB/Month'
 data$scenario_capacity[grep("100_100_100", data$scenario)] = '100 GB/Month'
 
+# metrics = data[(data$scenario == 'baseline_25_25_25' &
+#                   data$strategy == '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline'),]
+# round(sum(metrics$total_market_revenue)/1e9,1) #GSMA: 1.2tn annual revenue 2030
+# round(sum(metrics$total_phones)/1e9,1)  #GSMA: 6.3 unique mobile subs. 2030
+# round(sum(metrics$total_smartphones)/1e9,1) #GSMA: 92% smartphones by 2030
+# round(sum(metrics$total_ran, metrics$total_backhaul_fronthaul, 
+#       metrics$total_civils, metrics$total_core_network)/1e9,1)
+
 data = data[(data$scenario_capacity == '25 GB/Month' |
                data$scenario_capacity == '50 GB/Month' |
                data$scenario_capacity == '100 GB/Month'),]

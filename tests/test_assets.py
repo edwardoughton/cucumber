@@ -173,32 +173,63 @@ def test_calc_assets(setup_region, setup_option, setup_costs):
 
     """
     setup_region[0]['scenario'] = 'test'
-    setup_region[0]['strategy'] = 'test'
     setup_region[0]['confidence'] = 'test'
     setup_region[0]['backhaul_new'] = 5
+    setup_region[0]['backhaul_existing'] = 5
 
     asset_structure = {
+        'equipment': 10,
+        'installation': 10,
+        'site_rental': 10,
+        'operation_and_maintenance': 10,
         'backhaul': {
-            'quantity': 1,
+            'quantity': 10,
             'backhaul_dist_m': 2000
         }
     }
 
-    assets = calc_assets(setup_region[0], setup_option, asset_structure,
-        setup_costs, 'new')
-
-    assert assets[0]['asset'] == 'backhaul_wireless_small'
-    assert assets[0]['cost_per_unit'] == 10000
-    assert assets[0]['total_cost'] == 10000 #1 new site needs 2 backhaul units to work
+    setup_option['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
 
     assets = calc_assets(setup_region[0], setup_option, asset_structure,
         setup_costs, 'upgraded')
 
-    assert len(assets) == 1
+    for asset in assets:
+        if asset['asset'] == 'equipment':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 40000
+            assert asset['total_cost'] == 10*40000
+        if asset['asset'].startswith('backhaul'):
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 10000
+            assert asset['backhaul_units'] == 1
+            assert asset['total_cost'] == 10*10000
 
     setup_option['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+
+    assets = calc_assets(setup_region[0], setup_option, asset_structure,
+        setup_costs, 'upgraded')
+
+    for asset in assets:
+        if asset['asset'] == 'equipment':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 40000
+            assert asset['total_cost'] == 10*40000
+        if asset['asset'].startswith('backhaul'):
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 10
+            assert asset['backhaul_units'] == 2000
+            assert asset['total_cost'] == 10*10*2000
+
+    setup_region[0]['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
 
     asset_structure = {
+        'equipment': 10,
+        'site_build': 10,
+        'installation': 10,
+        'site_rental': 10,
+        'operation_and_maintenance': 10,
         'backhaul': {
             'quantity': 10,
             'backhaul_dist_m': 2000
@@ -206,54 +237,84 @@ def test_calc_assets(setup_region, setup_option, setup_costs):
     }
 
     assets = calc_assets(setup_region[0], setup_option, asset_structure,
-        setup_costs, 'upgraded')
-
-    assert assets[0]['asset'] == 'backhaul_fiber_urban_m'
-    assert assets[0]['cost_per_unit'] == 10
-    assert assets[0]['total_cost'] == 200000
-
-    assets = calc_assets(setup_region[0], setup_option, {'equipment':1},
         setup_costs, 'new')
 
-    assert assets[0]['asset'] == 'equipment'
-    assert assets[0]['cost_per_unit'] == 40000
-    assert assets[0]['total_cost'] == 40000
+    for asset in assets:
 
-    assets = calc_assets(setup_region[0], setup_option, {'equipment':1},
-        setup_costs, 'existing')
-
-    assert assets[0]['asset'] == 'equipment'
-    assert assets[0]['cost_per_unit'] == 40000
-    assert assets[0]['total_cost'] == 0
-
-    assets = calc_assets(setup_region[0], setup_option, {'site_rental':1},
-        setup_costs, 'existing')
-
-    assert assets[0]['asset'] == 'site_rental_urban'
-    assert assets[0]['cost_per_unit'] == 9600
-    assert assets[0]['total_cost'] == 0
-
-    assets = calc_assets(setup_region[0], setup_option, {'site_rental':1},
-        setup_costs, 'new')
-
-    assert assets[0]['asset'] == 'site_rental_urban'
-    assert assets[0]['cost_per_unit'] == 9600
-    assert assets[0]['total_cost'] == 9600
+        if asset['asset'] == 'equipment':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 40000
+            assert asset['total_cost'] == 10*40000
+        if asset['asset'] == 'installation':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 30000
+            assert asset['total_cost'] == 10*30000
+        if asset['asset'] == 'site_rental_urban':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 9600
+            assert asset['total_cost'] == 10*9600
+        if asset['asset'] == 'operation_and_maintenance':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 7400
+            assert asset['total_cost'] == 10*7400
+        if asset['asset'] == 'backhaul_wireless_small':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 10000
+            assert asset['total_cost'] == 10*10000
 
     setup_option['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
-
-    asset_structure = {
-        'backhaul': {
-            'quantity': 10,
-            'backhaul_dist_m': 20000
-        }
-    }
+    setup_region[0]['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
 
     assets = calc_assets(setup_region[0], setup_option, asset_structure,
-        setup_costs, 'upgraded')
+        setup_costs, 'new')
 
-    assert assets[0]['total_cost'] == 2000000 #20000 * 10 * 10
-    assert assets[0]['asset'] == 'backhaul_fiber_urban_m' #backhaul_wireless_medium
+    for asset in assets:
+        if asset['asset'].startswith('backhaul'):
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 10
+            assert asset['backhaul_units'] == 2000
+            assert asset['total_cost'] == 10*10*2000
+
+
+    asset_structure = {
+        'site_rental': 10,
+        'operation_and_maintenance': 10,
+    }
+
+    setup_option['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['strategy'] = '4G_epc_wireless_baseline_baseline_baseline_baseline_baseline_baseline'
+
+    assets = calc_assets(setup_region[0], setup_option, asset_structure,
+        setup_costs, 'existing')
+
+    for asset in assets:
+        if asset['asset'].startswith('site_rental'):
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 9600
+            assert asset['total_cost'] == 10*9600
+        if asset['asset'] == 'operation_and_maintenance':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 7400
+            assert asset['total_cost'] == 10*7400
+
+    setup_option['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+    setup_region[0]['strategy'] = '4G_epc_fiber_baseline_baseline_baseline_baseline_baseline_baseline'
+
+    assets = calc_assets(setup_region[0], setup_option, asset_structure,
+        setup_costs, 'existing')
+
+    assert len(assets) == 2
+
+    for asset in assets:
+        if asset['asset'] == 'equipment':
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 40000
+            assert asset['total_cost'] == 10*40000
+        if asset['asset'].startswith('backhaul'):
+            assert asset['quantity'] == 10
+            assert asset['cost_per_unit'] == 10
+            assert asset['backhaul_units'] == 2000
+            assert asset['total_cost'] == 10*10*2000
 
 
 def test_get_backhaul_dist(setup_country, setup_region):

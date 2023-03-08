@@ -46,9 +46,9 @@ data$strategy_short[grep("5G_nsa_wireless", data$strategy)] = '5G (W)'
 data$strategy_short = factor(data$strategy_short, levels=c(
                                      # "3G (F)",
                                      "4G (F)",
+                                     "4G (W)",
                                      '5G (F)',
                                      # "3G (W)",
-                                     "4G (W)",
                                      '5G (W)'
                                      ))
 
@@ -228,7 +228,7 @@ df_errorbar <-
   )
 
 min_value = min(round(df_errorbar$low,3))
-max_value = max(round(df_errorbar$high,3)) + .01
+max_value = max(round(df_errorbar$high,3)) + .001
 min_value[min_value > 0] = 0
 
 nitrogen_dioxide = ggplot(sample,
@@ -435,9 +435,9 @@ data$strategy_power[grep("baseline_baseline_baseline_baseline_renewable", data$s
 data$strategy_short = factor(data$strategy_short, levels=c(
   # "3G (F)",
   "4G (F)",
+  "4G (W)",
   '5G (F)',
   # "3G (W)",
-  "4G (W)",
   '5G (W)'
 ))
 
@@ -481,23 +481,27 @@ long <- data %>%
 long$strategy_long <- paste(long$strategy_short, data$strategy_power)
 unique(long$strategy_long)
 long$strategy_long = factor(long$strategy_long,
-                     levels=c("4G (W) Baseline",
+                     levels=c(
+                             "4G (F) Baseline",
+                             "4G (F) Renewables",
+                             "4G (W) Baseline",
                               "4G (W) Renewables",
-                              "4G (F) Baseline",
-                              "4G (F) Renewables",
+                             "5G (F) Baseline",
+                             "5G (F) Renewables",
                               "5G (W) Baseline",
-                              "5G (W) Renewables",
-                              "5G (F) Baseline",
-                              "5G (F) Renewables"
+                              "5G (W) Renewables"
+
                      ),
-                     labels=c("4G (W)\nBaseline",
+                     labels=c(
+                             "4G (F)\nBaseline",
+                             "4G (F)\nRenewables",
+                              "4G (W)\nBaseline",
                               "4G (W)\nRenewables",
-                              "4G (F)\nBaseline",
-                              "4G (F)\nRenewables",
+                               "5G (F)\nBaseline",
+                               "5G (F)\nRenewables",
                               "5G (W)\nBaseline",
-                              "5G (W)\nRenewables",
-                              "5G (F)\nBaseline",
-                              "5G (F)\nRenewables"
+                              "5G (W)\nRenewables"
+
                      )
                      )
 
@@ -602,9 +606,9 @@ data$strategy_short[grep("5G_nsa_wireless", data$strategy)] = '5G (W)'
 data$strategy_short = factor(data$strategy_short, levels=c(
   # "3G (F)",
   "4G (F)",
+  "4G (W)",
   '5G (F)',
   # "3G (W)",
-  "4G (W)",
   '5G (W)'
 ))
 

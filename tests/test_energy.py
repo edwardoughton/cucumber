@@ -41,23 +41,6 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         'decile': 1,
         'asset_type': 'new',
         },
-        # {
-        # 'scenario': 'low_20_20_20',
-        # 'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
-        # 'confidence': 50,
-        # 'GID_id':  'a',
-        # 'asset': 'regional_node',
-        # 'quantity': 1,
-        # 'decile': 1,
-        # },
-        # {
-        # 'scenario': 'low_20_20_20',
-        # 'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
-        # 'confidence': 50,
-        # 'GID_id':  'a',
-        # 'asset': 'core_node',
-        # 'quantity': 1,
-        # },
         {
         'scenario': 'low_20_20_20',
         'strategy': '3G_umts_wireless_baseline_baseline_baseline_baseline',
@@ -112,15 +95,12 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
 
         ##(1*24*365) = 1 kWh*24 hours*365 days with a 50%/50% split of on/off grid power
         assert results[0]['mno_equipment_annual_demand_kWh'] == (1 * 24 * 365) * 0.5
-        # assert results[0]['mno_regional_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
-        # assert results[0]['mno_core_nodes_annual_demand_kwh'] == (1 * 24 * 365) * 0.5
         assert results[0]['mno_wireless_backhaul_annual_demand_kwh'] == (3 * 24 * 365) * 0.5
         assert results[0]['mno_energy_annual_demand_kwh'] == (
             (((1 * 24 * 365) * 0.5)) + (((3 * 24 * 365)) * 0.5)
         )
 
         assert results[0]['total_equipment_annual_demand_kWh'] == (((1 * 24 * 365) * 0.5) *3)
-
 
     regions = [
         {

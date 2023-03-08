@@ -102,7 +102,7 @@ def test_estimate_demand(
         setup_penetration_lut,
         {'rural': {2020: 50}}
     )
-    # print(answer)
+
     # 5000/3 = 1667 phones on network
     # arpu = 2 * 12 months
     # 40,000 = ((5000/3) * 2 * 12)
