@@ -1,6 +1,6 @@
-# Chile Universal Broadband Assessment (cuba)
+# Techno-Economic Assessment of Mobile Broadband
 
-This repository holds the code for a universal broadband assessment of Chile.
+This repository holds the code for a global model capable of evaluating different mobile broadband strategies.
 
 Using conda
 ===========
