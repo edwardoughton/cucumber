@@ -5,17 +5,19 @@ This repository holds the code for a global model capable of evaluating differen
 Using conda
 ===========
 
-To run the code, it is advisable to use a virtual environment using conda to handle packages.
+You can install the existing conda environment using:
 
-Create a conda environment, for example, called cuba run:
+    conda env create -f environment.yml
+    
+Otherwise, you can create one from scratch:
 
     conda create --name cuba python=3.7 gdal
 
-Activate it (run this each time you switch projects):
+Once you've completed either optionm you can activate your environment (and run this each time you switch projects):
 
     conda activate cuba
 
-Some packages will be required:
+Some packages will be required if you didn't use the pre-existing conda environment:
 
     conda install geopandas rasterio rasterstats
 

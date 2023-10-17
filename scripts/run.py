@@ -34,7 +34,7 @@ CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 
-DATA_RAW = os.path.join(BASE_PATH, 'raw')
+DATA_RAW = os.path.join(BASE_PATH, '..', '..', 'data_raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 OUTPUT = os.path.join(BASE_PATH, '..', 'results', 'model_results')
@@ -136,7 +136,7 @@ def load_country_parameters():
     """
     output = {}
 
-    path = os.path.join(DATA_RAW, 'country_parameters.csv')
+    path = os.path.join(BASE_PATH, 'country_parameters.csv')
     data = pd.read_csv(path, encoding="ISO-8859-1")
     data = data.to_dict('records')
 
@@ -287,7 +287,7 @@ if __name__ == '__main__':
     if not os.path.exists(OUTPUT):
         os.makedirs(OUTPUT)
 
-    BASE_YEAR = 2020
+    BASE_YEAR = 2023
     END_YEAR = 2030
     TIMESTEP_INCREMENT = 1
     TIMESTEPS = [t for t in range(BASE_YEAR, END_YEAR + 1, TIMESTEP_INCREMENT)]
@@ -324,8 +324,8 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            # if not iso3 == "AUS":
-            #     continue
+            if not iso3 == "GBR":
+                continue
 
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
@@ -367,7 +367,7 @@ if __name__ == '__main__':
 
                     # data_initial = data_initial[data_initial['decile'] == 4]
 
-                    data_initial = data_initial.to_dict('records')
+                    data_initial = data_initial.to_dict('records')#[:1]
 
                     data_demand, annual_demand = estimate_demand(
                         country,
@@ -380,6 +380,7 @@ if __name__ == '__main__':
                         smartphone_lut
                     )
 
+                    
                     data_supply, assets = estimate_supply(
                         country,
                         data_demand,
@@ -401,7 +402,7 @@ if __name__ == '__main__':
                         country_parameters,
                         TIMESTEPS
                     )
-                    # print(option['strategy'], round(data_assess[0]['total_market_cost']/1e9,3))
+
                     data_energy = assess_energy(
                         country,
                         data_assess,

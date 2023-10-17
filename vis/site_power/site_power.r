@@ -3,7 +3,7 @@ library(ggpubr)
 
 folder = dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'gsma_site_power.csv'
-data_directory = file.path(folder, '..', '..', 'data', 'raw', 'gsma')
+data_directory = file.path(folder, '..', '..', '..', 'data_raw', 'gsma')
 setwd(data_directory)
 
 data = read_csv(file.path(data_directory, filename), show_col_types = FALSE)
@@ -116,3 +116,17 @@ output = ggarrange(
 
 path = file.path(folder, '..', 'figures', 'site_power_source.png')
 ggsave(path, units="in", width=7, height=7, dpi=300)
+
+folder = dirname(rstudioapi::getSourceEditorContext()$path)
+filename = 'gsma_site_power.csv'
+data_directory = file.path(folder, '..', '..', '..', 'data_raw')
+setwd(data_directory)
+
+country_info = read_csv('countries.csv')
+country_info = select(country_info, country, income_group)
+data = merge(sample, country_info, by.x="country", by.y="country")
+
+data = select(data, income_group, name, percentage)
+data = data %>%
+  group_by(income_group, name) %>%
+  summarize(percentage = round(mean(percentage),1))

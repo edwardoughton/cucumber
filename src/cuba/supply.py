@@ -131,6 +131,8 @@ def find_site_density(country, region, option, global_parameters,
 
     Parameters
     ----------
+    country : dict
+        Country metadata. 
     region : dicts
         Data for a single region.
     option : dict
@@ -141,8 +143,6 @@ def find_site_density(country, region, option, global_parameters,
         geotype, spectrum and taxation.
     global_parameters : dict
         All global model parameters.
-    country_parameters : dict
-        All country specific parameters.
     capacity_lut : dict
         A dictionary containing the lookup capacities.
     ci : int
