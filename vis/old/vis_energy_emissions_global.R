@@ -412,7 +412,6 @@ path = file.path(folder, '..', 'reports', 'images', 'global', 'power_strategies.
 ggsave(path, units="in", width=8, height=6, dpi=300)
 while (!is.null(dev.list()))  dev.off()
 
-
 ############################
 ### Infra Sharing
 ############################
