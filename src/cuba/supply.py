@@ -395,12 +395,12 @@ def lookup_capacity(capacity_lut, env, ant_type, frequency,
         Returns a list of site density to capacity tuples.
 
     """
-    if (env, ant_type, frequency, generation, ci) not in capacity_lut:
+    if (ant_type, frequency, generation, ci) not in capacity_lut:
         raise KeyError("Combination %s not found in lookup table",
-                       (env, ant_type, frequency, generation, ci))
+                       (ant_type, frequency, generation, ci))
 
     density_capacities = capacity_lut[
-        (env, ant_type,  frequency, generation, ci)
+        (ant_type,  frequency, generation, ci)
     ]
 
     return density_capacities
@@ -504,6 +504,7 @@ def estimate_backhaul_upgrades(region, strategy, country_parameters):
     -------
     region : dict
         Contains all regional data.
+        
     """
     backhaul = strategy.split('_')[2]
     geotype = region['geotype'].split(' ')[0]

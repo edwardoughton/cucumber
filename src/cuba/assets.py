@@ -171,6 +171,7 @@ def calc_assets(region, option, asset_structure, costs, build_type):
             if backhaul == 'wireless':
                 #cost = cost_per_backhaul_unit * number_of_sites * number_of_backhaul_units (e.g., 2 per site)
                 total_cost = cost_per_unit * quantity * backhaul_units
+
         else:
             cost_per_unit = costs[asset_name1]
             total_cost = cost_per_unit * quantity

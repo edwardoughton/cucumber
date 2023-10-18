@@ -63,14 +63,12 @@ def read_capacity_lut(path, global_parameters):
             generation = str(row["generation"])
             ci = str(row['confidence_interval'])
 
-            if (environment, ant_type, frequency_GHz, generation, ci) \
+            if (ant_type, frequency_GHz, generation, ci) \
                 not in capacity_lut:
-                capacity_lut[(
-                    environment, ant_type, frequency_GHz, generation, ci)
+                capacity_lut[(ant_type, frequency_GHz, generation, ci)
                     ] = []
 
             capacity_lut[(
-                environment,
                 ant_type,
                 frequency_GHz,
                 generation,
@@ -292,17 +290,17 @@ if __name__ == '__main__':
     TIMESTEP_INCREMENT = 1
     TIMESTEPS = [t for t in range(BASE_YEAR, END_YEAR + 1, TIMESTEP_INCREMENT)]
 
-    path = os.path.join(DATA_RAW, 'pysim5g', 'capacity_lut_by_frequency.csv')
+    path = os.path.join(DATA_INTERMEDIATE, 'luts', 'capacity_lut_by_frequency.csv')
     capacity_lut = read_capacity_lut(path, GLOBAL_PARAMETERS)
 
     country_parameter_lut = load_country_parameters()
 
     decision_options = [
         'technology_options',
-        # 'business_model_options',
-        # 'policy_options',
-        # 'power_options',
-        # 'business_model_power_options',
+        'business_model_options',
+        'policy_options',
+        'power_options',
+        'business_model_power_options',
     ]
 
     all_results = []
@@ -324,8 +322,8 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            if not iso3 == "GBR":
-                continue
+            # if not iso3 == "COL":
+            #     continue
 
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
