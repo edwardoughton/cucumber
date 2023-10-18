@@ -1,0 +1,73 @@
+"","scenario_adopt","scenario_capacity","strategy_short","cost_per_network_user","cost_per_smartphone_user","Cost_Type","value"
+"1","Baseline (4% Adoption CAGR)","20 GB/Month","4G (F)",824.829129727543,1183.23398569885,"Private Investment Cost ($USD)",44.19
+"2","Baseline (4% Adoption CAGR)","20 GB/Month","4G (W)",750.185703610864,1076.15648878815,"Private Investment Cost ($USD)",40.191
+"3","Baseline (4% Adoption CAGR)","20 GB/Month","5G (F)",293.884626052,421.583410292489,"Private Investment Cost ($USD)",15.745
+"4","Baseline (4% Adoption CAGR)","20 GB/Month","5G (W)",267.563786169922,383.825635793304,"Private Investment Cost ($USD)",14.335
+"5","Baseline (4% Adoption CAGR)","30 GB/Month","4G (F)",1076.71659033592,1544.57161699912,"Private Investment Cost ($USD)",57.685
+"6","Baseline (4% Adoption CAGR)","30 GB/Month","4G (W)",946.767356781407,1358.15682632847,"Private Investment Cost ($USD)",50.723
+"7","Baseline (4% Adoption CAGR)","30 GB/Month","5G (F)",395.082386382885,566.753634020722,"Private Investment Cost ($USD)",21.166
+"8","Baseline (4% Adoption CAGR)","30 GB/Month","5G (W)",378.595505557577,543.102871689964,"Private Investment Cost ($USD)",20.283
+"9","Baseline (4% Adoption CAGR)","40 GB/Month","4G (F)",1346.58475632475,1931.70293201666,"Private Investment Cost ($USD)",72.143
+"10","Baseline (4% Adoption CAGR)","40 GB/Month","4G (W)",1157.36947370934,1660.2698012807,"Private Investment Cost ($USD)",62.006
+"11","Baseline (4% Adoption CAGR)","40 GB/Month","5G (F)",516.731859758485,741.262251687902,"Private Investment Cost ($USD)",27.684
+"12","Baseline (4% Adoption CAGR)","40 GB/Month","5G (W)",494.602541290103,709.517299008077,"Private Investment Cost ($USD)",26.498
+"13","High (6% Adoption CAGR)","20 GB/Month","4G (F)",918.641489334579,1118.95319051441,"Private Investment Cost ($USD)",53.434
+"14","High (6% Adoption CAGR)","20 GB/Month","4G (W)",814.976264995692,992.683546843724,"Private Investment Cost ($USD)",47.404
+"15","High (6% Adoption CAGR)","20 GB/Month","5G (F)",325.816017540369,396.860882705805,"Private Investment Cost ($USD)",18.952
+"16","High (6% Adoption CAGR)","20 GB/Month","5G (W)",293.425253892606,357.407245190352,"Private Investment Cost ($USD)",17.068
+"17","High (6% Adoption CAGR)","30 GB/Month","4G (F)",1224.70676383282,1491.7566392826,"Private Investment Cost ($USD)",71.237
+"18","High (6% Adoption CAGR)","30 GB/Month","4G (W)",1053.8549316798,1283.650207217,"Private Investment Cost ($USD)",61.299
+"19","High (6% Adoption CAGR)","30 GB/Month","5G (F)",456.035784492278,555.475342634484,"Private Investment Cost ($USD)",26.526
+"20","High (6% Adoption CAGR)","30 GB/Month","5G (W)",435.35020146692,530.279224896932,"Private Investment Cost ($USD)",25.323
+"21","High (6% Adoption CAGR)","40 GB/Month","4G (F)",1552.74473671077,1891.32397934204,"Private Investment Cost ($USD)",90.318
+"22","High (6% Adoption CAGR)","40 GB/Month","4G (W)",1309.8610886302,1595.47904298891,"Private Investment Cost ($USD)",76.19
+"23","High (6% Adoption CAGR)","40 GB/Month","5G (F)",602.432688672082,733.79439845253,"Private Investment Cost ($USD)",35.041
+"24","High (6% Adoption CAGR)","40 GB/Month","5G (W)",574.728639265465,700.04942303654,"Private Investment Cost ($USD)",33.43
+"25","Low (2% Adoption CAGR)","20 GB/Month","4G (F)",804.662824161138,1273.47681933542,"Private Investment Cost ($USD)",39.069
+"26","Low (2% Adoption CAGR)","20 GB/Month","4G (W)",745.467646883336,1179.79324925336,"Private Investment Cost ($USD)",36.195
+"27","Low (2% Adoption CAGR)","20 GB/Month","5G (F)",296.012119951914,468.475194432009,"Private Investment Cost ($USD)",14.373
+"28","Low (2% Adoption CAGR)","20 GB/Month","5G (W)",240.757425136225,381.027917268945,"Private Investment Cost ($USD)",11.69
+"29","Low (2% Adoption CAGR)","30 GB/Month","4G (F)",1033.15375477231,1635.09151660325,"Private Investment Cost ($USD)",50.164
+"30","Low (2% Adoption CAGR)","30 GB/Month","4G (W)",923.782591105133,1461.99834334886,"Private Investment Cost ($USD)",44.853
+"31","Low (2% Adoption CAGR)","30 GB/Month","5G (F)",373.271890351456,590.748180975863,"Private Investment Cost ($USD)",18.124
+"32","Low (2% Adoption CAGR)","30 GB/Month","5G (W)",338.217364346367,535.270128629142,"Private Investment Cost ($USD)",16.422
+"33","Low (2% Adoption CAGR)","40 GB/Month","4G (F)",1278.06370365522,2022.69130792224,"Private Investment Cost ($USD)",62.055
+"34","Low (2% Adoption CAGR)","40 GB/Month","4G (W)",1114.90798576252,1764.47753385484,"Private Investment Cost ($USD)",54.133
+"35","Low (2% Adoption CAGR)","40 GB/Month","5G (F)",474.097694902418,750.317283749251,"Private Investment Cost ($USD)",23.019
+"36","Low (2% Adoption CAGR)","40 GB/Month","5G (W)",453.963303837063,718.452160217673,"Private Investment Cost ($USD)",22.042
+"37","Baseline (4% Adoption CAGR)","20 GB/Month","4G (F)",824.829129727543,1183.23398569885,"Government Cost ($USD)",3.096
+"38","Baseline (4% Adoption CAGR)","20 GB/Month","4G (W)",750.185703610864,1076.15648878815,"Government Cost ($USD)",-0.499
+"39","Baseline (4% Adoption CAGR)","20 GB/Month","5G (F)",293.884626052,421.583410292489,"Government Cost ($USD)",-3.852
+"40","Baseline (4% Adoption CAGR)","20 GB/Month","5G (W)",267.563786169922,383.825635793304,"Government Cost ($USD)",-3.709
+"41","Baseline (4% Adoption CAGR)","30 GB/Month","4G (F)",1076.71659033592,1544.57161699912,"Government Cost ($USD)",15.226
+"42","Baseline (4% Adoption CAGR)","30 GB/Month","4G (W)",946.767356781407,1358.15682632847,"Government Cost ($USD)",8.968
+"43","Baseline (4% Adoption CAGR)","30 GB/Month","5G (F)",395.082386382885,566.753634020722,"Government Cost ($USD)",-4.4
+"44","Baseline (4% Adoption CAGR)","30 GB/Month","5G (W)",378.595505557577,543.102871689964,"Government Cost ($USD)",-4.31
+"45","Baseline (4% Adoption CAGR)","40 GB/Month","4G (F)",1346.58475632475,1931.70293201666,"Government Cost ($USD)",28.223
+"46","Baseline (4% Adoption CAGR)","40 GB/Month","4G (W)",1157.36947370934,1660.2698012807,"Government Cost ($USD)",19.11
+"47","Baseline (4% Adoption CAGR)","40 GB/Month","5G (F)",516.731859758485,741.262251687902,"Government Cost ($USD)",-5.059
+"48","Baseline (4% Adoption CAGR)","40 GB/Month","5G (W)",494.602541290103,709.517299008077,"Government Cost ($USD)",-4.939
+"49","High (6% Adoption CAGR)","20 GB/Month","4G (F)",918.641489334579,1118.95319051441,"Government Cost ($USD)",7.782
+"50","High (6% Adoption CAGR)","20 GB/Month","4G (W)",814.976264995692,992.683546843724,"Government Cost ($USD)",2.362
+"51","High (6% Adoption CAGR)","20 GB/Month","5G (F)",325.816017540369,396.860882705805,"Government Cost ($USD)",-4.176
+"52","High (6% Adoption CAGR)","20 GB/Month","5G (W)",293.425253892606,357.407245190352,"Government Cost ($USD)",-3.985
+"53","High (6% Adoption CAGR)","30 GB/Month","4G (F)",1224.70676383282,1491.7566392826,"Government Cost ($USD)",23.785
+"54","High (6% Adoption CAGR)","30 GB/Month","4G (W)",1053.8549316798,1283.650207217,"Government Cost ($USD)",14.851
+"55","High (6% Adoption CAGR)","30 GB/Month","5G (F)",456.035784492278,555.475342634484,"Government Cost ($USD)",-4.942
+"56","High (6% Adoption CAGR)","30 GB/Month","5G (W)",435.35020146692,530.279224896932,"Government Cost ($USD)",-4.82
+"57","High (6% Adoption CAGR)","40 GB/Month","4G (F)",1552.74473671077,1891.32397934204,"Government Cost ($USD)",40.936
+"58","High (6% Adoption CAGR)","40 GB/Month","4G (W)",1309.8610886302,1595.47904298891,"Government Cost ($USD)",28.237
+"59","High (6% Adoption CAGR)","40 GB/Month","5G (F)",602.432688672082,733.79439845253,"Government Cost ($USD)",-5.803
+"60","High (6% Adoption CAGR)","40 GB/Month","5G (W)",574.728639265465,700.04942303654,"Government Cost ($USD)",-5.64
+"61","Low (2% Adoption CAGR)","20 GB/Month","4G (F)",804.662824161138,1273.47681933542,"Government Cost ($USD)",0.606
+"62","Low (2% Adoption CAGR)","20 GB/Month","4G (W)",745.467646883336,1179.79324925336,"Government Cost ($USD)",-1.977
+"63","Low (2% Adoption CAGR)","20 GB/Month","5G (F)",296.012119951914,468.475194432009,"Government Cost ($USD)",-3.713
+"64","Low (2% Adoption CAGR)","20 GB/Month","5G (W)",240.757425136225,381.027917268945,"Government Cost ($USD)",-3.442
+"65","Low (2% Adoption CAGR)","30 GB/Month","4G (F)",1033.15375477231,1635.09151660325,"Government Cost ($USD)",10.579
+"66","Low (2% Adoption CAGR)","30 GB/Month","4G (W)",923.782591105133,1461.99834334886,"Government Cost ($USD)",5.805
+"67","Low (2% Adoption CAGR)","30 GB/Month","5G (F)",373.271890351456,590.748180975863,"Government Cost ($USD)",-4.092
+"68","Low (2% Adoption CAGR)","30 GB/Month","5G (W)",338.217364346367,535.270128629142,"Government Cost ($USD)",-3.92
+"69","Low (2% Adoption CAGR)","40 GB/Month","4G (F)",1278.06370365522,2022.69130792224,"Government Cost ($USD)",21.268
+"70","Low (2% Adoption CAGR)","40 GB/Month","4G (W)",1114.90798576252,1764.47753385484,"Government Cost ($USD)",14.147
+"71","Low (2% Adoption CAGR)","40 GB/Month","5G (F)",474.097694902418,750.317283749251,"Government Cost ($USD)",-4.587
+"72","Low (2% Adoption CAGR)","40 GB/Month","5G (W)",453.963303837063,718.452160217673,"Government Cost ($USD)",-4.488

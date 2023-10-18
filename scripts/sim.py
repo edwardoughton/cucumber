@@ -12,15 +12,10 @@ import os
 import sys
 import configparser
 import csv
-
 import math
-import fiona
-from shapely.geometry import shape, Point, LineString, mapping
-import numpy as np
 from random import choice
-from rtree import index
-
-from collections import OrderedDict
+import numpy as np
+from shapely.geometry import shape, Point, LineString, mapping
 
 from cuba.generate_hex import produce_sites_and_site_areas
 from cuba.system_simulator import SimulationManager
@@ -32,9 +27,9 @@ CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 
+
 def generate_receivers(site_area, parameters, grid):
     """
-
     Generate receiver locations as points within the site area.
 
     Sampling points can either be generated on a grid (grid=1)
@@ -150,14 +145,17 @@ def obtain_percentile_values(results, transmission_type, parameters, confidence_
     ----------
     results : list of dicts
         All data returned from the system simulation.
-
+    tranmission_type : string
+        The transmission type (SISO, MIMO etc.).
     parameters : dict
         Contains all necessary simulation parameters.
+    confidence_intervals: list
+        Integer confidence interval values. 
 
     Output
     ------
-    percentile_site_results : dict
-        Contains the percentile value for each site metric.
+    percentile_site_results : list of dicts
+        Contains the confidence interval values for each metric.
 
     """
     output = []
@@ -182,6 +180,7 @@ def obtain_percentile_values(results, transmission_type, parameters, confidence_
         noise_values.append(result['noise'])
 
         sinr = result['sinr']
+
         if sinr == None:
             sinr = 0
         else:
@@ -283,7 +282,6 @@ def obtain_threshold_values_choice(results, parameters):
 
 def convert_results_geojson(data):
     """
-
     Convert results to geojson format, for writing to shapefile.
 
     Parameters
@@ -333,7 +331,6 @@ def write_full_results(data, environment, site_radius, frequency,
     bandwidth, generation, ant_type, transmittion_type, directory,
     filename, parameters):
     """
-
     Write full results data to .csv.
 
     Parameters
@@ -434,7 +431,6 @@ def write_frequency_lookup_table(results, environment, site_radius,
     frequency, bandwidth, generation, ant_type, tranmission_type,
     directory, filename, parameters):
     """
-
     Write the main, comprehensive lookup table for all environments,
     site radii, frequencies etc.
 
@@ -536,56 +532,27 @@ def write_frequency_lookup_table(results, environment, site_radius,
 if __name__ == '__main__':
 
     PARAMETERS = {
-        'iterations': 1,
-        'seed_value1_3G': 1,
-        'seed_value2_3G': 2,
-        'seed_value1_4G': 3,
         'seed_value2_4G': 4,
-        'seed_value1_5G': 5,
         'seed_value2_5G': 6,
-        'seed_value1_urban': 7,
-        'seed_value2_urban': 8,
-        'seed_value1_suburban': 9,
-        'seed_value2_suburban': 10,
-        'seed_value1_rural': 11,
-        'seed_value2_rural': 12,
-        'seed_value1_free-space': 13,
         'seed_value2_free-space': 14,
-        'indoor_users_percentage': 50,
         'los_breakpoint_m': 500,
         'tx_macro_baseline_height': 30,
         'tx_macro_power': 40,
         'tx_macro_gain': 16,
         'tx_macro_losses': 1,
-        'tx_micro_baseline_height': 10,
-        'tx_micro_power': 24,
-        'tx_micro_gain': 5,
-        'tx_micro_losses': 1,
         'rx_gain': 0,
         'rx_losses': 4,
         'rx_misc_losses': 4,
         'rx_height': 1.5,
-        'building_height': 5,
-        'street_width': 20,
-        'above_roof': 0,
         'network_load': 100,
-        'percentile': 50,
         'sectorization': 3,
-        'mnos': 2,
-        'asset_lifetime': 10,
-        'discount_rate': 3.5,
-        'opex_percentage_of_capex': 10,
     }
 
     SPECTRUM_PORTFOLIO = [
         (0.7, 10, '5G', '4x4'),
-        (0.8, 10, '4G', '2x2'),
-        # (1.7, 10, '4G', '2x2'),
-        (1.8, 1, '4G', '2x2'),
-        # (1.9, 1, '4G', '2x2'),
-        # (2.3, 1, '4G', '2x2'),
-        (2.5, 1, '4G', '2x2'),
-        # (2.6, 10, '4G', '2x2'),
+        (0.8, 10, '4G', '4x4'),
+        (1.8, 10, '4G', '4x4'),
+        (2.6, 10, '4G', '4x4'),
         (3.5, 40, '5G', '4x4'),
     ]
 
@@ -635,25 +602,19 @@ if __name__ == '__main__':
     }
 
     CONFIDENCE_INTERVALS = [
-        5,
+        # 10,
         50,
-        95,
+        90,
     ]
 
     def generate_site_radii(min, max, increment):
         for n in range(min, max, increment):
             yield n
 
-    INCREMENT_MA = (250, 40000, 250) #(400, 40400, 1000) #1000,125)#
+    INCREMENT_MA = (1000, 40000, 500) #(400, 40400, 1000) #1000,125)#
 
     SITE_RADII = {
         'macro': {
-            # 'urban':
-            #     generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
-            # 'suburban':
-            #     generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
-            # 'rural':
-            #     generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
             'free-space':
                 generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2])
             },
@@ -674,9 +635,6 @@ if __name__ == '__main__':
     projected_crs = 'epsg:3857'
 
     environments =[
-        # 'urban',
-        # 'suburban',
-        # 'rural'
         'free-space'
     ]
 
@@ -684,9 +642,6 @@ if __name__ == '__main__':
         for ant_type in ANT_TYPES:
             site_radii_generator = SITE_RADII[ant_type]
             for site_radius in site_radii_generator[environment]:
-
-                # if not site_radius == 4400:
-                #     continue
 
                 if environment == 'urban' and site_radius > 5000:
                     continue

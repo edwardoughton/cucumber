@@ -46,7 +46,6 @@ def path_loss_calculator(distance, frequency, simulation_parameters):
         Stochastic component.
 
     """
-
     path_loss = 20*log10(distance) + 20*log10(frequency) + 32.44
 
     random_variations = generate_log_normal_dist_value(

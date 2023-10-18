@@ -29,9 +29,9 @@ def generate_tech_options():
     output = []
 
     scenarios = [
-                'low_75_75_75', 'baseline_75_75_75','high_75_75_75',
-                'low_50_50_50','baseline_50_50_50', 'high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                'low_40_40_40', 'baseline_40_40_40','high_40_40_40',
+                'low_30_30_30','baseline_30_30_30', 'high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc', '5G_nsa']
     backhaul_types = ['wireless', 'fiber']
@@ -74,9 +74,9 @@ def generate_business_model_options():
     output = []
 
     scenarios = [
-                'low_75_75_75', 'baseline_75_75_75', 'high_75_75_75',
-                'low_50_50_50', 'baseline_50_50_50', 'high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+                'low_40_40_40', 'baseline_40_40_40', 'high_40_40_40',
+                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc']
     backhaul_types = ['wireless']
@@ -118,9 +118,9 @@ def generate_policy_options():
     """
     output = []
 
-    scenarios = ['low_75_75_75', 'baseline_75_75_75','high_75_75_75',
-                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
+                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc']
     backhaul_types = ['wireless']
@@ -162,9 +162,9 @@ def generate_mixed_options():
     """
     output = []
 
-    scenarios = ['low_75_75_75', 'baseline_75_75_75','high_75_75_75',
-                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
+                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc']
     backhaul_types = ['wireless', 'fiber']
@@ -206,9 +206,9 @@ def generate_power_options():
     """
     output = []
 
-    scenarios = ['low_75_75_75', 'baseline_75_75_75','high_75_75_75',
-                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
+                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc', '5G_nsa']
     backhaul_types = ['wireless', 'fiber']
@@ -250,9 +250,9 @@ def business_model_power_options():
     """
     output = []
 
-    scenarios = ['low_75_75_75', 'baseline_75_75_75','high_75_75_75',
-                'low_50_50_50', 'baseline_50_50_50','high_50_50_50',
-                'low_25_25_25', 'baseline_25_25_25', 'high_25_25_25',
+    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
+                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
+                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc', '5G_nsa']
     backhaul_types = ['wireless', 'fiber']
@@ -308,10 +308,10 @@ COSTS = {
     'site_rental_suburban': 5000,
     'site_rental_rural': 3000,
     'fiber_urban_m': 20,
-    'fiber_suburban_m': 10,
-    'fiber_rural_m': 5,
+    'fiber_suburban_m': 12,
+    'fiber_rural_m': 7,
     'wireless_small': 40000,
-    'wireless_medium': 60000,
+    'wireless_medium': 40000,
     'wireless_large': 80000,
 }
 
@@ -398,13 +398,16 @@ COST_TYPES = {
 
 
 ENERGY_DEMAND = {
-    #all costs in $USD
-    'equipment_kwh': 5,
+    #all values in kwh per hour
+    #roughly 5 kwh per site
+    'equipment_kwh': 0.249,
+    'wireless_small_kwh': .06, 
+    'wireless_medium_kwh': .06,
+    'wireless_large_kwh': .06,
     'core_node_kwh': 0,
     'regional_node_kwh': 0,
-    'wireless_small_kwh': 5, #Faruk et al. 2019
-    'wireless_medium_kwh': 10,
-    'wireless_large_kwh': 15,
+    #https://blog.wirelessmoves.com/2019/08/cell-site-power-consumption.html
+    #https://www.gsma.com/mobilefordevelopment/wp-content/uploads/2015/01/140617-GSMA-report-draft-vF-KR-v7.pdf
 }
 
 

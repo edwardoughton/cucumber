@@ -27,7 +27,7 @@ CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 
-DATA_RAW = os.path.join(BASE_PATH, 'raw')
+DATA_RAW = os.path.join(BASE_PATH, '..', '..', 'data_raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
@@ -854,50 +854,6 @@ def forecast_smartphones(country):
     return print('Completed subscription forecast')
 
 
-# def load_smartphone_data(path, country):
-#     """
-#     Load smartphone adoption survey data.
-
-#     Parameters
-#     ----------
-#     path : string
-#         Location of data as .csv.
-#     country : string
-#         ISO3 digital country code.
-
-#     """
-#     survey_data = pd.read_csv(path)
-
-#     survey_data = survey_data.to_dict('records')
-
-#     countries_with_data = [i['iso3'] for i in survey_data]
-#     print(countries_with_data)
-#     output = []
-
-#     if country['iso3']  in countries_with_data:
-#         print(country)
-#         for item in survey_data:
-#                 if item['iso3'] == country['iso3']:
-#                     output.append({
-#                         'country': item['iso3'],
-#                         'cluster': item['cluster'],
-#                         'settlement_type': item['Settlement'],
-#                         'smartphone_penetration': item['Smartphone']
-#                     })
-
-#     else:
-#         for item in survey_data:
-#             if item['cluster'] == country['cluster']:
-#                 output.append({
-#                     'country': country['iso3'],
-#                     'cluster': item['cluster'],
-#                     'settlement_type': item['Settlement'],
-#                     'smartphone_penetration': item['Smartphone']
-#                 })
-
-#     return output
-
-
 def forecast_smartphones_linear(data, country, start_point, end_point):
     """
     Forecast smartphone adoption.
@@ -927,7 +883,6 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
     for scenario in scenarios:
         for settlement_type in settlement_types:
 
-            # smartphone_growth = country['sp_growth_{}_{}'.format(scenario, settlement_type)]
             smartphone_growth = country['sp_growth_{}'.format(scenario)]
 
             seen_years = set()
@@ -968,8 +923,8 @@ def forecast_smartphones_linear(data, country, start_point, end_point):
 
                         penetration = penetration * (1 + (smartphone_growth/100))
 
-                    if penetration > 90:
-                        penetration = 90
+                    if penetration > 95:
+                        penetration = 95
 
                     output.append({
                         'scenario': scenario,
@@ -998,7 +953,7 @@ if __name__ == '__main__':
         # if country['iso3'] == 'MDV': #MDV has it's own set of scripts
         #     continue #see -> ~/qubic/scripts/MDV/
 
-        # if not country['iso3'] == 'ECU':
+        # if not country['iso3'] == 'AFG':
         #     continue
 
         print('----')
