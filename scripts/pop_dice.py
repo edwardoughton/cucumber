@@ -34,7 +34,7 @@ CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 
-DATA_RAW = os.path.join(BASE_PATH, 'raw')
+DATA_RAW = os.path.join(BASE_PATH, '..', '..', 'data_raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
@@ -246,8 +246,8 @@ def get_pop_and_luminosity_data(country):
 
     path_output = os.path.join(DATA_INTERMEDIATE, iso3, 'regional_data.csv')
 
-    # if os.path.exists(path_output):
-    #     return print('Regional data already exists')
+    if os.path.exists(path_output):
+        return print('Regional data already exists')
 
     path_settlements = os.path.join(DATA_INTERMEDIATE, iso3,
         'settlements.tif')
@@ -437,8 +437,8 @@ if __name__ == '__main__':
 
     for country in tqdm(countries):
 
-        if not country['iso3'] in ['BRA', 'CAN', 'DNK', 'EGY', 'JPN', 'KEN', 'MLT', 'PHL', 'RUS', 'ARE','URY']:
-            continue
+        # if not country['iso3'] in ['BRA', 'CAN', 'DNK', 'EGY', 'JPN', 'KEN', 'MLT', 'PHL', 'RUS', 'ARE','URY']:
+        #     continue
 
         # if not country['iso3'] == 'BRA':
         #     continue

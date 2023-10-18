@@ -180,6 +180,7 @@ def obtain_percentile_values(results, transmission_type, parameters, confidence_
         noise_values.append(result['noise'])
 
         sinr = result['sinr']
+
         if sinr == None:
             sinr = 0
         else:
@@ -549,9 +550,9 @@ if __name__ == '__main__':
 
     SPECTRUM_PORTFOLIO = [
         (0.7, 10, '5G', '4x4'),
-        (0.8, 10, '4G', '2x2'),
-        (1.8, 10, '4G', '2x2'),
-        (2.5, 10, '4G', '2x2'),
+        (0.8, 10, '4G', '4x4'),
+        (1.8, 10, '4G', '4x4'),
+        (2.6, 10, '4G', '4x4'),
         (3.5, 40, '5G', '4x4'),
     ]
 
@@ -601,16 +602,16 @@ if __name__ == '__main__':
     }
 
     CONFIDENCE_INTERVALS = [
-        5,
+        # 10,
         50,
-        95,
+        90,
     ]
 
     def generate_site_radii(min, max, increment):
         for n in range(min, max, increment):
             yield n
 
-    INCREMENT_MA = (250, 40000, 250) #(400, 40400, 1000) #1000,125)#
+    INCREMENT_MA = (1000, 40000, 500) #(400, 40400, 1000) #1000,125)#
 
     SITE_RADII = {
         'macro': {

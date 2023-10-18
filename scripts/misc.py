@@ -24,7 +24,7 @@ def find_country_list(continent_list):
         Contains all desired country information for countries in
         the stated continent.
     """
-    glob_info_path = os.path.join(BASE_PATH, 'global_information_dice.csv')
+    glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
     countries = pd.read_csv(glob_info_path, encoding = "ISO-8859-1")
 
     if len(continent_list) > 0:
