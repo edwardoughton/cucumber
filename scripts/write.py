@@ -217,7 +217,7 @@ def write_results(regional_results, folder, metric):
     national_results['social_cost'] = (
         national_results['private_cost'] + national_results['government_cost'])
     path = os.path.join(folder,'national_market_results_{}.csv'.format(metric))
-    # national_results.reset_index(drop=False, inplace=True)
+    # national_results.reset_index(drop=True, inplace=True)
     national_results.to_csv(path, index=True)
 
 
@@ -351,6 +351,30 @@ def write_results(regional_results, folder, metric):
 
     path = os.path.join(folder,'regional_market_results_{}.csv'.format(metric))
     regional_market_results.to_csv(path, index=True)
+
+
+    sites_results = pd.DataFrame(regional_results)
+    sites_results = sites_results[[
+        'GID_0', 'decile', 'scenario', 'strategy', 'geotype',
+        'confidence', 'population_total', 'area_km2',
+        'total_estimated_sites', 
+        #'total_estimated_sites_4G', 'total_sites', 'total_upgraded_sites',
+        'total_new_sites',
+    ]]
+    sites_results = sites_results.drop_duplicates()
+
+    sites_results['population_km2'] = (
+        sites_results['population_total'] / sites_results['area_km2'])
+    sites_results['site_density_km2'] = ((
+        sites_results['total_estimated_sites'] + sites_results['total_new_sites']) /
+        sites_results['area_km2'])
+    sites_results = sites_results[[
+        'GID_0', 'decile', 'scenario', 'strategy', 'geotype',
+        'confidence', 'population_total', 'area_km2', 'population_km2',
+        'total_estimated_sites', 'total_new_sites', 'site_density_km2'
+    ]]
+    path = os.path.join(folder,'regional_market_sites_results_{}.csv'.format(metric))
+    sites_results.to_csv(path, index=True)
 
 
 def write_inputs(folder, country, country_parameters, global_parameters,
