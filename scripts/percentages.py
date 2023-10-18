@@ -169,9 +169,9 @@ def process_technology_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -239,9 +239,9 @@ def process_sharing_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -287,9 +287,9 @@ def process_policy_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -337,9 +337,9 @@ def process_mixed_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -388,9 +388,9 @@ def process_emissions_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -469,9 +469,9 @@ def process_power_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
@@ -569,11 +569,11 @@ def process_business_model_emissions_data(data):
         All processed model results.
 
     """
-    data.loc[data['scenario'].str.endswith('25_25_25', na=False), 'capacity'] = '25gbmonth'
-    data.loc[data['scenario'].str.endswith('50_50_50', na=False), 'capacity'] = '50gbmonth'
-    data.loc[data['scenario'].str.endswith('100_100_100', na=False), 'capacity'] = '100gbmonth'
+    data.loc[data['scenario'].str.endswith('20_20_20', na=False), 'capacity'] = '20gbmonth'
+    data.loc[data['scenario'].str.endswith('30_30_30', na=False), 'capacity'] = '30gbmonth'
+    data.loc[data['scenario'].str.endswith('40_40_40', na=False), 'capacity'] = '40gbmonth'
 
-    # data = data.loc[data.capacity == '50gbmonth']
+    # data = data.loc[data.capacity == '30gbmonth']
 
     data.loc[data['scenario'].str.startswith('low', na=False), 'scenario'] = 'Low'
     data.loc[data['scenario'].str.startswith('baseline', na=False), 'scenario'] = 'Baseline'
