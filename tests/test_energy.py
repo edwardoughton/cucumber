@@ -148,8 +148,13 @@ def test_assess_energy(setup_region, setup_option, setup_global_parameters,
         if not region['asset_type'] == 'new':
             continue
 
+        ## number of assets: 4, kwh per asset: 1
+        if region['grid_type_perc'] == 100 and region['grid_type'] == 'on_grid':
+            assert region['mno_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 4) * 1) 
+        ## number of assets: 4, kwh per asset: 1, MNOs: 3
         if region['grid_type_perc'] == 100 and region['grid_type'] == 'on_grid':
             assert region['total_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 4) * 1) * 3
+        ## number of assets: 4, kwh per asset: 1, MNOs: 3
         if region['grid_type_perc'] == 100 and region['grid_type'] == 'off_grid':
             assert region['total_energy_annual_demand_kwh'] == (((1 * 24 * 365) * 4) * 1) * 3
 
