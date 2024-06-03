@@ -433,7 +433,7 @@ def write_energy_aggregated(data_energy, regional_annual_demand, folder, metric)
     df = pd.DataFrame(data_energy)
     df = df.drop_duplicates()
     df = df[[
-        'GID_0', 'income', 'scenario', 'strategy',
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy',
         'confidence', 'grid_type', 'asset_type','asset_type',
         'mno_energy_annual_demand_kwh',
         'mno_equipment_annual_demand_kWh',
@@ -463,8 +463,7 @@ def write_energy_annual_aggregated(data_energy, regional_annual_demand, folder, 
     df = pd.DataFrame(data_energy)
     df = df.drop_duplicates()
     df = df[[
-        'GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type',
-
+        'GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type',
         'mno_energy_annual_demand_kwh',
         'mno_equipment_annual_demand_kWh',
         'mno_regional_nodes_annual_demand_kwh',
@@ -478,21 +477,21 @@ def write_energy_annual_aggregated(data_energy, regional_annual_demand, folder, 
 
     ]]
     df = df.groupby([
-        'GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
+        'GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
 
     regional_annual_demand = pd.DataFrame(regional_annual_demand)
     regional_annual_demand = regional_annual_demand.drop_duplicates()
     regional_annual_demand = regional_annual_demand[[
-        'GID_0', 'income', 'scenario', 'strategy',
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy',
         'confidence', 'year', 'population',
         'area_km2', 'population_with_phones',
         'population_with_smartphones',
     ]]
     regional_annual_demand = regional_annual_demand.groupby([
-        'GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
+        'GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
     df = df.merge(regional_annual_demand,
-        left_on=['GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'],
-        right_on=['GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'])
+        left_on=['GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'],
+        right_on=['GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'])
 
     path = os.path.join(folder,'energy_national_annual_{}.csv'.format(metric))
     df.to_csv(path, index=True)
@@ -532,7 +531,7 @@ def write_emissions_aggregated(emissions, folder, metric):
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
     df = df[[
-        'GID_0', 'income', 'scenario', 'strategy', 'asset_type', 'confidence',
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy', 'asset_type', 'confidence',
         # 'population','population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
         'mno_demand_carbon_tonnes',
@@ -546,7 +545,7 @@ def write_emissions_aggregated(emissions, folder, metric):
         'total_pm10_tonnes'
     ]]
     df = df.groupby([
-        'GID_0', 'income', 'scenario', 'strategy', 'asset_type','confidence'], as_index=True).sum()
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy', 'asset_type','confidence'], as_index=True).sum()
     path = os.path.join(folder,'emissions_national_{}.csv'.format(metric))
     df.to_csv(path, index=True)
 
@@ -561,7 +560,7 @@ def write_emissions_annual_aggregated(emissions, regional_annual_demand, folder,
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
     df = df[[
-        'year', 'GID_0', 'income', 'scenario', 'strategy', 'confidence', #'asset_type',
+        'year', 'GID_0', 'income', 'wb_region', 'scenario', 'strategy', 'confidence', #'asset_type',
         # 'total_sites',
         # 'total_upgraded_sites',
         # 'total_new_sites',
@@ -577,21 +576,21 @@ def write_emissions_annual_aggregated(emissions, regional_annual_demand, folder,
         'total_pm10_tonnes'
     ]]
     df = df.groupby([
-        'income', 'year', 'GID_0', 'scenario', 'strategy'], as_index=True).sum() #, 'asset_type'
+        'income', 'wb_region', 'year', 'GID_0', 'scenario', 'strategy'], as_index=True).sum() #, 'asset_type'
 
     regional_annual_demand = pd.DataFrame(regional_annual_demand)
     regional_annual_demand = regional_annual_demand.drop_duplicates()
     regional_annual_demand = regional_annual_demand[[
-        'GID_0', 'income', 'scenario', 'strategy',
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy',
         'confidence', 'year', 'population',
         'area_km2', 'population_with_phones',
         'population_with_smartphones',
     ]]
     regional_annual_demand = regional_annual_demand.groupby([
-        'GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
+        'GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'], as_index=True).sum()
     df = df.merge(regional_annual_demand,
-        left_on=['GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'],
-        right_on=['GID_0', 'income', 'year', 'scenario', 'strategy', 'confidence'])
+        left_on=['GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'],
+        right_on=['GID_0', 'income', 'wb_region', 'year', 'scenario', 'strategy', 'confidence'])
 
     path = os.path.join(folder,'emissions_national_annual_{}.csv'.format(metric))
     df.to_csv(path, index=True)
@@ -606,7 +605,7 @@ def write_power_emissions(emissions, folder, metric):
     df = pd.DataFrame(emissions)
     df = df.drop_duplicates()
     df = df[[
-        'GID_0', 'income', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type',
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type',
         # 'population','population_with_phones', 'population_with_smartphones',
         'mno_energy_annual_demand_kwh',
         'mno_demand_carbon_tonnes',
@@ -620,6 +619,6 @@ def write_power_emissions(emissions, folder, metric):
         'total_pm10_tonnes'
     ]]
     df = df.groupby([
-        'GID_0', 'income', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type'], as_index=True).sum()
+        'GID_0', 'income', 'wb_region', 'scenario', 'strategy', 'confidence', 'asset_type', 'grid_type'], as_index=True).sum()
     path = os.path.join(folder,'power_emissions_{}.csv'.format(metric))
     df.to_csv(path, index=True)

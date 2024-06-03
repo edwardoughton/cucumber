@@ -45,6 +45,7 @@ def find_country_list(continent_list):
             'iso2': country['ISO_2digit'],
             'regional_level': country['lowest'],
             'continent2': country['continent2'],
+            'wb_region': country['wb_region'],
             'iea_classification': country['iea_classification'],
             'subs_growth_low': float(country['subs_growth_low']),
             'subs_growth_baseline': float(country['subs_growth_baseline']),

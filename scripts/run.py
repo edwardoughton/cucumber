@@ -297,10 +297,10 @@ if __name__ == '__main__':
 
     decision_options = [
         'technology_options',
-        'business_model_options',
-        'policy_options',
-        'power_options',
-        'business_model_power_options',
+        # 'business_model_options',
+        # 'policy_options',
+        # 'power_options',
+        # 'business_model_power_options',
     ]
 
     all_results = []
@@ -322,7 +322,7 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            # if not iso3 == "COL":
+            # if not iso3 == "GBR":
             #     continue
 
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
@@ -377,7 +377,6 @@ if __name__ == '__main__':
                         penetration_lut,
                         smartphone_lut
                     )
-
                     
                     data_supply, assets = estimate_supply(
                         country,
@@ -447,33 +446,33 @@ if __name__ == '__main__':
 
             write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
-            write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
-                OUTPUT_COUNTRY, decision_option)
+            # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+            #     OUTPUT_COUNTRY, decision_option)
 
-            write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
-                decision_option)
+            # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+            #     decision_option)
 
-            write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
-                decision_option)
+            # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+            #     decision_option)
 
-            write_results(regional_results, OUTPUT_COUNTRY, decision_option)
+            # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
-            write_inputs(OUTPUT_COUNTRY, country, country_parameters,
-                            GLOBAL_PARAMETERS, COSTS, decision_option)
+            # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
+            #                 GLOBAL_PARAMETERS, COSTS, decision_option)
 
-            generate_percentages(iso3, decision_option)
+            # generate_percentages(iso3, decision_option)
 
         if decision_option == 'technology_options':
             collect_results('decile_market_cost_results_technology_options.csv')
             collect_results('national_market_cost_results_technology_options.csv')
             collect_results('emissions_technology_options.csv')
-        elif decision_option == 'business_model_options':
-            collect_results('national_market_cost_results_business_model_options.csv')
-        elif decision_option == 'policy_options':
-            collect_results('national_market_cost_results_policy_options.csv')
-        elif decision_option == 'power_options':
-            collect_results('power_emissions_power_options.csv')
+    #     elif decision_option == 'business_model_options':
+    #         collect_results('national_market_cost_results_business_model_options.csv')
+    #     elif decision_option == 'policy_options':
+    #         collect_results('national_market_cost_results_policy_options.csv')
+    #     elif decision_option == 'power_options':
+    #         collect_results('power_emissions_power_options.csv')
         elif decision_option == 'business_model_power_options':
             collect_results('emissions_national_business_model_power_options.csv')
 
-    print('Completed model run')
+    # print('Completed model run')

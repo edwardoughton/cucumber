@@ -134,6 +134,7 @@ def estimate_demand(country, country_parameters, regions, option, global_paramet
                 'GID_0': region['GID_0'],
                 'decile': region['decile'],
                 'income': country['income'],
+                'wb_region': country['wb_region'],
                 'scenario': option['scenario'],
                 'strategy': option['strategy'],
                 'confidence': global_parameters['confidence'][0],

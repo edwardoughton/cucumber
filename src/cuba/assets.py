@@ -108,6 +108,11 @@ def existing_sites(existing_sites, country, region):
 
     """
     assets = {
+        'equipment': existing_sites,
+        'backhaul': {
+            'quantity': existing_sites,
+            'backhaul_dist_m': get_backhaul_dist(country, region)
+        },
         'site_rental': existing_sites,
         'operation_and_maintenance': existing_sites,
     }

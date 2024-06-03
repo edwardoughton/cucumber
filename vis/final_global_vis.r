@@ -896,6 +896,16 @@ long$type = factor(long$type,
 
 long = spread(long, scenario_adopt, value)
 
+export = data %>%
+  group_by(scenario_adopt, scenario_capacity, 
+           strategy_short, strategy_power) %>%
+  summarize(
+    total_demand_carbon_tonnes = sum(total_demand_carbon_tonnes),
+    total_nitrogen_oxide_tonnes = sum(total_nitrogen_oxide_tonnes),
+    total_sulpher_dioxide_tonnes = sum(total_sulpher_dioxide_tonnes),
+    total_pm10_tonnes = sum(total_pm10_tonnes)
+  )
+
 df_errorbar <- 
   long |>
   group_by(income, type, strategy_long) |>
