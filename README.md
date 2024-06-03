@@ -1,8 +1,32 @@
-# Techno-Economic Assessment of Mobile Broadband
+# Sustainability assessment of global universal mobile broadband strategies 
 
-This repository holds the code for a global model capable of evaluating different mobile broadband strategies.
+This repository estimates the global emissions impacts of  
+different universal mobile broadband strategies (focusing on terrestrial 
+4G and 5G).
 
-Using conda
+Sustainable Development Goal (SDG) 9 aims to build resilient infrastructure and 
+promote inclusive and sustainable industrialization. For example, via universal 
+mobile broadband. 
+
+However, there is a trade-off in attempting to deliver this aspirational 
+objective. Expanding existing broadband infrastructure will incur new emissions, 
+potentially contrevening SDG13, which aims to take urgent steps to combat 
+climate change and its impacts via decarbonization.
+
+This analysis quantifies this trade-off by first estimating (i) the existing 
+energy and emissions produced globally by mobile broadband networks, (ii) the 
+additional energy and emissions impacts from providing universal mobile 
+broadband via terrestrial 4G or 5G, and then (iii) the energy and emissions 
+savings from utilizing infrastructure sharing. 
+
+Reference
+===========
+
+Oughton, E.J., Oh, J., Ballan, S., Kusuma, J., 2023. Sustainability assessment 
+of 4G and 5G universal mobile broadband strategies. https://doi.org/10.48550/arXiv.2311.05480
+
+
+Installation using conda
 ===========
 
 You can install the existing conda environment using:

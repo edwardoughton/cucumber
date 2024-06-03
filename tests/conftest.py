@@ -6,6 +6,7 @@ def setup_country():
     return {
     'GID_0': 'MWI',
     'income': 'HIC',
+    'wb_region': 'SSA',
     'backhaul_fiber_perc': 50,
     }
 
@@ -15,6 +16,7 @@ def setup_region():
     return [{
     'GID_0': 'MWI',
     'GID_id': 'MWI.1.1.1_1',
+    'wb_region': 'SSA',
     'mean_luminosity_km2': 26.736407691655717,
     'population_total': 10000,
     'pop_under_10_pop': 0,
@@ -31,6 +33,7 @@ def setup_region_rural():
     return [{
     'GID_0': 'MWI',
     'GID_id': 'MWI.1.1.1_1',
+    'wb_region': 'SSA',
     'mean_luminosity_km2': 26.736407691655717,
     'population_total': 10000,
     'pop_under_10_pop': 0,
@@ -464,6 +467,7 @@ def setup_data_energy():
             'year': 2020,
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
+            'wb_region': 'SSA',
             'geotype': 'rural',
             'decile': 1,
             'scenario': 'low_20_20_20',
@@ -488,6 +492,7 @@ def setup_data_energy():
             'year': 2020,
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
+            'wb_region': 'SSA',
             'geotype': 'rural',
             'decile': 1,
             'scenario': 'low_20_20_20',
@@ -512,6 +517,7 @@ def setup_data_energy():
             'year': 2021,
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
+            'wb_region': 'SSA',
             'geotype': 'rural',
             'decile': 1,
             'scenario': 'low_20_20_20',
@@ -536,6 +542,7 @@ def setup_data_energy():
             'year': 2021,
             'GID_0': 'CHL',
             'GID_id': 'CHL.1.1.1_1',
+            'wb_region': 'SSA',
             'geotype': 'rural',
             'decile': 1,
             'scenario': 'low_20_20_20',

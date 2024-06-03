@@ -30,7 +30,7 @@ def generate_tech_options():
 
     scenarios = [
                 'low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30','baseline_30_30_30', 'high_30_30_30',
+                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
                 'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
                 ]
     generation_core_types = ['4G_epc', '5G_nsa']
