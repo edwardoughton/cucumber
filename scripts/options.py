@@ -1,300 +1,57 @@
 """
-Options consisting of scenarios and strategies.
-
-Country parameters consist of those parameters which are specific
-to each country.
-
-Written by Ed Oughton, based on work from the pytal and podis repositories.
-
-April 2021
-
-#strategy is defined based on generation_core_backhaul_sharing_networks_spectrum_tax_power
-
-generation: technology generation, so 3G or 4G
-core: type of core data transport network, eg. evolved packet core (4G)
-backhaul: type of backhaul, so fiber or wireless
-sharing: the type of infrastructure sharing, active, passive etc..
-network: relates to the number of networks, as defined in country parameters
-spectrum: type of spectrum strategy, so baseline, high or low
-tax: type of taxation strategy, so baseline, high or low
+Generating scenarios and strategies.
 
 """
+import os
+import configparser
+import pandas as pd
+from tqdm import tqdm
+import random
 
+from misc import find_country_list
+
+CONFIG = configparser.ConfigParser()
+CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
+BASE_PATH = CONFIG['file_locations']['base_path']
+
+DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 
 def generate_tech_options():
     """
     Generate technology strategy options.
 
+    sps = Stated Policies Scenario
+    aps = Announced Pledges Scenario
+
+    capacity_generation_backhaul_energy_year
+
     """
     output = []
 
-    scenarios = [
-                'low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc', '5G_nsa']
+    capacities = [20, 30, 40]
+    generations = ['4G', '5G']
     backhaul_types = ['wireless', 'fiber']
-    sharing_types = ['baseline']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline']
-    tax_types = ['baseline']
-    power_types = ['baseline']
+    energy_scenarios = ['sps-2022','sps-2030','aps-2030']
 
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
+    for capacity in capacities:
+        for generation in generations:
                 for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
+                    for energy_scenario in energy_scenarios:
+                            option = '{}_{}_{}_{}'.format(
+                                capacity,
+                                generation,
+                                backhaul,
+                                energy_scenario,
+                            )
+                            output.append(option)
 
     return output
 
 
-def generate_business_model_options():
-    """
-    Generate business model strategy options.
+# OPTIONS = {
+#     'technology_options': generate_tech_options(),
 
-    """
-    output = []
-
-    scenarios = [
-                'low_40_40_40', 'baseline_40_40_40', 'high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30', 'high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc']
-    backhaul_types = ['wireless']
-    sharing_types = ['baseline', 'passive', 'active', 'srn']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline']
-    tax_types = ['baseline']
-    power_types = ['baseline']
-
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
-                for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
-
-    return output
-
-
-def generate_policy_options():
-    """
-    Generate policy strategy options.
-
-    """
-    output = []
-
-    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc']
-    backhaul_types = ['wireless']
-    sharing_types = ['baseline']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline', 'low', 'high']
-    tax_types = ['baseline', 'low', 'high']
-    power_types = ['baseline']
-
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
-                for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
-
-    return output
-
-
-def generate_mixed_options():
-    """
-    Generate policy strategy options.
-
-    """
-    output = []
-
-    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc']
-    backhaul_types = ['wireless', 'fiber']
-    sharing_types = ['baseline', 'srn']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline', 'low']
-    tax_types = ['baseline', 'low']
-    power_types = ['baseline']
-
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
-                for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
-
-    return output
-
-
-def generate_power_options():
-    """
-    Generate energy strategy options.
-
-    """
-    output = []
-
-    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc', '5G_nsa']
-    backhaul_types = ['wireless', 'fiber']
-    sharing_types = ['baseline']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline']
-    tax_types = ['baseline']
-    power_types = ['baseline', 'renewable']
-
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
-                for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
-
-    return output
-
-
-def business_model_power_options():
-    """
-    Generate energy strategy options.
-
-    """
-    output = []
-
-    scenarios = ['low_40_40_40', 'baseline_40_40_40','high_40_40_40',
-                'low_30_30_30', 'baseline_30_30_30','high_30_30_30',
-                'low_20_20_20', 'baseline_20_20_20', 'high_20_20_20',
-                ]
-    generation_core_types = ['4G_epc', '5G_nsa']
-    backhaul_types = ['wireless', 'fiber']
-    sharing_types = ['baseline', 'passive', 'active', 'srn']
-    networks_types = ['baseline']
-    spectrum_types = ['baseline']
-    tax_types = ['baseline']
-    power_types = ['baseline']
-
-    for scenario in scenarios:
-        for generation_core_type in generation_core_types:
-                for backhaul in backhaul_types:
-                    for sharing in sharing_types:
-                        for network in networks_types:
-                            for spectrum in spectrum_types:
-                                for tax in tax_types:
-                                    for power in power_types:
-                                        strategy = '{}_{}_{}_{}_{}_{}_{}'.format(
-                                            generation_core_type,
-                                            backhaul,
-                                            sharing,
-                                            network,
-                                            spectrum,
-                                            tax,
-                                            power
-                                        )
-                                        output.append({
-                                            'scenario': scenario,
-                                            'strategy': strategy
-                                        })
-
-    return output
-
-
-OPTIONS = {
-    'technology_options': generate_tech_options(),
-    'business_model_options': generate_business_model_options(),
-    'policy_options': generate_policy_options(),
-    'mixed_options': generate_mixed_options(),
-    'power_options': generate_power_options(),
-    'business_model_power_options': business_model_power_options(),
-}
+# }
 
 
 COSTS = {
@@ -325,53 +82,6 @@ GLOBAL_PARAMETERS = {
     'confidence': [50],
     'tdd_dl_to_ul': '80:20',
     }
-
-
-INFRA_SHARING_ASSETS = {
-    'baseline': [],
-    'passive': [
-        'site_build',
-        'installation',
-        'site_rental',
-        'backhaul',
-        'backhaul_fiber_urban_m',
-        'backhaul_fiber_suburban_m',
-        'backhaul_fiber_rural_m',
-        'backhaul_wireless_small',
-        'backhaul_wireless_medium',
-        'backhaul_wireless_large',
-    ],
-    'active': [
-        'equipment',
-        'site_build',
-        'installation',
-        'site_rental',
-        'operation_and_maintenance',
-        'power',
-        'backhaul',
-        'backhaul_fiber_urban_m',
-        'backhaul_fiber_suburban_m',
-        'backhaul_fiber_rural_m',
-        'backhaul_wireless_small',
-        'backhaul_wireless_medium',
-        'backhaul_wireless_large',
-    ],
-    'srn': [
-        'equipment',
-        'site_build',
-        'installation',
-        'site_rental',
-        'operation_and_maintenance',
-        'power',
-        'backhaul',
-        'backhaul_fiber_urban_m',
-        'backhaul_fiber_suburban_m',
-        'backhaul_fiber_rural_m',
-        'backhaul_wireless_small',
-        'backhaul_wireless_medium',
-        'backhaul_wireless_large',
-    ],
-}
 
 
 COST_TYPES = {
@@ -411,47 +121,122 @@ ENERGY_DEMAND = {
 }
 
 
-TECH_LUT = {
+EMISSIONS_FACTORS = {
     'oil': {
         'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
     },
-    'gas': {
+    'natural gas': {
         'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
     },
     'coal': {
         'carbon_per_kWh': 1, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
     },
     'nuclear': {
         'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
     },
     'hydro': {
         'carbon_per_kWh': 0.01, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
     },
     'diesel': {
         'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
     },
     'renewables': {
         'carbon_per_kWh': 0.1, #kgs of carbon per kWh
-        'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
-        'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
-        'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+    },
+    'solar pv': {
+        'carbon_per_kWh': 0.1, #kgs of carbon per kWh
+        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
+    },
+    'wind': {
+        'carbon_per_kWh': 0.1, #kgs of carbon per kWh
+        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
+        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
+        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
     }
 }
+
+if __name__ == '__main__':
+
+    print(generate_tech_options())
+
+    # random.seed(10)
+
+    # countries = find_country_list([])
+
+    # if not os.path.exists(DATA_INTERMEDIATE):
+    #     os.makedirs(DATA_INTERMEDIATE)
+
+    # for country in tqdm(countries):#[::-1]:#[:1]:
+
+    #     output = []
+
+    #     iso3 = country['iso3']
+
+    #     if not iso3 == "GBR":
+    #         continue
+
+    #     OUTPUT_COUNTRY = os.path.join(DATA_INTERMEDIATE, iso3)
+
+    #     if not os.path.exists(OUTPUT_COUNTRY):
+    #         os.makedirs(OUTPUT_COUNTRY)
+
+    #     for i in range(0, 100):
+        
+    #         output.append({
+    #             'iteration': i,
+    #             'constellation': constellation_params['name'], 
+    #             'number_of_satellites': constellation_params['number_of_satellites'],
+    #             'number_of_ground_stations': (
+    #                 constellation_params['number_of_ground_stations']),
+    #             'subscribers_low': constellation_params['subscribers'][0],
+    #             'subscribers_baseline': constellation_params['subscribers'][1],
+    #             'subscribers_high': constellation_params['subscribers'][2],
+    #             'altitude_km': altitude_km,
+    #             'elevation_angle': elevation_angle,
+    #             'dl_frequency_hz': dl_frequency_hz,
+    #             'power_dbw': power_dbw,
+    #             'receiver_gain_db': receiver_gain,
+    #             'earth_atmospheric_losses_db': earth_atmospheric_losses,
+    #             'antenna_diameter_m': antenna_diameter_m,
+    #             'total_area_earth_km_sq' : (
+    #                 constellation_params['total_area_earth_km_sq']),
+    #             'ideal_coverage_area_per_sat_sqkm': ideal_coverage_area_per_sat_sqkm,
+    #             'percent_coverage' : constellation_params['percent_coverage'],
+    #             'speed_of_light': constellation_params['speed_of_light'],
+    #             'antenna_efficiency' : constellation_params['antenna_efficiency'],
+    #             'all_other_losses_db' : constellation_params['all_other_losses_db'],
+    #             'number_of_beams' : constellation_params['number_of_beams'],
+    #             'number_of_channels' : constellation_params['number_of_channels'],
+    #             'polarization' : constellation_params['polarization'],
+    #             'dl_bandwidth_hz' : constellation_params['dl_bandwidth_hz'],
+    #             'subscriber_traffic_percent' : (
+    #                 constellation_params['subscriber_traffic_percent'])
+    #         })
+
+    #     df = pd.DataFrame.from_dict(output)
+    #     filename = 'options_{}.csv'.format(iso3)      
+    #     path_out = os.path.join(OUTPUT_COUNTRY, filename)
+    #     df.to_csv(path_out, index = False)

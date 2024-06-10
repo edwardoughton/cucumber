@@ -95,7 +95,6 @@ def process(data):
 
     output.to_csv(path, index=False)
 
-
     return
 
 

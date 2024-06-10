@@ -21,7 +21,7 @@ from cuba.supply import estimate_supply
 from cuba.assess import assess
 from cuba.energy import assess_energy
 from cuba.emissions import assess_emissions
-from write import (write_demand, write_results, write_inputs, #define_deciles,
+from write import (write_demand, write_results, write_inputs, 
     write_assets, write_energy, write_energy_aggregated, write_energy_annual_aggregated,
     write_emissions, write_emissions_aggregated,
     write_emissions_annual_aggregated, write_power_emissions)
@@ -264,20 +264,6 @@ def load_on_grid_mix(country, path):
     return on_grid_mix
 
 
-def allocate_deciles(data):
-    """
-    Convert to pandas df, define deciles, and then return as a list of dicts.
-
-    """
-    data = pd.DataFrame(data)
-
-    data = define_deciles(data)
-
-    data = data.to_dict('records')
-
-    return data
-
-
 if __name__ == '__main__':
 
     countries = find_country_list([])
@@ -286,7 +272,7 @@ if __name__ == '__main__':
         os.makedirs(OUTPUT)
 
     BASE_YEAR = 2023
-    END_YEAR = 2030
+    END_YEAR = 2023 #2030
     TIMESTEP_INCREMENT = 1
     TIMESTEPS = [t for t in range(BASE_YEAR, END_YEAR + 1, TIMESTEP_INCREMENT)]
 
@@ -307,7 +293,7 @@ if __name__ == '__main__':
 
     for decision_option in decision_options:
 
-        options = OPTIONS[decision_option]#[:1]
+        options = OPTIONS[decision_option][:1]
 
         failures = []
 
@@ -322,8 +308,8 @@ if __name__ == '__main__':
 
             iso3 = country['iso3']
 
-            # if not iso3 == "GBR":
-            #     continue
+            if not iso3 == "GBR":
+                continue
 
             OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
@@ -421,8 +407,7 @@ if __name__ == '__main__':
                         country_parameters
                     )
 
-                    # final_results = allocate_deciles(data_assess)
-
+                    
                     regional_annual_demand = regional_annual_demand + annual_demand
                     regional_results = regional_results + data_assess
                     for key, value in assets.items():
@@ -432,47 +417,47 @@ if __name__ == '__main__':
 
             all_results = all_results + regional_results
 
-            write_demand(regional_annual_demand, OUTPUT_COUNTRY)
+            # write_demand(regional_annual_demand, OUTPUT_COUNTRY)
 
-            write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
+            # write_assets(all_assets, OUTPUT_COUNTRY, decision_option)
 
-            write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
+            # write_energy(regional_energy_demand, OUTPUT_COUNTRY, decision_option)
 
             write_energy_annual_aggregated(regional_energy_demand, regional_annual_demand,
                 OUTPUT_COUNTRY, decision_option)
 
-            write_energy_aggregated(regional_energy_demand, regional_annual_demand,
-                OUTPUT_COUNTRY, decision_option)
+    #         write_energy_aggregated(regional_energy_demand, regional_annual_demand,
+    #             OUTPUT_COUNTRY, decision_option)
 
-            write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
+    #         write_emissions(regional_emissions, OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
-            #     OUTPUT_COUNTRY, decision_option)
+    #         # write_emissions_annual_aggregated(regional_emissions, regional_annual_demand,
+    #         #     OUTPUT_COUNTRY, decision_option)
 
-            # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+    #         # write_emissions_aggregated(regional_emissions, OUTPUT_COUNTRY,
+    #         #     decision_option)
 
-            # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
-            #     decision_option)
+    #         # write_power_emissions(regional_emissions, OUTPUT_COUNTRY,
+    #         #     decision_option)
 
-            # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
+    #         # write_results(regional_results, OUTPUT_COUNTRY, decision_option)
 
-            # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
-            #                 GLOBAL_PARAMETERS, COSTS, decision_option)
+    #         # write_inputs(OUTPUT_COUNTRY, country, country_parameters,
+    #         #                 GLOBAL_PARAMETERS, COSTS, decision_option)
 
-            # generate_percentages(iso3, decision_option)
+    #         # generate_percentages(iso3, decision_option)
 
-        if decision_option == 'technology_options':
-            collect_results('decile_market_cost_results_technology_options.csv')
-            collect_results('national_market_cost_results_technology_options.csv')
-            collect_results('emissions_technology_options.csv')
-    #     elif decision_option == 'business_model_options':
-    #         collect_results('national_market_cost_results_business_model_options.csv')
-    #     elif decision_option == 'policy_options':
-    #         collect_results('national_market_cost_results_policy_options.csv')
-    #     elif decision_option == 'power_options':
-    #         collect_results('power_emissions_power_options.csv')
-        elif decision_option == 'business_model_power_options':
-            collect_results('emissions_national_business_model_power_options.csv')
+    #     if decision_option == 'technology_options':
+    #         collect_results('decile_market_cost_results_technology_options.csv')
+    #         collect_results('national_market_cost_results_technology_options.csv')
+    #         collect_results('emissions_technology_options.csv')
+    # #     elif decision_option == 'business_model_options':
+    # #         collect_results('national_market_cost_results_business_model_options.csv')
+    # #     elif decision_option == 'policy_options':
+    # #         collect_results('national_market_cost_results_policy_options.csv')
+    # #     elif decision_option == 'power_options':
+    # #         collect_results('power_emissions_power_options.csv')
+    #     elif decision_option == 'business_model_power_options':
+    #         collect_results('emissions_national_business_model_power_options.csv')
 
-    # print('Completed model run')
+    # # print('Completed model run')
