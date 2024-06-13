@@ -26,18 +26,40 @@ def assess_energy(country, deciles):
     """
     output = []
 
+    site_kwh = 1 #kwh per site
+    fiber_bh_kwh = 0.01 #kwh per link
+    wireless_bh_kwh = 0.5 #kwh per link
+
     for decile in deciles:
 
+        if decile['backhaul'] == 'wireless':
+            selected_backhaul = wireless_bh_kwh
+        elif decile['backhaul'] == 'fiber':
+            selected_backhaul = fiber_bh_kwh
+
+        existing_site_energy_kwh = (
+            decile['total_existing_sites'] * site_kwh * #kwh per site
+            24 * 365
+        )
+        existing_backhaul_energy_kwh = (
+            (decile['backhaul_wireless'] * wireless_bh_kwh * 24 * 365) + #kwh per site
+            (decile['backhaul_fiber'] * fiber_bh_kwh * 24 * 365) 
+        )
         #get energy use for existing sites in 1 year
-        decile['total_existing_energy_kwh'] =  (
-            decile['total_existing_sites'] * 1 * #kwh per site
-            24 * 365 
+        decile['total_existing_energy_kwh'] = (
+            existing_site_energy_kwh + existing_backhaul_energy_kwh
         )
 
-        #get energy use for all sites in 1 year
-        decile['total_new_energy_kwh'] =  (
-            decile['total_new_sites'] * 1 * #kwh per site
-            24 * 365  
+        new_site_energy_kwh = (
+            decile['total_new_sites'] * site_kwh * #kwh per site
+            24 * 365
+        )
+        new_backhaul_energy_kwh = (
+            (decile['backhaul_new'] * selected_backhaul * 24 * 365)
+        )
+        #get energy use for new sites in 1 year
+        decile['total_new_energy_kwh'] = (
+            new_site_energy_kwh + new_backhaul_energy_kwh
         )
 
         output.append(decile)

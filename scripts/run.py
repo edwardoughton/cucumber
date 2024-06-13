@@ -154,9 +154,10 @@ if __name__ == '__main__':
 
         iso3 = country['iso3']
 
-        # if not iso3 == "GBR":
+        # if not iso3 == "CHN":
         #     continue
-
+        print('--Working on {}'.format(iso3))
+        
         OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
         if not os.path.exists(OUTPUT_COUNTRY):
@@ -172,8 +173,6 @@ if __name__ == '__main__':
             energy_scenario = option.split('_')[3]
             on_grid_mix = load_on_grid_mix(country, energy_scenario, path_in)
 
-            print('--Working on {}: {}'.format(iso3, option))
-
             filename = 'decile_data.csv'
             path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
             deciles = pd.read_csv(path_out)#[:1]
@@ -184,7 +183,7 @@ if __name__ == '__main__':
             deciles['energy_scenario'] = option.split('_')[3]
             # deciles['year'] = option.split('_')[4]
 
-            deciles = deciles.to_dict('records')#[:1]
+            deciles = deciles.to_dict('records')#[9:10]
 
             deciles = estimate_demand(
                 country,
