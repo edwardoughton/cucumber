@@ -42,12 +42,12 @@ data = data %>%
   )
 
 data$total_new_emissions_kg_co2_per_user = (
-  data$total_new_emissions_t_co2 / data$population_with_smartphones
-) * 1e3 #(convert to kg)
+  (data$total_new_emissions_t_co2 * 1e3) / data$population_with_smartphones
+)  #(convert to kg)
 
 data$total_existing_emissions_kg_co2_per_user = (
-  data$total_existing_emissions_t_co2 / data$population_with_smartphones
-) * 1e3 #(convert to kg)
+  (data$total_existing_emissions_t_co2 * 1e3) / data$population_with_smartphones
+)  #(convert to kg)
 
 data$tech = factor(
   data$tech,
@@ -92,23 +92,21 @@ subset$income = factor(
              'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
 )
 
-# subset$value = subset$value / 1e6 #convert t -> Mt
-
-df_errorbar <- 
-  subset |>
-  group_by(income, tech, energy_scenario) |>
-  summarize(
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  ) |>
-  group_by(tech, energy_scenario) |>
-  summarize(
-    income = 'Low Income Country (LIC)', 
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  )
+# df_errorbar <- 
+#   subset |>
+#   group_by(income, tech, energy_scenario) |>
+#   summarize(
+#     # low = sum(low),
+#     value = sum(value)#,
+#     # high = sum(high)
+#   ) |>
+#   group_by(tech, energy_scenario) |>
+#   summarize(
+#     income = 'Low Income Country (LIC)', 
+#     # low = sum(low),
+#     value = sum(value)#,
+#     # high = sum(high)
+#   )
 
 # min_value = min(round(df_errorbar$low,3))
 # max_value = max(round(df_errorbar$high,3)) + .5
@@ -116,20 +114,20 @@ max_value = max(round(df_errorbar$value,3)) + 10
 # min_value[min_value > 0] = 0
 
 plot1 = ggplot(subset, aes(x = tech, y = value, fill=income)) +
-  geom_bar(stat="identity", position='stack') +
+  geom_bar(stat="identity", position='dodge') +
   # geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
   #               lwd = .5, 
   #               show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(data = df_errorbar,
-            aes(label = paste(round(value,1),"")), size = 2,angle=90,
-            vjust =0.2, hjust =-.2, angle = 0)+
+  # geom_text(data = df_errorbar,
+  #           aes(label = paste(round(value,1),"")), size = 2,angle=90,
+  #           vjust =0.2, hjust =-.4, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
   labs(title=expression(paste("(A) Cell Site Operational Emissions Per Smartphone (", CO[2], ") by World Bank Income Group.")),
        fill=NULL,
        subtitle = "Interval bars reflect estimates for low and high adoption scenarios for...",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  # scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
   facet_grid(~energy_scenario)
@@ -174,21 +172,21 @@ subset$wb_region = factor(
 
 # subset$value = subset$value / 1e6 #convert t -> Mt
 
-df_errorbar <- 
-  subset |>
-  group_by(wb_region, tech, energy_scenario) |>
-  summarize(
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  ) |>
-  group_by(tech, energy_scenario) |>
-  summarize(
-    wb_region = 'South Asia', 
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  )
+# df_errorbar <- 
+#   subset |>
+#   group_by(wb_region, tech, energy_scenario) |>
+#   summarize(
+#     # low = sum(low),
+#     value = sum(value)#,
+#     # high = sum(high)
+#   ) |>
+#   group_by(tech, energy_scenario) |>
+#   summarize(
+#     wb_region = 'South Asia', 
+#     # low = sum(low),
+#     value = sum(value)#,
+#     # high = sum(high)
+#   )
 
 # min_value = min(round(df_errorbar$low,3))
 # max_value = max(round(df_errorbar$high,3)) + .5
@@ -196,20 +194,20 @@ max_value = max(round(df_errorbar$value,3)) + 10
 # min_value[min_value > 0] = 0
 
 plot2 = ggplot(subset, aes(x = tech, y = value, fill=wb_region)) +
-  geom_bar(stat="identity", position='stack') +
+  geom_bar(stat="identity", position='dodge') +
   # geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
   #               lwd = .5, 
   #               show.legend = FALSE, width=0.1,  color="#FF0000FF") +
-  geom_text(data = df_errorbar,
-            aes(label = paste(round(value,1),"")), size = 2,angle=90,
-            vjust =0.2, hjust =-.2, angle = 0)+
+  # geom_text(data = df_errorbar,
+  #           aes(label = paste(round(value,1),"")), size = 2,angle=90,
+  #           vjust =0.2, hjust =-.4, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("(B) Cell Site Operational Emissions Per Smartphone (", CO[2], ") by World Bank Region.")),
        fill=NULL,
        subtitle = "Interval bars reflect estimates for low and high adoption scenarios for...",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  # scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~energy_scenario)
 
@@ -220,7 +218,6 @@ panel = ggarrange(
   ncol = 1, nrow = 2,  
   common.legend = FALSE,
   legend = 'bottom')
-
 
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'emissions_per_smartphone_panel.png')

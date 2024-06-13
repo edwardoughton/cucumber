@@ -52,6 +52,7 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_fectors):
                 float(decile['total_new_energy_kwh']) * 
                 (percentage / 100) * float(emissions_by_type) / 1000, 1
             )
+            
             decile_dict[energy_type_key] = new_emissions_t_co2
             new_total_emissions_t_co2 += new_emissions_t_co2
 
@@ -59,5 +60,5 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_fectors):
         decile_dict['total_new_emissions_t_co2'] = new_total_emissions_t_co2
         
         output.append(decile.update(decile_dict)) #dict2.update(dict1)
-
+  
     return output

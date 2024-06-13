@@ -40,37 +40,20 @@ def estimate_supply(country, deciles, capacity_lut):
             capacity_lut
         )
 
-        if decile['total_existing_sites'] > 0:
+        decile['total_required_sites'] = math.ceil(
+            total_site_density *
+            decile['area_km2']
+        )
 
-            total_required_sites = math.ceil(
-                total_site_density *
-                decile['area_km2']
-            )
+        decile = estimate_site_upgrades(
+            country,
+            decile
+        )
 
-            total_new_sites = (
-                total_required_sites - 
-                decile['total_existing_sites']
-            )
-
-            if total_new_sites > 0:
-                decile['total_new_sites'] = total_new_sites
-            else:
-                decile['total_new_sites'] = 0
-        else:
-            decile['total_new_sites'] = 0
-
-            # print(decile['total_estimated_sites'], decile['total_sites_required'])
-            # decile = estimate_site_upgrades(
-            #     decile,
-            #     option['strategy'],
-            #     country_parameters
-            # )
-
-            # decile = estimate_backhaul_upgrades(
-            #     decile,
-            #     option['strategy'],
-            #     country_parameters
-            # )
+        decile = estimate_backhaul_upgrades(
+            country,
+            decile
+        )
 
         # else:
         #     decile['existing_mno_sites'] =  (
@@ -102,7 +85,7 @@ def estimate_supply(country, deciles, capacity_lut):
         # )
 
         output.append(decile)
-        # output_assets[decile['decile']] = assets
+    #     # output_assets[decile['decile']] = assets
 
     return output
 
@@ -198,11 +181,9 @@ def find_site_density(country, decile, capacity_lut):
     min_density, min_capacity = density_lut[0]
 
     if demand > max_capacity:
-
         return max_density
 
     elif demand < min_capacity:
-
         return min_density
 
     else:
@@ -399,21 +380,17 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def estimate_site_upgrades(decile, strategy, country_parameters):
+def estimate_site_upgrades(country, decile):
     """
     Estimate the number of greenfield sites and brownfield upgrades for the
     single network being modeled.
 
     Parameters
     ----------
-    decile : dict
-        Contains all decileal data.
-    strategy : dict
-        Controls the strategy variants being tested in the model and is
-        defined based on the type of technology generation, core and
-        backhaul, and the level of sharing, subsidy, spectrum and tax.
-    country_parameters : dict
-        All country specific parameters.
+    country : dict
+        All country metadata.
+    deciles : list of dicts
+        Data for all deciles (one dict per decile)
 
     Returns
     -------
@@ -421,56 +398,49 @@ def estimate_site_upgrades(decile, strategy, country_parameters):
         Contains all decileal data.
 
     """
-    generation = strategy.split('_')[0]
-    geotype = decile['geotype'].split(' ')[0]
-    sharing = strategy.split('_')[3]
-
-    #get the number of networks in the area
-    networks = country_parameters['networks'][sharing + '_' + geotype]
-
-    decile['existing_mno_sites'] = math.ceil(decile['total_estimated_sites'] / networks)
-
-    #get the number of existing 4G sites
-    existing_4G_sites = math.ceil(decile['total_estimated_sites_4G'] / networks)
-
-    if decile['total_sites_required'] > decile['existing_mno_sites']:
-        decile['new_mno_sites'] = (int(round(decile['total_sites_required'] -
-            decile['existing_mno_sites'])))
-        if decile['existing_mno_sites'] > 0:
-            if generation == '4G' and existing_4G_sites > 0 :
-                decile['upgraded_mno_sites'] = (decile['existing_mno_sites'] -
-                    existing_4G_sites)
+    #estimate upgrades
+    if decile['total_required_sites'] > decile['total_existing_sites']:
+        if decile['total_existing_sites'] > 0:
+            if decile['generation'] == '4G' and decile['total_existing_sites_4G'] > 0 :
+                decile['total_upgraded_sites'] = (decile['total_existing_sites'] - decile['total_existing_sites_4G'])
             else:
-                decile['upgraded_mno_sites'] = decile['existing_mno_sites']
+                decile['total_upgraded_sites'] = decile['total_existing_sites']
         else:
-            decile['upgraded_mno_sites'] = 0
-
+            decile['total_upgraded_sites'] = 0
     else:
-        decile['new_mno_sites'] = 0
-        if generation == '4G' and existing_4G_sites > 0 :
-            to_upgrade = decile['total_sites_required'] - existing_4G_sites
-            decile['upgraded_mno_sites'] = to_upgrade if to_upgrade >= 0 else 0
+        if decile['generation'] == '4G' and decile['total_existing_sites_4G'] > 0 :
+            to_upgrade = decile['total_required_sites'] - decile['total_existing_sites_4G']
+            decile['total_upgraded_sites'] = to_upgrade if to_upgrade >= 0 else 0
         else:
-            decile['upgraded_mno_sites'] = decile['total_sites_required']
+            decile['total_upgraded_sites'] = decile['total_required_sites']
+
+    #estimate new sites
+    if decile['generation'] == '4G':
+        decile['total_new_sites'] = (decile['total_required_sites'] - 
+            (decile['total_existing_sites_4G'] + decile['total_upgraded_sites'])
+        )
+    if decile['generation'] == '5G':
+        decile['total_new_sites'] = (decile['total_required_sites'] - 
+            (decile['total_upgraded_sites'])
+        )
+
+    if decile['total_new_sites'] < 0:
+        decile['total_new_sites'] = 0
 
     return decile
 
 
-def estimate_backhaul_upgrades(decile, strategy, country_parameters):
+def estimate_backhaul_upgrades(country, decile):
     """
     Estimates the number of backhaul links requiring upgrades for the
     single network being modeled.
 
     Parameters
     ----------
-    decile : dict
-        Contains all decileal data.
-    strategy : dict
-        The strategy string controls the strategy variants being tested in the
-        model and is defined based on the type of technology generation, core
-        and backhaul, and the level of sharing, subsidy, spectrum and tax.
-    country_parameters : dict
-        All country specific parameters.
+    country : dict
+        Country metadata. 
+    decile : dicts
+        Data for a single decile.
 
     Returns
     -------
@@ -478,27 +448,24 @@ def estimate_backhaul_upgrades(decile, strategy, country_parameters):
         Contains all decileal data.
         
     """
-    backhaul = strategy.split('_')[2]
-    geotype = decile['geotype'].split(' ')[0]
-    networks = country_parameters['networks']['baseline' + '_' + geotype]
-    all_mno_sites = (decile['new_mno_sites'] + decile['upgraded_mno_sites']) # networks
+    total_sites = decile['total_upgraded_sites'] + decile['total_new_sites']
 
-    if backhaul == 'fiber':
+    if decile['backhaul'] == 'fiber':
 
-        decile['backhaul_existing'] = decile['backhaul_fiber'] / networks
+        decile['backhaul_existing'] = decile['backhaul_fiber'] 
 
-        if decile['backhaul_existing'] < all_mno_sites:
-            decile['backhaul_new'] =  math.ceil(all_mno_sites - decile['backhaul_existing'])
+        if decile['backhaul_existing'] < total_sites:
+            decile['backhaul_new'] =  math.ceil(total_sites - decile['backhaul_existing'])
         else:
             decile['backhaul_new'] = 0
 
-    elif backhaul == 'wireless':
+    elif decile['backhaul'] == 'wireless':
 
         decile['backhaul_existing'] = (decile['backhaul_wireless'] +
-            decile['backhaul_fiber']) / networks
+            decile['backhaul_fiber']) 
 
-        if decile['backhaul_existing'] < all_mno_sites:
-            decile['backhaul_new'] =  math.ceil(all_mno_sites - decile['backhaul_existing'])
+        if decile['backhaul_existing'] < total_sites:
+            decile['backhaul_new'] =  math.ceil(total_sites - decile['backhaul_existing'])
         else:
             decile['backhaul_new'] = 0
 
