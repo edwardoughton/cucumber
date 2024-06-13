@@ -68,7 +68,8 @@ def estimate_demand(country, deciles):
         #     decile['smartphones_on_network'] / decile['area_km2']
         # )
 
-        scenario_per_user_mbps = 30
+        scenario_per_user_mbps = get_per_user_capacity('suburban', decile)
+
         #demand_mbps_km2 : float
         #total demand in mbps / km^2.
         decile['demand_mbps_km2'] = (
@@ -82,7 +83,7 @@ def estimate_demand(country, deciles):
     return output
 
 
-def get_per_user_capacity(geotype, option, global_parameters):
+def get_per_user_capacity(geotype, option):
     """
     Function to return the per user data rate by scenario,
     from the scenario string.
@@ -106,9 +107,10 @@ def get_per_user_capacity(geotype, option, global_parameters):
         The targetted per user capacity in Mbps.
 
     """
+    global_parameters = {'traffic_in_the_busy_hour_perc': 15}
     if geotype.split(' ')[0] == 'urban':
 
-        per_month_gb = int(option['scenario'].split('_')[1])
+        per_month_gb = int(option['capacity'])
         per_day_gb = per_month_gb / 30
         busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
         per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
@@ -116,7 +118,7 @@ def get_per_user_capacity(geotype, option, global_parameters):
 
     elif geotype.split(' ')[0] == 'suburban':
 
-        per_month_gb = int(option['scenario'].split('_')[2])
+        per_month_gb = int(option['capacity'])
         per_day_gb = per_month_gb / 30
         busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
         per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
@@ -124,7 +126,7 @@ def get_per_user_capacity(geotype, option, global_parameters):
 
     elif geotype.split(' ')[0] == 'rural':
 
-        per_month_gb = int(option['scenario'].split('_')[3])
+        per_month_gb = int(option['capacity'])
         per_day_gb = per_month_gb / 30
         busy_hour_gb = per_day_gb * (global_parameters['traffic_in_the_busy_hour_perc'] / 100)
         per_user_mbps = busy_hour_gb * 1000 * 8 / 3600
