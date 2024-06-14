@@ -684,6 +684,50 @@ def aggregate_to_deciles(data_initial):
     return output
 
 
+def get_regional_data_lut(country):
+    """
+    Export decile information for use later in visualization.
+    
+    """
+    output = []
+
+    # if not country['iso3'] == 'GBR':
+    #     continue
+
+    # if country['iso3'] in ['MAC', 'STP', 'WLF']:
+    #     continue
+
+    filename = 'population.csv'
+    folder = os.path.join(DATA_INTERMEDIATE, country['iso3'], 'population')
+    path = os.path.join(folder, filename)
+
+    if not os.path.exists(path):
+        return
+
+    data = pd.read_csv(path)
+
+    data = data.sort_values(by='population_km2', ascending=True)
+
+    deciles = [10,9,8,7,6,5,4,3,2,1]
+    data['decile'] = pd.qcut(data['population_km2'],
+        q=10,
+        labels=deciles,
+        duplicates='drop'
+        )
+
+    # data = data.to_dict('records')
+    # output = output + data
+
+    # output = pd.DataFrame(output)
+
+    filename = 'regional_data_deciles.csv'
+    folder = os.path.join(DATA_INTERMEDIATE, country['iso3'], 'population')
+    path = os.path.join(folder, filename)
+    data.to_csv(path, index=False)
+
+    return
+
+
 if __name__ == '__main__':
 
     countries = find_country_list([])
@@ -694,17 +738,19 @@ if __name__ == '__main__':
         # if not country['iso3'] == 'GBR':
         #     continue
 
-        print('----')
-        print('-- Working on {}'.format(country['country_name']))
+    #     print('----')
+    #     print('-- Working on {}'.format(country['country_name']))
 
-        process_country_shapes(country)
+    #     # process_country_shapes(country)
 
-        process_regions(country)
+    #     # process_regions(country)
 
-        process_settlement_layer(country)
+    #     # process_settlement_layer(country)
 
-        get_regional_data(country)
+    #     # get_regional_data(country)
 
-        process_unconstrained_site_estimation(country)
+    #     # process_unconstrained_site_estimation(country)
 
-        generate_deciles(country)
+    #     # generate_deciles(country)
+
+        get_regional_data_lut(country)
