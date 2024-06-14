@@ -112,3 +112,4 @@ results/*
 reports/countries/*
 reports/images/*
 reports/templates/*
+vis/data/*
