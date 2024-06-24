@@ -26,10 +26,10 @@ def assess_energy(country, deciles):
     """
     output = []
 
-    site_kwh = 1 #kwh per site
-    fiber_bh_kwh = 0.01 #kwh per link
-    wireless_bh_kwh = 0.5 #kwh per link
-
+    site_kwh = country['energy_equipment_kwh'] #1 #kwh per site
+    wireless_bh_kwh = country['energy_wireless_medium_kwh'] #0.5 #kwh per link
+    fiber_bh_kwh = country['energy_fiber_kwh'] #0.01 #kwh per link
+    
     for decile in deciles:
 
         if decile['backhaul'] == 'wireless':
