@@ -31,8 +31,37 @@ def assess_cost(country, deciles):
 
     for decile in deciles:
 
-        decile['total_new_cost_usd'] =  (
-            decile['total_new_sites'] * 100000
+        decile['cost_equipment_usd'] =  (
+            decile['total_new_sites'] * 
+            country['cost_equipment']  
+        )
+
+        decile['cost_site_build_usd'] =  (
+            decile['total_new_sites'] * 
+            country['cost_site_build']  
+        )
+
+        decile['cost_installation_usd'] =  (
+            decile['total_new_sites'] * 
+            country['cost_installation']  
+        )
+
+        decile['cost_operation_and_maintenance_usd'] =  (
+            decile['total_new_sites'] * 
+            country['cost_operation_and_maintenance']  
+        )
+
+        decile['cost_power_usd'] =  (
+            decile['total_new_sites'] * 
+            country['cost_power']  
+        )
+
+        decile['total_new_cost_usd'] = (
+            decile['cost_equipment_usd'] + 
+            decile['cost_site_build_usd'] +
+            decile['cost_installation_usd'] + 
+            decile['cost_operation_and_maintenance_usd'] +
+            decile['cost_power_usd']  
         )
 
         output.append(decile)

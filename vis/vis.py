@@ -307,8 +307,6 @@ def plot_regions_by_emissions(regions, path): #, imf_countries, non_imf):
     Plot regions by cost.
 
     """
-    # metric = 'total_emis'
-
     regions['emissions'] = round(regions['emissions_'] / 1e3,2)
     regions = regions[['geometry','emissions']]
     regions['emissions'] = regions['emissions'].fillna(0)
@@ -343,29 +341,26 @@ def plot_regions_by_emissions(regions, path): #, imf_countries, non_imf):
     )
 
     sns.set(font_scale=0.9)
-    fig, ax = plt.subplots(1, 1, figsize=(12, 5))
+    fig, ax = plt.subplots(3, 2, figsize=(12, 5))
 
-    minx, miny, maxx, maxy = regions.total_bounds
-    # ax.set_xlim(minx+20, maxx-2)
-    # ax.set_ylim(miny+2, maxy-10)
-    ax.set_xlim(minx-20, maxx+5)
-    ax.set_ylim(miny-5, maxy)
+    # minx, miny, maxx, maxy = regions.total_bounds
+    # ax.set_xlim(minx-20, maxx+5)
+    # ax.set_ylim(miny-5, maxy)
 
-    base = regions.plot(column='bin', ax=ax, cmap='viridis', linewidth=0, #inferno_r
+    base = regions.plot(column='bin', ax=ax[0,0], cmap='viridis', linewidth=0, #inferno_r
         legend=True, antialiased=False)
-    # # imf_countries.plot(ax=base, facecolor="none", edgecolor='grey', linewidth=0.1)
-    # zeros = zeros.plot(ax=base, color='dimgray', edgecolor='dimgray', linewidth=0)
-    # non_imf.plot(ax=base, color='lightgrey', edgecolor='lightgrey', linewidth=0)
+    # # # imf_countries.plot(ax=base, facecolor="none", edgecolor='grey', linewidth=0.1)
+    # # zeros = zeros.plot(ax=base, color='dimgray', edgecolor='dimgray', linewidth=0)
+    # # non_imf.plot(ax=base, color='lightgrey', edgecolor='lightgrey', linewidth=0)
 
-    handles, labels = ax.get_legend_handles_labels()
+    # handles, labels = ax[0,0].get_legend_handles_labels()
+    # fig.legend(handles[::-1], labels[::-1])
+    # print(fig)
+    # # # ctx.add_basemap(ax, crs=regions.crs, source=ctx.providers.CartoDB.Voyager)
 
-    fig.legend(handles[::-1], labels[::-1])
-
-    # # ctx.add_basemap(ax, crs=regions.crs, source=ctx.providers.CartoDB.Voyager)
-
-    n = len(regions)
-    name = 'Estimated Carbon Emissions from Universal Mobile Broadband by Sub-National Region (n={})'.format(n)
-    fig.suptitle(name)
+    # n = len(regions)
+    # name = 'Estimated Carbon Emissions from Universal Mobile Broadband by Sub-National Region (n={})'.format(n)
+    # fig.suptitle(name)
 
     fig.tight_layout()
     fig.savefig(path, dpi=600)
@@ -390,6 +385,79 @@ if __name__ == "__main__":
     # # # regions = regions[['GID_id', 'cost', 'decile']]
     # # # regions.to_csv(os.path.join(VIS, '..', 'test.csv'))
 
-    regions = gpd.read_file(os.path.join(VIS,'..','data','test3.shp'), crs='epsg:4326')
-    path = os.path.join(VIS, 'regions_by_emissions.tif')
-    plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
+    regions = gpd.read_file(os.path.join(VIS,'..','data','test3.shp'), crs='epsg:4326')#[:100]
+    # path = os.path.join(VIS, 'regions_by_emissions.tif')
+    # plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
+
+    sns.set(font_scale=0.9)
+    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(7, 9), layout='constrained')
+    bins = [0,5,10,15,20,25,30,35,40,45,1e12]
+    labels = [
+        '<5t $CO_2$',
+        '<10t $CO_2$',
+        '<15t $CO_2$',
+        '<20t $CO_2$',
+        '<25t $CO_2$',
+        '<30t $CO_2$',
+        '<35t $CO_2$',
+        '<40t $CO_2$',
+        '<45t $CO_2$',
+        '>45t $CO_2$'
+    ]
+    regions['bin'] = pd.cut(
+        regions['emissions_'],
+        bins=bins,
+        labels=labels
+    )
+    
+    base = regions.plot(
+        column='bin', 
+        ax=ax1, 
+        cmap='viridis', 
+        linewidth=0, #fontsize=8,
+        legend=True,
+        legend_kwds={
+            "title": "Emissions (xx/x)", 'title_fontsize': 7,
+            "loc": "lower left", 
+            'fontsize': 6, "fancybox":True
+            } 
+        )
+    base = regions.plot(
+        column='bin', 
+        ax=ax2, 
+        cmap='viridis', 
+        linewidth=0, #fontsize=8,
+        legend=True,
+        legend_kwds={
+            "title": "Emissions (xx/x)", 'title_fontsize': 7,
+            "loc": "lower left", 
+            'fontsize': 6, "fancybox":True
+            } 
+        )   
+    base = regions.plot(
+        column='bin', 
+        ax=ax3, 
+        cmap='viridis', 
+        linewidth=0, #fontsize=8,
+        legend=True,
+        legend_kwds={
+            "title": "Emissions (xx/x)", 'title_fontsize': 7,
+            "loc": "lower left", 
+            'fontsize': 6, "fancybox":True
+            } 
+        )
+    len = len(regions)
+    t = 'Global estimated impacts by sub-national region (n={})'.format(len)
+    fig.suptitle(t)
+
+    ax1.set_title('(A) Aggregate existing emissions by sub-national region', loc='left')
+    ax2.set_title('(B) Aggregate new emissions by sub-national region', loc='left')
+    ax3.set_title('(C) Per smartphone new emissions by sub-national region', loc='left')
+
+    ax1.tick_params(axis='both', which='both', labelsize=7)
+    ax2.tick_params(axis='both', which='both', labelsize=7)
+    ax3.tick_params(axis='both', which='both', labelsize=7)
+
+    fig.tight_layout()
+    path = os.path.join(VIS, 'demo.png')
+    fig.savefig(path, dpi=300)

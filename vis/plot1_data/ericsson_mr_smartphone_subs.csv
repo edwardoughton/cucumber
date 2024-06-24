@@ -1,0 +1,73 @@
+report_year,region,status,year,value,metric
+2017,CEE,actual,2016,240,millions_subs
+2017,INB,actual,2016,270,millions_subs
+2017,LATAM,actual,2016,410,millions_subs
+2017,MENA,actual,2016,210,millions_subs
+2017,NAM,actual,2016,290,millions_subs
+2017,NEA ,actual,2016,1310,millions_subs
+2017,SEAO,actual,2016,470,millions_subs
+2017,SSA,actual,2016,260,millions_subs
+2017,WE,actual,2016,380,millions_subs
+2018,CEE,actual,2017,310,millions_subs
+2018,INB,actual,2017,420,millions_subs
+2018,LATAM,actual,2017,480,millions_subs
+2018,MENA,actual,2017,280,millions_subs
+2018,NAM,actual,2017,320,millions_subs
+2018,NEA ,actual,2017,1310,millions_subs
+2018,SEAO,actual,2017,600,millions_subs
+2018,SSA,actual,2017,280,millions_subs
+2018,WE,actual,2017,380,millions_subs
+2019,CEE,actual,2018,330,millions_subs
+2019,INB,actual,2018,590,millions_subs
+2019,LATAM,actual,2018,480,millions_subs
+2019,MENA,actual,2018,330,millions_subs
+2019,NAM,actual,2018,310,millions_subs
+2019,NEA ,actual,2018,1630,millions_subs
+2019,SEAO,actual,2018,640,millions_subs
+2019,SSA,actual,2018,320,millions_subs
+2019,WE,actual,2018,390,millions_subs
+2020,CEE,actual,2019,380,millions_subs
+2020,INB,actual,2019,620,millions_subs
+2020,LATAM,actual,2019,500,millions_subs
+2020,MENA,actual,2019,440,millions_subs
+2020,NAM,actual,2019,310,millions_subs
+2020,NEA ,actual,2019,1810,millions_subs
+2020,SEAO,actual,2019,770,millions_subs
+2020,SSA,actual,2019,390,millions_subs
+2020,WE,actual,2019,420,millions_subs
+2021,CEE,actual,2020,390,millions_subs
+2021,INB,actual,2020,730,millions_subs
+2021,LATAM,actual,2020,500,millions_subs
+2021,MENA,actual,2020,420,millions_subs
+2021,NAM,actual,2020,320,millions_subs
+2021,NEA ,actual,2020,1860,millions_subs
+2021,SEAO,actual,2020,840,millions_subs
+2021,SSA,actual,2020,440,millions_subs
+2021,WE,actual,2020,410,millions_subs
+2022,CEE,actual,2021,410,millions_subs
+2022,INB,actual,2021,800,millions_subs
+2022,LATAM,actual,2021,540,millions_subs
+2022,MENA,actual,2021,630,millions_subs
+2022,NAM,actual,2021,310,millions_subs
+2022,NEA ,actual,2021,1920,millions_subs
+2022,SEAO,actual,2021,860,millions_subs
+2022,SSA,actual,2021,350,millions_subs
+2022,WE,actual,2021,430,millions_subs
+2023,CEE,actual,2022,410,millions_subs
+2023,INB,actual,2022,870,millions_subs
+2023,LATAM,actual,2022,570,millions_subs
+2023,MENA,actual,2022,560,millions_subs
+2023,NAM,actual,2022,360,millions_subs
+2023,NEA ,actual,2022,2020,millions_subs
+2023,SEAO,actual,2022,950,millions_subs
+2023,SSA,actual,2022,420,millions_subs
+2023,WE,actual,2022,440,millions_subs
+2023,CEE,actual,2023,410,millions_subs
+2023,INB,actual,2023,950,millions_subs
+2023,LATAM,actual,2023,600,millions_subs
+2023,MENA,actual,2023,600,millions_subs
+2023,NAM,actual,2023,370,millions_subs
+2023,NEA ,actual,2023,2060,millions_subs
+2023,SEAO,actual,2023,970,millions_subs
+2023,SSA,actual,2023,460,millions_subs
+2023,WE,actual,2023,460,millions_subs

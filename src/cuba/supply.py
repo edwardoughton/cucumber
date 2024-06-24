@@ -45,6 +45,9 @@ def estimate_supply(country, deciles, capacity_lut):
             decile['area_km2']
         )
 
+        if decile['population_km2'] < country['pop_density_satellite_threshold']:
+            decile['total_required_sites'] = 0
+
         decile = estimate_site_upgrades(
             country,
             decile
@@ -55,37 +58,7 @@ def estimate_supply(country, deciles, capacity_lut):
             decile
         )
 
-        # else:
-        #     decile['existing_mno_sites'] =  (
-        #         decile['total_estimated_sites'] /
-        #         country_parameters['networks']['baseline' + '_' + decile['geotype'].split(' ')[0]]
-        #     )
-        #     decile['new_mno_sites'] = 0
-        #     decile['upgraded_mno_sites'] = 0
-        #     decile['backhaul_new'] = 0
-
-        # assets = estimate_assets(
-        #     country,
-        #     decile,
-        #     option,
-        #     costs,
-        #     global_parameters,
-        #     country_parameters,
-        # )
-
-        # decile = find_cost(
-        #     decile,
-        #     assets,
-        #     option,
-        #     costs,
-        #     global_parameters,
-        #     country_parameters,
-        #     infra_sharing_options,
-        #     cost_types
-        # )
-
         output.append(decile)
-    #     # output_assets[decile['decile']] = assets
 
     return output
 

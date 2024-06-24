@@ -1,0 +1,64 @@
+region,year,group,value
+North America,2020,coverage_gap,1
+North America,2020,usage_gap,18
+North America,2020,connected,81
+North America,2021,coverage_gap,1
+North America,2021,usage_gap,16
+North America,2021,connected,83
+North America,2022,coverage_gap,1
+North America,2022,usage_gap,14
+North America,2022,connected,85
+Europe & Central Asia,2020,coverage_gap,2
+Europe & Central Asia,2020,usage_gap,22
+Europe & Central Asia,2020,connected,76
+Europe & Central Asia,2021,coverage_gap,2
+Europe & Central Asia,2021,usage_gap,20
+Europe & Central Asia,2021,connected,78
+Europe & Central Asia,2022,coverage_gap,2
+Europe & Central Asia,2022,usage_gap,19
+Europe & Central Asia,2022,connected,79
+East Asia & Pacific,2020,coverage_gap,2
+East Asia & Pacific,2020,usage_gap,33
+East Asia & Pacific,2020,connected,65
+East Asia & Pacific,2021,coverage_gap,2
+East Asia & Pacific,2021,usage_gap,30
+East Asia & Pacific,2021,connected,68
+East Asia & Pacific,2022,coverage_gap,2
+East Asia & Pacific,2022,usage_gap,28
+East Asia & Pacific,2022,connected,70
+Latin America & Caribbean,2020,coverage_gap,8.7
+Latin America & Caribbean,2020,usage_gap,35
+Latin America & Caribbean,2020,connected,56
+Latin America & Caribbean,2021,coverage_gap,8
+Latin America & Caribbean,2021,usage_gap,33
+Latin America & Caribbean,2021,connected,59
+Latin America & Caribbean,2022,coverage_gap,6
+Latin America & Caribbean,2022,usage_gap,32
+Latin America & Caribbean,2022,connected,62
+Middle East & North Africa,2020,coverage_gap,6
+Middle East & North Africa,2020,usage_gap,49
+Middle East & North Africa,2020,connected,45
+Middle East & North Africa,2021,coverage_gap,5.7
+Middle East & North Africa,2021,usage_gap,46
+Middle East & North Africa,2021,connected,48
+Middle East & North Africa,2022,coverage_gap,4.7
+Middle East & North Africa,2022,usage_gap,44
+Middle East & North Africa,2022,connected,51
+South Asia,2020,coverage_gap,5
+South Asia,2020,usage_gap,58
+South Asia,2020,connected,37
+South Asia,2021,coverage_gap,5
+South Asia,2021,usage_gap,54
+South Asia,2021,connected,41
+South Asia,2022,coverage_gap,4
+South Asia,2022,usage_gap,52
+South Asia,2022,connected,44
+Sub-Saharan Africa,2020,coverage_gap,19
+Sub-Saharan Africa,2020,usage_gap,59
+Sub-Saharan Africa,2020,connected,22
+Sub-Saharan Africa,2021,coverage_gap,17
+Sub-Saharan Africa,2021,usage_gap,60
+Sub-Saharan Africa,2021,connected,23
+Sub-Saharan Africa,2022,coverage_gap,15.7
+Sub-Saharan Africa,2022,usage_gap,59
+Sub-Saharan Africa,2022,connected,25

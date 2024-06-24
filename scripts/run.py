@@ -20,7 +20,7 @@ from cuba.energy import assess_energy
 from cuba.emissions import assess_emissions
 from cuba.costs import assess_cost
 
-from options import ENERGY_DEMAND, EMISSIONS_FACTORS, generate_tech_options
+from options import tech_options, PARAMETERS, EMISSIONS_FACTORS 
 from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
@@ -142,7 +142,7 @@ def collect_results(countries):
 if __name__ == '__main__':
 
     countries = find_country_list([])
-    options = generate_tech_options()
+    options = tech_options()
 
     if not os.path.exists(OUTPUT):
         os.makedirs(OUTPUT)
@@ -153,9 +153,11 @@ if __name__ == '__main__':
     for country in tqdm(countries):#[::-1]:#[:1]:
 
         iso3 = country['iso3']
+        country.update(PARAMETERS)
 
-        # if not iso3 == "CHN":
+        # if not iso3 == "GBR":
         #     continue
+
         print('--Working on {}'.format(iso3))
         
         OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
