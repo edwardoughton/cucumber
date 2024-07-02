@@ -146,4 +146,4 @@ EMISSIONS_FACTORS = {
 
 if __name__ == '__main__':
 
-    print(generate_tech_options())
+    print(tech_options())

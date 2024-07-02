@@ -13,10 +13,11 @@ data = select(data, GID_0, #capacity,
               tech, energy_scenario,
               income, wb_region,
               population_total, area_km2, 
-              population_with_phones, population_with_smartphones,
+              # population_with_phones, 
+              population_with_smartphones,
               total_existing_sites, total_existing_sites_4G, total_new_sites,
               total_existing_energy_kwh, total_new_energy_kwh,
-              new_total_emissions_t_co2, existing_total_emissions_t_co2,
+              total_new_emissions_t_co2, total_existing_emissions_t_co2,
               total_new_cost_usd
               )
 
@@ -26,15 +27,15 @@ data = data %>%
   summarise(
     population_total = round(sum(population_total, na.rm=TRUE),0), 
     area_km2 = round(sum(area_km2, na.rm=TRUE),0), 
-    population_with_phones = round(sum(population_with_phones, na.rm=TRUE),0), 
+    # population_with_phones = round(sum(population_with_phones, na.rm=TRUE),0), 
     population_with_smartphones = round(sum(population_with_smartphones, na.rm=TRUE),0),
     total_existing_sites = round(sum(total_existing_sites, na.rm=TRUE),0), 
     total_existing_sites_4G = round(sum(total_existing_sites_4G, na.rm=TRUE),0), 
     total_new_sites = round(sum(total_new_sites, na.rm=TRUE),0),
     total_existing_energy_kwh = round(sum(total_existing_energy_kwh, na.rm=TRUE),0), 
     total_new_energy_kwh = round(sum(total_new_energy_kwh, na.rm=TRUE),0),
-    new_total_emissions_t_co2 = round(sum(new_total_emissions_t_co2, na.rm=TRUE),0), 
-    existing_total_emissions_t_co2 = round(sum(existing_total_emissions_t_co2, na.rm=TRUE),0),
+    total_new_emissions_t_co2 = round(sum(total_new_emissions_t_co2, na.rm=TRUE),0), 
+    total_existing_emissions_t_co2 = round(sum(total_existing_emissions_t_co2, na.rm=TRUE),0),
     total_new_cost_usd = round(sum(total_new_cost_usd, na.rm=TRUE),0)
  )
 
@@ -77,13 +78,21 @@ data$energy_scenario[grep("aps-2030", data$energy_scenario)] = 'APS 2030'
 
 
 #### Energy demand: new vs old
-subset = select(data, tech, energy_scenario, total_existing_energy_kwh, total_new_energy_kwh)
+subset = select(data, tech, energy_scenario, 
+                total_existing_energy_kwh, total_new_energy_kwh)
+
+subset <- subset %>%
+  group_by(tech, energy_scenario) %>%
+  summarize(
+    total_existing_energy_kwh = sum(total_existing_energy_kwh)/1e9,
+    total_new_energy_kwh = sum(total_new_energy_kwh)/1e9,
+    ) 
 
 subset <- subset %>% 
   pivot_longer(
     cols = `total_existing_energy_kwh`:`total_new_energy_kwh`, 
     names_to = "energy",
-    values_to = "kwh"
+    values_to = "value"
   )
 
 subset$energy = factor(
@@ -94,33 +103,34 @@ subset$energy = factor(
 
 totals <- subset %>%
   group_by(tech) %>%
-  summarize(value = signif(sum(kwh)/1e9)) #convert kwh -> twh
+  summarize(value = round(sum(value),1)) #convert kwh -> twh
 
-ggplot(subset, aes(x = tech, y = kwh/1e9, fill=energy)) +
+ggplot(subset, aes(x = tech, y = value, fill=energy)) +
   geom_bar(stat="identity", position='stack') +
   # geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
   #               lwd = .5, 
   #               show.legend = FALSE, width=0.1,  color="#FF0000FF") +
   # geom_text(data = totals,
-  #           aes(label = paste(round(value, 1),"")), size = 2,#.25,
-  #           vjust =-.7, hjust =-.2, angle = 0)+
+  #           aes(label = value), size = 2,#.25,
+  #           vjust =-.7, hjust =-.2, angle = 0) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("Total Cell Site Energy Demand")),
        fill=NULL,
-       subtitle = "Interval bars reflect estimates for low and high adoption scenarios for",
+       subtitle = "Reported for new versus existing energy demand.",
        x = NULL, y=expression(paste("Terawatt hours (TWh)")), sep="")  +
   # scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~energy_scenario)
 
-# dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'global', 'energy.png')
-# ggsave(path, units="in", width=8, height=5, dpi=300)
-# while (!is.null(dev.list()))  dev.off()
+dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
+path = file.path(folder, 'figures', 'global', 'energy_new_vs_existing.png')
+ggsave(path, units="in", width=8, height=5, dpi=300)
+while (!is.null(dev.list()))  dev.off()
 
 #### Energy demand: income group
-subset = select(data, income, tech, energy_scenario, total_existing_energy_kwh, total_new_energy_kwh)
+subset = select(data, income, tech, energy_scenario, 
+                total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
   pivot_longer(
@@ -157,10 +167,10 @@ ggplot(subset, aes(x = tech, y = kwh/1e9, fill=income)) +
   scale_fill_viridis_d() +
   facet_grid(~energy_scenario)
 
-# dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'global', 'energy.png')
-# ggsave(path, units="in", width=8, height=5, dpi=300)
-# while (!is.null(dev.list()))  dev.off()
+dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
+path = file.path(folder, 'figures', 'global', 'energy_by_income_group.png')
+ggsave(path, units="in", width=8, height=5, dpi=300)
+while (!is.null(dev.list()))  dev.off()
 
 #### Energy demand: regions
 subset = select(data, wb_region, tech, energy_scenario, total_existing_energy_kwh, total_new_energy_kwh)
@@ -204,3 +214,8 @@ ggplot(subset, aes(x = tech, y = kwh/1e9, fill=wb_region)) +
   # scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~energy_scenario)
+
+dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
+path = file.path(folder, 'figures', 'global', 'energy_by_region.png')
+ggsave(path, units="in", width=8, height=5, dpi=300)
+while (!is.null(dev.list()))  dev.off()

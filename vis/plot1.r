@@ -40,7 +40,7 @@ plot1 = ggplot(data, aes(x=year, y=value, group=region_name,
   labs(title="(A) Global Monthly Data Traffic.",
        subtitle="Reported annually by region.",
        x=NULL,
-       y = "Monthly Traffic\n(GB/Smartphone)",
+       y = "Monthly Traffic (GB/Smartphone)",
        color='', linetype='', group='')+
   theme_bw() +
   scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
@@ -91,7 +91,7 @@ plot2 = ggplot(data, aes(x=year, y=value/1e3, group=region_name,
   labs(title="(B) Global Smartphone Subscriptions.",
        subtitle="Reported annually as the total by region.",
        x=NULL,
-       y = "Smartphone\n(Billions)",
+       y = "Smartphones (Billions)",
        color='', linetype='', group='')+
   theme_bw() +
   scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
@@ -116,6 +116,10 @@ folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'mobile_connectivity_by_country_groups.csv'
 data <- read.csv(file.path(folder, 'plot1_data', filename))
 
+data = data[(data$year != 2021),]
+# data = data[(data$year == 2022),]
+data = data[(data$group != 'connected'),]
+
 data$income_year = paste(data$income, data$year)
 
 
@@ -127,7 +131,7 @@ data$income_year = factor(data$income_year,
                             'HIC 2020','HIC 2021','HIC 2022'
                           ),
                           labels = c(
-                'LDCs 2020','LDCs 2021','LDCs 2022',
+                'LDC 2020','LDC 2021','LDC 2022',
                 'LMIC 2020','LMIC 2021','LMIC 2022',
                 'UMIC 2020','UMIC 2021','UMIC 2022',  
                 'HIC 2020','HIC 2021','HIC 2022'
@@ -136,22 +140,24 @@ data$income_year = factor(data$income_year,
 
 data$group = factor(data$group,
                     levels = c('coverage_gap','usage_gap','connected'),
-                    labels = c('Coverage Gap','Usage Gap','Connected')
+                    labels = c('Uncovered','Covered Without Smartphone','Connected')
 )
 
 plot3 = ggplot(data, aes(x=income_year, y=value, group=group, 
                  fill=group)) + #coord_flip() +
-  geom_bar(position="stack", stat="identity") +
+  geom_bar(position="dodge", stat="identity") +
+  geom_text(aes(label = paste(round(value,0),"%")),vjust=.5,hjust=-.2, size=3,
+            position = position_dodge(.9), angle=90) +
   labs(title="(C) Mobile Connectivity by Country Group.",
        subtitle="Reported annually by coverage type.",
        x=NULL,
-       y = "Coverage\n(%)",
-       color='', linetype='Coverage Type', group='Coverage Type', fill='Coverage Type')+
+       y = "Coverage (%)",
+       color='', linetype='Coverage Type', group='Coverage Type', fill='Coverage Type') +
   theme_bw() +
   # scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
   scale_y_continuous(expand = c(0, 0), limits=c(0,100)) +
   scale_color_viridis(discrete = TRUE, option = "C") +
-  scale_fill_viridis(discrete = TRUE, option = "C", direction=-1, alpha=.85) +
+  scale_fill_viridis(discrete = TRUE, option = "D", direction=-1, alpha=.85) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 65, hjust=1),
         legend.text = element_text(size = 8),
@@ -170,6 +176,10 @@ folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'mobile_internet_connectivity_by_region.csv'
 data <- read.csv(file.path(folder, 'plot1_data', filename))
 
+data = data[(data$year != 2021),]
+# data = data[(data$year == 2022),]
+data = data[(data$group != 'connected'),]
+
 data$region_year = paste(data$region, data$year)
 
 data$region_year = factor(data$region_year,
@@ -183,7 +193,7 @@ data$region_year = factor(data$region_year,
             "Sub-Saharan Africa 2020","Sub-Saharan Africa 2021", "Sub-Saharan Africa 2022"
                           ),
                           labels = c(
-                            "Eurasia 2020","Eurasia 2021", "Eurasia 2022",
+                            "ECA 2020","ECA 2021", "ECA 2022",
                             "East Asia 2020","East Asia 2021", "East Asia 2022",
                             "LATAM 2020","LATAM 2021", "LATAM 2022",
                             "MENA 2020","MENA 2021", "MENA 2022",
@@ -192,26 +202,6 @@ data$region_year = factor(data$region_year,
                             "SSA 2020","SSA 2021", "SSA 2022"
                           )
 )
-# data$region_year = factor(data$region_year,
-#                           levels = c(
-#                             "Europe & Central Asia 2020","Europe & Central Asia 2021", "Europe & Central Asia 2022",
-#                             "East Asia & Pacific 2020","East Asia & Pacific 2021", "East Asia & Pacific 2022",
-#                             "Latin America & Caribbean 2020","Latin America & Caribbean 2021", "Latin America & Caribbean 2022",
-#                             "Middle East & North Africa 2020","Middle East & North Africa 2021", "Middle East & North Africa 2022",
-#                             "North America 2020","North America 2021", "North America 2022",
-#                             "South Asia 2020","South Asia 2021", "South Asia 2022",
-#                             "Sub-Saharan Africa 2020","Sub-Saharan Africa 2021", "Sub-Saharan Africa 2022"
-#                           ),
-#                           labels = c(
-#                             "Europe & Central Asia 2020","Europe & Central Asia 2021", "Europe & Central Asia 2022",
-#                             "East Asia & Pacific 2020","East Asia & Pacific 2021", "East Asia & Pacific 2022",
-#                             "Latin America & Caribbean 2020","Latin America & Caribbean 2021", "Latin America & Caribbean 2022",
-#                             "Middle East & North Africa 2020","Middle East & North Africa 2021", "Middle East & North Africa 2022",
-#                             "North America 2020","North America 2021", "North America 2022",
-#                             "South Asia 2020","South Asia 2021", "South Asia 2022",
-#                             "Sub-Saharan Africa 2020","Sub-Saharan Africa 2021", "Sub-Saharan Africa 2022"
-#                           )
-# )
 
 data$group = factor(data$group,
                     levels = c('coverage_gap','usage_gap','connected'),
@@ -219,17 +209,19 @@ data$group = factor(data$group,
 )
 plot4 = ggplot(data, aes(x=region_year, y=value, group=group, 
                            fill=group)) + #coord_flip() +
-  geom_bar(position="stack", stat="identity") +
+  geom_bar(position="dodge", stat="identity") +
+  geom_text(aes(label = paste(round(value,0),"%")),vjust=.5,hjust=-.2, size=3,
+            position = position_dodge(.9), angle=90) +
   labs(title="(D) Mobile Internet Connectivity by Region.",
        subtitle="Reported annually by coverage type.",
        x=NULL,
-       y = "Coverage\n(%)",
+       y = "Coverage (%)",
        color='', linetype='Coverage Type', group='Coverage Type', fill='Coverage Type')+
   theme_bw() +
   # scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
   scale_y_continuous(expand = c(0, 0), limits=c(0,100)) +
   # scale_color_viridis(discrete = TRUE, option = "C") +
-  scale_fill_viridis(discrete = TRUE, option = "C", direction=-1, alpha=.85) +
+  scale_fill_viridis(discrete = TRUE, option = "D", direction=-1, alpha=.85) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 65, hjust=1),
         legend.text = element_text(size = 8),

@@ -41,10 +41,10 @@ def find_country_list(continent_list):
 
         output.append({
             'country_name': country['country'],
-            'iso3': country['ISO_3digit'],
-            'iso2': country['ISO_2digit'],
+            'iso3': country['iso3'],
+            'iso2': country['iso2'],
             'regional_level': country['lowest'],
-            'continent2': country['continent2'],
+            # 'continent2': country['continent2'],
             'income': country['income'],
             'wb_region': country['wb_region'],
             'iea_classification': country['iea_classification'],

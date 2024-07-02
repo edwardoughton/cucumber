@@ -15,7 +15,8 @@ data = select(data, GID_0, #capacity,
               tech, energy_scenario,
               income, wb_region,
               population_total, area_km2, 
-              population_with_phones, population_with_smartphones,
+              # population_with_phones, 
+              population_with_smartphones,
               total_existing_sites, total_existing_sites_4G, total_new_sites,
               total_existing_energy_kwh, total_new_energy_kwh,
               total_new_emissions_t_co2, 
@@ -36,8 +37,8 @@ data = data %>%
     # total_new_sites = round(sum(total_new_sites, na.rm=TRUE),0),
     # total_existing_energy_kwh = round(sum(total_existing_energy_kwh, na.rm=TRUE),0), 
     # total_new_energy_kwh = round(sum(total_new_energy_kwh, na.rm=TRUE),0),
-    total_new_emissions_t_co2 = round(sum(total_new_emissions_t_co2, na.rm=TRUE),0), 
-    total_existing_emissions_t_co2 = round(sum(total_existing_emissions_t_co2, na.rm=TRUE),0)#,
+    total_new_emissions_t_co2 = round(sum(total_new_emissions_t_co2, na.rm=TRUE),2), 
+    total_existing_emissions_t_co2 = round(sum(total_existing_emissions_t_co2, na.rm=TRUE),2)#,
     # total_new_cost_usd = round(sum(total_new_cost_usd, na.rm=TRUE),0)
   )
 
@@ -83,6 +84,12 @@ subset$income = factor(
              'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
 )
 
+subset <- subset %>%
+  group_by(income, tech, energy_scenario, metric) %>%
+  summarize(
+    value = sum(value)
+    ) 
+
 subset$value = subset$value / 1e6 #convert t -> Mt
 
 df_errorbar <- 
@@ -103,10 +110,11 @@ df_errorbar <-
 
 # min_value = min(round(df_errorbar$low,3))
 # max_value = max(round(df_errorbar$high,3)) + .5
-max_value = max(round(df_errorbar$value,3)) + .2
+max_value = max(round(df_errorbar$value,3)) + 2
 # min_value[min_value > 0] = 0
 
-plot1 = ggplot(subset, aes(x = tech, y = value, fill=income)) +
+# plot1 = 
+  ggplot(subset, aes(x = tech, y = value, fill=income)) +
   geom_bar(stat="identity", position='stack') +
   # geom_errorbar(data=df_errorbar, aes(y = baseline, ymin = low, ymax = high),
   #               lwd = .5, 
@@ -119,7 +127,7 @@ plot1 = ggplot(subset, aes(x = tech, y = value, fill=income)) +
   labs(title=expression(paste("(A) Total Cell Site Operational Emissions (", CO[2], ") by World Bank Income Group.")),
        fill=NULL,
        subtitle = "Interval bars reflect estimates for low and high adoption scenarios for...",
-       x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
+       x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
@@ -152,6 +160,12 @@ subset$wb_region = factor(
              'North America','South Asia','Sub-Saharan Africa')
 )
 
+subset <- subset %>%
+  group_by(wb_region, tech, energy_scenario, metric) %>%
+  summarize(
+    value = sum(value)
+  ) 
+
 subset$value = subset$value / 1e6 #convert t -> Mt
 
 df_errorbar <- 
@@ -172,7 +186,7 @@ df_errorbar <-
 
 # min_value = min(round(df_errorbar$low,3))
 # max_value = max(round(df_errorbar$high,3)) + .5
-max_value = max(round(df_errorbar$value,3)) + .2
+max_value = max(round(df_errorbar$value,3)) + 20
 # min_value[min_value > 0] = 0
 
 plot2 = ggplot(subset, aes(x = tech, y = value, fill=wb_region)) +
@@ -201,18 +215,10 @@ panel = ggarrange(
   common.legend = FALSE,
   legend = 'bottom')
 
-
 dir.create(file.path(folder, 'figures', 'global'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'global', 'emissions_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
-
-
-
-
-
-
-
 
 # #### emissions: new vs old
 # subset = select(data, tech, energy_scenario, 
