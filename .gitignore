@@ -104,7 +104,8 @@ venv.bak/
 .mypy_cache/
 
 # specific folders
-/data
+/data/raw/*
+/data/intermediate/*
 vis/figures/*
 vis/smartphones/data_inputs/*
 vis/subscriptions/data_inputs/*
