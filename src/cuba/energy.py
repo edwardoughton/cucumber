@@ -7,7 +7,7 @@ June 2021
 
 """
 
-def assess_energy(country, deciles):
+def assess_energy(country, deciles, on_grid_mix):
     """
     Estimate energy consumption.
 
@@ -25,7 +25,8 @@ def assess_energy(country, deciles):
 
     """
     output = []
-
+    energy = []
+    
     site_kwh = country['energy_equipment_kwh'] #1 #kwh per site
     wireless_bh_kwh = country['energy_wireless_medium_kwh'] #0.5 #kwh per link
     fiber_bh_kwh = country['energy_fiber_kwh'] #0.01 #kwh per link
@@ -64,5 +65,35 @@ def assess_energy(country, deciles):
 
         output.append(decile)
 
-    return output
+        for energy_type, percentage in on_grid_mix.items():
+
+            existing_energy_kwh = round(
+                float(decile['total_existing_energy_kwh']) * 
+                (percentage / 100) , 1
+            )
+            new_energy_kwh = round(
+                float(decile['total_new_energy_kwh']) * 
+                (percentage / 100) , 1
+            )
+
+            energy.append({
+                'country_name': country['country_name'],
+                'iso3': country['iso3'],
+                'decile': decile['decile'],
+                # 'population': decile['population_total'],  
+                # 'area_km2': decile['area_km2'],        
+                # 'population_km2': decile['population_km2'],
+                'capacity': decile['capacity'],
+                'generation': decile['generation'],
+                'backhaul': decile['backhaul'],
+                'energy_scenario': decile['energy_scenario'],
+                'income': country['income'],
+                'wb_region': country['wb_region'],
+                'iea_classification': country['iea_classification'],
+                'product': energy_type,
+                'total_existing_energy_kwh': existing_energy_kwh,
+                'new_existing_energy_kwh': new_energy_kwh,
+            })
+
+    return output, energy
 

@@ -20,7 +20,7 @@ from cuba.energy import assess_energy
 from cuba.emissions import assess_emissions
 from cuba.costs import assess_cost
 
-from options import tech_options, PARAMETERS, EMISSIONS_FACTORS 
+from options import tech_options, PARAMETERS#, EMISSIONS_FACTORS 
 from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
@@ -72,6 +72,34 @@ def read_capacity_lut(path):
     return capacity_lut
 
 
+def read_emissions_lut(path):
+    """
+
+    """
+    capacity_lut = {}
+
+    data = pd.read_csv(path)
+    regions = data['region'].unique()
+    scenarios = data['scenario'].unique()
+    data = data.to_dict('records')
+
+    for region in regions:
+        region_dict = {}
+        for scenario in scenarios:
+            technologies = {}
+            for item in data:
+                if not region == item['region']:
+                    continue
+                if not scenario == item['scenario']:
+                    continue
+                technologies[item['generation_twh'].lower()] = item['co2_g_kwh']
+
+            region_dict[scenario] = technologies
+        capacity_lut[region] = region_dict
+
+    return capacity_lut
+
+
 def load_on_grid_mix(country, energy_scenario, path):
     """
     Load IEA WEO2023 data.
@@ -93,11 +121,13 @@ def load_on_grid_mix(country, energy_scenario, path):
 
     data = pd.read_csv(path)
     data = data[data.FLOW == 'Electricity generation']
+    data = data[data.CATEGORY == 'Energy']
     data = data[data.SCENARIO == energy_scenario_long]
     data = data[data.YEAR == int(year)]
     data = data[data.PRODUCT != 'Total']
     data = data[data.REGION != 'World']
     data = data[['PRODUCT','REGION','VALUE']]
+    data = data[data['PRODUCT'] != 'Renewables']
 
     #calculate energy generation mix share
     data['share']  = (
@@ -110,8 +140,20 @@ def load_on_grid_mix(country, energy_scenario, path):
         
         if not item['REGION'] == iea_classification:
             continue
+        
+        product = item['PRODUCT'].lower()
+        if product == 'modern bioenergy and renewable waste':
+            product = 'bioenergy'
+        elif product == 'hydrogen and h2-based fuels':
+            product = 'hydrogen and ammonia'
+        elif product == 'fossil fuels: with ccus':
+            product = 'fossil fuels with ccus'
+        elif product == 'coal: unabated':
+            product = 'unabated coal'
+        elif product == 'natural gas: unabated':
+            product = 'unabated natural gas'
 
-        on_grid_mix[item['PRODUCT']] = item['share']
+        on_grid_mix[product] = item['share']
 
     return on_grid_mix
 
@@ -150,13 +192,18 @@ if __name__ == '__main__':
     path = os.path.join(DATA_INTERMEDIATE, 'luts', 'capacity_lut_by_frequency.csv')
     capacity_lut = read_capacity_lut(path)
 
+    filename = 'iea_electricity_emissions_factors.csv'
+    folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
+    path = os.path.join(folder, filename)
+    emissions_lut = read_emissions_lut(path)
+
     for country in tqdm(countries):#[::-1]:#[:1]:
 
         iso3 = country['iso3']
         country.update(PARAMETERS)
 
-        # if not iso3 == "GBR":
-        #     continue
+        if not iso3 == "GBR":
+            continue
 
         print('--Working on {}'.format(iso3))
         
@@ -166,11 +213,13 @@ if __name__ == '__main__':
             os.makedirs(OUTPUT_COUNTRY)
 
         output = []
+        energy_output = []
+        emissions_output = []
 
         for option in options:
             
-            folder = os.path.join(DATA_RAW, 'iea_data')
-            filename = 'WEO2023_AnnexA_Free_Dataset_Regions.csv'
+            folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
+            filename = 'WEO2023_Extended_Data_Regions.csv'
             path_in = os.path.join(folder, filename)
             energy_scenario = option.split('_')[3]
             on_grid_mix = load_on_grid_mix(country, energy_scenario, path_in)
@@ -198,28 +247,42 @@ if __name__ == '__main__':
                 capacity_lut,
             )
 
-            deciles = assess_energy(
+            deciles, energy = assess_energy(
                 country,
                 deciles,
+                on_grid_mix
             )
 
-            data_emissions = assess_emissions(
+            deciles, emissions = assess_emissions(
                 country,
                 deciles,
                 on_grid_mix,
-                EMISSIONS_FACTORS
+                emissions_lut
             )
-            
+
             deciles = assess_cost(
                 country,
                 deciles,
             )
 
             output = output + deciles
+            energy_output = energy_output + energy
+            emissions_output = emissions_output + emissions
 
         output = pd.DataFrame(output)
         filename = 'results_{}.csv'.format(iso3)
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
 
-    collect_results(countries)
+        energy_output = pd.DataFrame(energy_output)
+        filename = 'energy_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        energy_output.to_csv(path_out, index=False)
+
+        emissions_output = pd.DataFrame(emissions_output)
+        filename = 'emissions_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        emissions_output.to_csv(path_out, index=False)
+
+    # collect_results(countries)
+    
