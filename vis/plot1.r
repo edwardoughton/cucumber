@@ -5,6 +5,70 @@ library("viridis")
 
 #############
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
+filename = 'ericsson_mr_smartphone_subs.csv'
+data <- read.csv(file.path(folder, 'plot1_data', filename))
+
+data$region = gsub( " ", "", data$region)
+
+data$region_name = factor(data$region,
+                          levels = c(
+                            'CEE',
+                            'INB',
+                            'LATAM',
+                            'MENA',
+                            'NAM',
+                            'NEA',
+                            'SEAO',
+                            'SSA',
+                            'WE'
+                          ),
+                          labels = c(
+                            'Central Eastern Europe',
+                            'India, Nepal, Bhutan',
+                            'Latin America',
+                            'Middle East and North Africa',
+                            'North America',
+                            'North East Asia',
+                            'South East Asia and Oceania',
+                            'Sub-Saharan Africa',
+                            'Western Europe'
+                          )
+)
+
+totals <- data %>%
+  group_by(year) %>%
+  summarize(total = signif(sum(value/1e3))) #convert kwh -> twh
+
+plot1 = 
+  ggplot(data, aes(x=year, y=value/1e3, fill=region_name)) +
+  geom_bar(stat="identity", position='stack') +
+  geom_text(data=totals, aes(x=year, label=total, y=total, fill=NULL), 
+            nudge_y=.2, size=3) +
+  labs(title="(A) Global Smartphone Subscriptions.",
+       subtitle="Reported annually as the total by region.",
+       x=NULL,
+       y = "Smartphones (Billions)",
+       color='', linetype='', group='', fill='')+
+  theme_bw() +
+  scale_x_continuous(expand = c(-0.05, 0), limits=c(2015,2024),
+                     breaks = seq(2015,2024, by = 1)) +
+  scale_y_continuous(expand = c(-0.01, 0), limits=c(0,8)) +
+  scale_color_viridis_d(option = "C") +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 0, hjust=0.5),
+        # legend.text = element_text(size = 6),
+        # panel.grid.minor.x = element_line(color = 'black')
+        # panel.background = element_rect(fill = "white"),
+        # panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
+        # panel.grid.minor = element_line(colour="grey95",size = rel(0.25))
+  ) +
+  guides(color = guide_legend(ncol = 5, nrow = 2),
+         linetype = guide_legend(ncol = 5, nrow = 2),
+         group = guide_legend(ncol = 5, nrow = 2),
+  )
+
+#############
+folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'ericsson_mr_data_per_sub.csv'
 data <- read.csv(file.path(folder, 'plot1_data', filename))
 unique(data$region)
@@ -34,10 +98,10 @@ data$region_name = factor(data$region,
                      )
 )
 
-plot1 = ggplot(data, aes(x=year, y=value, group=region_name, 
+plot2 = ggplot(data, aes(x=year, y=value, group=region_name, 
                          color=region_name)) +
   geom_line(aes(linetype=region_name)) +
-  labs(title="(A) Global Monthly Data Traffic.",
+  labs(title="(B) Global Monthly Data Traffic.",
        subtitle="Reported annually by region.",
        x=NULL,
        y = "Monthly Traffic (GB/Smartphone)",
@@ -54,62 +118,6 @@ plot1 = ggplot(data, aes(x=year, y=value, group=region_name,
          linetype = guide_legend(ncol = 5, nrow = 2),
          group = guide_legend(ncol = 5, nrow = 2),
   )
-
-#############
-folder <- dirname(rstudioapi::getSourceEditorContext()$path)
-filename = 'ericsson_mr_smartphone_subs.csv'
-data <- read.csv(file.path(folder, 'plot1_data', filename))
-
-data$region_name = factor(data$region,
-                          levels = c(
-                            'CEE',
-                            'INB',
-                            'LATAM',
-                            'MENA',
-                            'NAM',
-                            'NEA',
-                            'SEAO',
-                            'SSA',
-                            'WE'
-                          ),
-                          labels = c(
-                            'Central Eastern Europe',
-                            'India, Nepal, Bhutan',
-                            'Latin America',
-                            'Middle East and North Africa',
-                            'North America',
-                            'North East Asia',
-                            'South East Asia and Oceania',
-                            'Sub-Saharan Africa',
-                            'Western Europe'
-                          )
-)
-
-plot2 = ggplot(data, aes(x=year, y=value/1e3, group=region_name, 
-                         color=region_name))+
-  geom_line(aes(linetype=region_name)) +
-  labs(title="(B) Global Smartphone Subscriptions.",
-       subtitle="Reported annually as the total by region.",
-       x=NULL,
-       y = "Smartphones (Billions)",
-       color='', linetype='', group='')+
-  theme_bw() +
-  scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
-  scale_y_continuous(expand = c(0, 0), limits=c(0,1)) +
-  scale_color_viridis(discrete = TRUE, option = "C")+
-  theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 0, hjust=0.2),
-        # legend.text = element_text(size = 6),
-        # panel.grid.minor.x = element_line(color = 'black')
-        # panel.background = element_rect(fill = "white"),
-        # panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
-        # panel.grid.minor = element_line(colour="grey95",size = rel(0.25))
-  ) +
-  guides(color = guide_legend(ncol = 5, nrow = 2),
-         linetype = guide_legend(ncol = 5, nrow = 2),
-         group = guide_legend(ncol = 5, nrow = 2),
-  )
-
 
 #############
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
