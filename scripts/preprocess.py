@@ -1,6 +1,5 @@
 """
-Collect all population related regional data, including
-an estimation of the population < 10 years of age.
+Collect and preprocess all necessary data.
 
 Written by Ed Oughton.
 
@@ -10,15 +9,12 @@ March 2021.
 import os
 import configparser
 import json
-# import csv
 import random
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-# import glob
 import pyproj
-from shapely.geometry import MultiPolygon, mapping, MultiLineString
-from shapely.ops import transform, unary_union, nearest_points
+from shapely.geometry import MultiPolygon
 import rasterio
 from rasterio.mask import mask
 from rasterstats import zonal_stats
@@ -389,6 +385,7 @@ def process_unconstrained_site_estimation(country):
     else:
         towers_per_pop_4G = towers_4G / population_covered_4G
 
+    #continent2 is missing from country metadata
     backhaul_lut = get_backhaul_lut(iso3, country['continent2'], '2025')
 
     regional_data = regional_data.to_dict('records')
@@ -735,22 +732,22 @@ if __name__ == '__main__':
 
     for country in countries:
 
-        # if not country['iso3'] == 'GBR':
-        #     continue
+        if not country['iso3'] == 'GBR':
+            continue
 
     #     print('----')
     #     print('-- Working on {}'.format(country['country_name']))
 
-    #     # process_country_shapes(country)
+        # process_country_shapes(country)
 
-    #     # process_regions(country)
+        # process_regions(country)
 
-    #     # process_settlement_layer(country)
+        # process_settlement_layer(country)
 
-    #     # get_regional_data(country)
+        # get_regional_data(country)
 
-    #     # process_unconstrained_site_estimation(country)
+        # process_unconstrained_site_estimation(country)
 
-    #     # generate_deciles(country)
+        # generate_deciles(country)
 
-        get_regional_data_lut(country)
+        # get_regional_data_lut(country)

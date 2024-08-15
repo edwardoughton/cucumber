@@ -46,11 +46,12 @@ def assess_energy(country, deciles, on_grid_mix):
             (decile['backhaul_wireless'] * wireless_bh_kwh * 24 * 365) + #kwh per site
             (decile['backhaul_fiber'] * fiber_bh_kwh * 24 * 365) 
         )
+
         #get energy use for existing sites in 1 year
         decile['total_existing_energy_kwh'] = (
             existing_site_energy_kwh + existing_backhaul_energy_kwh
         )
-
+        # print(decile['total_existing_sites'], site_kwh, existing_site_energy_kwh)
         new_site_energy_kwh = (
             decile['total_new_sites'] * site_kwh * #kwh per site
             24 * 365
@@ -69,11 +70,11 @@ def assess_energy(country, deciles, on_grid_mix):
 
             existing_energy_kwh = round(
                 float(decile['total_existing_energy_kwh']) * 
-                (percentage / 100) , 1
+                percentage, 1
             )
             new_energy_kwh = round(
                 float(decile['total_new_energy_kwh']) * 
-                (percentage / 100) , 1
+                percentage, 1
             )
 
             energy.append({

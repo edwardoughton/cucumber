@@ -1,5 +1,5 @@
 """
-Caclulate new revised outputs.
+Compute outputs.
 
 Written by Ed Oughton.
 
@@ -14,13 +14,13 @@ import geopandas
 from collections import OrderedDict
 from tqdm import tqdm
 
-from cuba.demand import estimate_demand
-from cuba.supply import estimate_supply
-from cuba.energy import assess_energy
-from cuba.emissions import assess_emissions
-from cuba.costs import assess_cost
+from cucumber.demand import estimate_demand
+from cucumber.supply import estimate_supply
+from cucumber.energy import assess_energy
+from cucumber.emissions import assess_emissions
+from cucumber.costs import assess_cost
 
-from options import tech_options, PARAMETERS#, EMISSIONS_FACTORS 
+from options import tech_options, PARAMETERS
 from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
@@ -274,15 +274,15 @@ if __name__ == '__main__':
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
 
-        energy_output = pd.DataFrame(energy_output)
-        filename = 'energy_{}.csv'.format(iso3)
-        path_out = os.path.join(OUTPUT_COUNTRY, filename)
-        energy_output.to_csv(path_out, index=False)
+        # energy_output = pd.DataFrame(energy_output)
+        # filename = 'energy_{}.csv'.format(iso3)
+        # path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        # energy_output.to_csv(path_out, index=False)
 
         emissions_output = pd.DataFrame(emissions_output)
         filename = 'emissions_{}.csv'.format(iso3)
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         emissions_output.to_csv(path_out, index=False)
 
-    # collect_results(countries)
+    collect_results(countries)
     

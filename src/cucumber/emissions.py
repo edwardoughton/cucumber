@@ -43,19 +43,19 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
 
             energy_type_key = 'existing_emissions_t_co2_' + energy_type
             existing_energy_kwh = (float(decile['total_existing_energy_kwh']) * 
-                (percentage / 100))
+                percentage)
             existing_emissions_t_co2 = round(existing_energy_kwh * 
-                float(emissions_by_type_kg) / 1000, 1
+                float(emissions_by_type_kg) / 1000, 5
             )
+
             decile_dict[energy_type_key] = existing_emissions_t_co2
             existing_total_emissions_t_co2 += existing_emissions_t_co2
 
             energy_type_key = 'new_emissions_t_co2_' + energy_type
             new_energy_kwh = (float(decile['total_new_energy_kwh']) * 
-                (percentage / 100)
-                )
+                percentage)
             new_emissions_t_co2 = round(
-                new_energy_kwh * float(emissions_by_type_kg) / 1000, 1
+                new_energy_kwh * float(emissions_by_type_kg) / 1000, 5
             )
 
             decile_dict[energy_type_key] = new_emissions_t_co2

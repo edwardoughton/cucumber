@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-"""Setup cuba package
+"""Setup cucumber package
 """
 from glob import glob
 from os.path import basename, splitext
@@ -17,16 +17,16 @@ def readme():
 
 
 setup(
-    name='cuba',
+    name='cucumber',
     # use_scm_version=True,
     version=0.1,
     license='MIT License',
-    description='Chile Universal Broadband Assessment',
+    description='Computing universal mobile broadband emissions',
     long_description=readme(),
     long_description_content_type="text/markdown",
     author='Ed Oughton',
     author_email='edward.oughton@gmail.com',
-    url='https://github.com/edwardoughton/cuba',
+    url='https://github.com/edwardoughton/cucumber',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],

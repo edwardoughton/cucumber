@@ -12,7 +12,7 @@ import numpy as np
 from itertools import tee
 from collections import OrderedDict
 
-from cuba.path_loss import path_loss_calculator
+from cucumber.path_loss import path_loss_calculator
 
 np.random.seed(42)
 
