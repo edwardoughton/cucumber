@@ -1,8 +1,7 @@
 # Computing universal mobile broadband emissions (cucumber)
 
-This repository estimates the global emissions impacts of  
-different universal mobile broadband strategies (focusing on terrestrial 
-4G and 5G options).
+This repository estimates the global emissions impacts of different universal 
+mobile broadband strategies (focusing on terrestrial 4G and 5G options).
 
 Sustainable Development Goal (SDG) 9 aims to build resilient infrastructure and 
 promote inclusive and sustainable industrialization. For example, via universal 
