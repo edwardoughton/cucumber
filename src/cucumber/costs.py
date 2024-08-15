@@ -1,6 +1,8 @@
 """
 Cost module
+
 Author: Edward Oughton
+
 Date: June 2021
 
 """

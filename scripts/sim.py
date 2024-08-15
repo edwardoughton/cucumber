@@ -17,8 +17,8 @@ from random import choice
 import numpy as np
 from shapely.geometry import shape, Point, LineString, mapping
 
-from cuba.generate_hex import produce_sites_and_site_areas
-from cuba.system_simulator import SimulationManager
+from cucumber.generate_hex import produce_sites_and_site_areas
+from cucumber.system_simulator import SimulationManager
 
 np.random.seed(42)
 

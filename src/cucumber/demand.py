@@ -1,5 +1,5 @@
 """
-Estimate demand
+Estimate demand.
 
 Written by Ed Oughton.
 
@@ -46,7 +46,7 @@ def estimate_demand(country, deciles):
             'suburban', 
             decile
         )
-
+        print(scenario_per_user_mbps)
         #demand_mbps_km2 : float
         #total demand in mbps / km^2.
         decile['demand_mbps_km2'] = (

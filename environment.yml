@@ -1,4 +1,4 @@
-name: cuba
+name: cucumber
 channels:
   - defaults
   - conda-forge
@@ -127,4 +127,4 @@ dependencies:
   - xz=5.2.6=h8cc25b3_0
   - zlib=1.2.12=h8cc25b3_3
   - zstd=1.5.2=h19a0ad4_0
-prefix: D:\Anaconda\envs\cuba
+prefix: D:\Anaconda\envs\cucumber

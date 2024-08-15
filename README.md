@@ -1,8 +1,8 @@
-# Sustainability assessment of global universal mobile broadband strategies 
+# Computing universal mobile broadband emissions (cucumber)
 
 This repository estimates the global emissions impacts of  
 different universal mobile broadband strategies (focusing on terrestrial 
-4G and 5G).
+4G and 5G options).
 
 Sustainable Development Goal (SDG) 9 aims to build resilient infrastructure and 
 promote inclusive and sustainable industrialization. For example, via universal 
@@ -14,10 +14,9 @@ potentially contrevening SDG13, which aims to take urgent steps to combat
 climate change and its impacts via decarbonization.
 
 This analysis quantifies this trade-off by first estimating (i) the existing 
-energy and emissions produced globally by mobile broadband networks, (ii) the 
+energy and emissions produced globally by mobile broadband networks and (ii) the 
 additional energy and emissions impacts from providing universal mobile 
-broadband via terrestrial 4G or 5G, and then (iii) the energy and emissions 
-savings from utilizing infrastructure sharing. 
+broadband via terrestrial 4G or 5G. 
 
 Reference
 ===========
@@ -35,11 +34,11 @@ You can install the existing conda environment using:
     
 Otherwise, you can create one from scratch:
 
-    conda create --name cuba python=3.7 gdal
+    conda create --name cucumber python=3.7 gdal
 
 Once you've completed either optionm you can activate your environment (and run this each time you switch projects):
 
-    conda activate cuba
+    conda activate cucumber
 
 Some packages will be required if you didn't use the pre-existing conda environment:
 
