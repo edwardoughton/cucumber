@@ -89,9 +89,9 @@ subset <- subset %>%
     value = sum(value)
     ) 
 
-subset$value = subset$value / 1e3 #convert t -> kt
+subset$value = subset$value / 1e6 #convert t -> mt
 
-max_value = max(round(subset$value,3)) + 12
+max_value = max(round(subset$value,3)) + 30
 
 plot1 = 
   ggplot(subset, aes(x = tech, y = value, fill=income)) +
@@ -103,7 +103,7 @@ plot1 =
   labs(title=expression(paste("(A) Total Cell Site Operational Emissions (", CO[2], ") by World Bank Income Group.")),
        fill=NULL,
        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-       x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +
+       x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
@@ -142,7 +142,7 @@ subset <- subset %>%
     value = sum(value)
   )
 
-subset$value = subset$value / 1e3 #convert t -> Kt
+subset$value = subset$value / 1e6 #convert t -> mt
 
 # df_errorbar <-
 #   subset |>
@@ -162,7 +162,7 @@ subset$value = subset$value / 1e3 #convert t -> Kt
 
 # min_value = min(round(df_errorbar$low,3))
 # max_value = max(round(df_errorbar$high,3)) + .5
-max_value = max(round(subset$value,3)) + 10
+max_value = max(round(subset$value,3)) + 20
 # min_value[min_value > 0] = 0
 
 plot2 = 

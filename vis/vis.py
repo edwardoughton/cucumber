@@ -116,6 +116,9 @@ def collect_results(countries):
 
     for country in countries:
 
+        # if not country['iso3'] == 'AFG':
+        #     continue
+
         interim = {}
 
         filename = "results_{}.csv".format(country['iso3'])
@@ -127,13 +130,14 @@ def collect_results(countries):
             data['total_new_emissions_t_co2']) * 1e3) /
             data['population_with_smartphones']
         )
+        # print(data['total_existing_emissions_t_co2'], data['total_new_emissions_t_co2'])
         # data['total_emissions_kg'] = (
         #     data['emissions_per_smartphone_kg'] * 
         #     data['population_with_smartphones']
         # )
         data = data[['decile','emissions_per_smartphone_kg']]
         data = data.to_dict('records')
-
+        # print(data)
         for item in data:
             interim[item['decile']] = item['emissions_per_smartphone_kg']
 
@@ -182,12 +186,12 @@ def collect_deciles(countries):
     #     return output
 
     results_dict = collect_results(countries)#cost_[:100]
-
+    # print(results_dict)
     output = []
 
     for country in countries:#[:1]:
 
-        # if not country['iso3'] == 'GBR':
+        # if not country['iso3'] == 'AFG':
         #     continue
 
         country_results = results_dict[country['iso3']]
@@ -203,12 +207,11 @@ def collect_deciles(countries):
         for item in data:
 
             emissions_per_smartphone_kg = country_results[item['decile']]
-
+            # print(emissions_per_smartphone_kg)
             penetration_rate = 1
-            total_emissions = round(
+            total_emissions = (
                 (item['population'] * penetration_rate) * 
-                emissions_per_smartphone_kg, 1
-            )
+                emissions_per_smartphone_kg)
 
             output.append({
                 # 'GID_0': item['GID_0'],
@@ -292,12 +295,13 @@ def combine_data(deciles, regions):
 
     """
     regions['iso3'] = regions['GID_id'].str[:3]
+    # regions = regions[regions['iso3'] == 'CAN']
     regions = regions[['GID_id', 'iso3', 'geometry']] #[:1000]
     regions = regions.copy()
-
+    # print(regions)
     regions = regions.merge(deciles, how='left', left_on='GID_id', right_on='GID_id')
-    # regions.reset_index(drop=True, inplace=True)
-    # regions.to_file(os.path.join(VIS,'..','data','test3.shp'))
+    regions.reset_index(drop=True, inplace=True)
+    regions.to_file(os.path.join(VIS,'..','data','test3.shp'))
 
     return regions
 
@@ -372,44 +376,49 @@ if __name__ == "__main__":
 
     countries = find_country_list([])
 
-    # imf_countries = get_country_outlines(countries)
-    # non_imf = get_non_imf_outlines(countries)
-
     # deciles = collect_deciles(countries)#[:300]
     # # out = pd.DataFrame(deciles)
     # # out.to_csv(os.path.join(VIS, '..', 'data.csv'))
 
     # regions = get_regional_shapes()#[:1000]
     # regions = combine_data(deciles, regions)
-    # # regions = pd.DataFrame(regions)
-    # # # regions = regions[['GID_id', 'cost', 'decile']]
-    # # # regions.to_csv(os.path.join(VIS, '..', 'test.csv'))
+    # # # # # # regions = pd.DataFrame(regions)
+    # # # # # # # regions = regions[['GID_id', 'cost', 'decile']]
+    # # # # # # # regions.to_csv(os.path.join(VIS, '..', 'test.csv'))
 
     regions = gpd.read_file(os.path.join(VIS,'..','data','test3.shp'), crs='epsg:4326')#[:100]
     # path = os.path.join(VIS, 'regions_by_emissions.tif')
-    # plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
+    # # plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
+
+    # satellite = regions[regions['pop_densit'] < 2]
+    # regions = regions[regions['pop_densit'] >= 2]
 
     sns.set(font_scale=0.9)
     fig, (ax1, ax2) = plt.subplots(2, figsize=(7, 6.5), layout='constrained')
-    bins = [0,5,10,15,20,25,30,35,40,45,1e12]
+
+    bins = [-10,1,25,50,75,100,150,250,500,750,1e12]
     labels = [
-        '<5t $CO_2$',
-        '<10t $CO_2$',
-        '<15t $CO_2$',
-        '<20t $CO_2$',
+        '<1t $CO_2$',
         '<25t $CO_2$',
-        '<30t $CO_2$',
-        '<35t $CO_2$',
-        '<40t $CO_2$',
-        '<45t $CO_2$',
-        '>45t $CO_2$'
+        '<50t $CO_2$',
+        '<75t $CO_2$',
+        '<100t $CO_2$',
+        '<150t $CO_2$',
+        '<250t $CO_2$',
+        '<500t $CO_2$',
+        '<750t $CO_2$',
+        '>750t $CO_2$'
     ]
     regions['bin'] = pd.cut(
-        regions['emissions_'],
+        regions['emissions_'] / 1e3,
         bins=bins,
         labels=labels
     )
-    
+    # regions['bin'] = pd.qcut(
+    #     regions['emissions_'] / 1e3, 10
+    #     # bins=bins,
+    #     # labels=labels
+    # )
     base = regions.plot(
         column='bin', 
         ax=ax1, 
@@ -422,6 +431,8 @@ if __name__ == "__main__":
             'fontsize': 6, "fancybox":True
             } 
         )
+    # satellite.plot(ax=base, color='lightgrey', edgecolor='lightgrey', linewidth=0)
+
     base = regions.plot(
         column='bin', 
         ax=ax2, 
@@ -434,6 +445,7 @@ if __name__ == "__main__":
             'fontsize': 6, "fancybox":True
             } 
         )   
+    # satellite.plot(ax=base, color='lightgrey', edgecolor='lightgrey', linewidth=0)
     # base = regions.plot(
     #     column='bin', 
     #     ax=ax3, 

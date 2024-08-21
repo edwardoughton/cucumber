@@ -386,92 +386,101 @@ if __name__ == "__main__":
     # # # regions.to_csv(os.path.join(VIS, '..', 'test.csv'))
 
     regions = gpd.read_file(os.path.join(VIS,'..','data','test3.shp'), crs='epsg:4326')#[:100]
-    regions = regions[regions['iso3'] == 'USA']
 
-    # path = os.path.join(VIS, 'regions_by_emissions.tif')
-    # plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
+    path = os.path.join(VIS, 'regions_by_emissions.tif')
+    plot_regions_by_emissions(regions, path)#, imf_countries, non_imf)
 
-    sns.set(font_scale=0.9)
-    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(7, 9))
-    minx, miny, maxx, maxy = regions.total_bounds
-    ax1.set_aspect('auto')
-    ax1.set_xlim(xmin=-130, xmax=-50)
-    ax2.set_xlim(xmin=-130, xmax=-50)
-    ax3.set_xlim(xmin=-130, xmax=-50)
-    ax1.set_ylim(ymin=25, ymax=50)
-    ax2.set_ylim(ymin=25, ymax=50)
-    ax3.set_ylim(ymin=25, ymax=50)
 
-    bins = [0,5,10,15,20,25,30,35,40,45,1e12]
-    labels = [
-        '<5t $CO_2$',
-        '<10t $CO_2$',
-        '<15t $CO_2$',
-        '<20t $CO_2$',
-        '<25t $CO_2$',
-        '<30t $CO_2$',
-        '<35t $CO_2$',
-        '<40t $CO_2$',
-        '<45t $CO_2$',
-        '>45t $CO_2$'
-    ]
-    regions['bin'] = pd.cut(
-        regions['emissions_'],
-        bins=bins,
-        labels=labels
-    )
+
+
+
+
+
+
+    # regions = gpd.read_file(os.path.join(VIS,'..','data','test3.shp'), crs='epsg:4326')#[:100]
+    # regions = regions[regions['iso3'] == 'USA']
+
+    # sns.set(font_scale=0.9)
+    # fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(7, 9))
+    # minx, miny, maxx, maxy = regions.total_bounds
+    # ax1.set_aspect('auto')
+    # ax1.set_xlim(xmin=-130, xmax=-50)
+    # ax2.set_xlim(xmin=-130, xmax=-50)
+    # ax3.set_xlim(xmin=-130, xmax=-50)
+    # ax1.set_ylim(ymin=25, ymax=50)
+    # ax2.set_ylim(ymin=25, ymax=50)
+    # ax3.set_ylim(ymin=25, ymax=50)
+
+    # bins = [0,5,10,15,20,25,30,35,40,45,1e12]
+    # labels = [
+    #     '<5t $CO_2$',
+    #     '<10t $CO_2$',
+    #     '<15t $CO_2$',
+    #     '<20t $CO_2$',
+    #     '<25t $CO_2$',
+    #     '<30t $CO_2$',
+    #     '<35t $CO_2$',
+    #     '<40t $CO_2$',
+    #     '<45t $CO_2$',
+    #     '>45t $CO_2$'
+    # ]
+    # regions['bin'] = pd.cut(
+    #     regions['emissions_'],
+    #     bins=bins,
+    #     labels=labels
+    # )
     
-    base = regions.plot(
-        column='bin', 
-        ax=ax1, 
-        cmap='viridis', 
-        linewidth=0.1, #fontsize=8,
-        edgecolor='grey', 
-        legend=True,
-        legend_kwds={
-            "title": "Emissions (xx/x)", 'title_fontsize': 7,
-            "loc": "lower right", 
-            'fontsize': 6, "fancybox":True
-            } 
-        )
-    base = regions.plot(
-        column='bin', 
-        ax=ax2, 
-        cmap='viridis', 
-        linewidth=0.1, #fontsize=8,
-        edgecolor='grey', 
-        legend=True,
-        legend_kwds={
-            "title": "Emissions (xx/x)", 'title_fontsize': 7,
-            "loc": "lower right", 
-            'fontsize': 6, "fancybox":True
-            } 
-        )   
-    base = regions.plot(
-        column='bin', 
-        ax=ax3, 
-        cmap='viridis', 
-        linewidth=0.1, #fontsize=8,
-        edgecolor='grey', 
-        legend=True,
-        legend_kwds={
-            "title": "Emissions (xx/x)", 'title_fontsize': 7,
-            "loc": "lower right", 
-            'fontsize': 6, "fancybox":True
-            } 
-        )
-    len = len(regions)
-    t = 'Estimated impacts by US sub-national region (n={})'.format(len)
-    fig.suptitle(t)
+    # base = regions.plot(
+    #     column='bin', 
+    #     ax=ax1, 
+    #     cmap='viridis', 
+    #     linewidth=0.1, #fontsize=8,
+    #     edgecolor='grey', 
+    #     legend=True,
+    #     legend_kwds={
+    #         "title": "Emissions (xx/x)", 'title_fontsize': 7,
+    #         "loc": "lower right", 
+    #         'fontsize': 6, "fancybox":True
+    #         } 
+    #     )
+    # base = regions.plot(
+    #     column='bin', 
+    #     ax=ax2, 
+    #     cmap='viridis', 
+    #     linewidth=0.1, #fontsize=8,
+    #     edgecolor='grey', 
+    #     legend=True,
+    #     legend_kwds={
+    #         "title": "Emissions (xx/x)", 'title_fontsize': 7,
+    #         "loc": "lower right", 
+    #         'fontsize': 6, "fancybox":True
+    #         } 
+    #     )   
+    # base = regions.plot(
+    #     column='bin', 
+    #     ax=ax3, 
+    #     cmap='viridis', 
+    #     linewidth=0.1, #fontsize=8,
+    #     edgecolor='grey', 
+    #     legend=True,
+    #     legend_kwds={
+    #         "title": "Emissions (xx/x)", 'title_fontsize': 7,
+    #         "loc": "lower right", 
+    #         'fontsize': 6, "fancybox":True
+    #         } 
+    #     )
+    # len = len(regions)
+    # t = 'Estimated impacts by US sub-national region (n={})'.format(len)
+    # fig.suptitle(t)
 
-    ax1.set_title('(A) Aggregate existing emissions by US sub-national region', loc='left')
-    ax2.set_title('(B) Aggregate new emissions by US sub-national region', loc='left')
-    ax3.set_title('(C) Per smartphone new emissions by US sub-national region', loc='left')
+    # ax1.set_title('(A) Aggregate existing emissions by US sub-national region', loc='left')
+    # ax2.set_title('(B) Aggregate new emissions by US sub-national region', loc='left')
+    # ax3.set_title('(C) Per smartphone new emissions by US sub-national region', loc='left')
 
-    ax1.tick_params(axis='both', which='both', labelsize=7)
-    ax2.tick_params(axis='both', which='both', labelsize=7)
-    ax3.tick_params(axis='both', which='both', labelsize=7)
+    # ax1.tick_params(axis='both', which='both', labelsize=7)
+    # ax2.tick_params(axis='both', which='both', labelsize=7)
+    # ax3.tick_params(axis='both', which='both', labelsize=7)
 
-    fig.tight_layout()
-    path = os.path.join(VIS, 'demo_usa.png')
-    fig.savefig(path, dpi=300)
+    # fig.tight_layout()
+    # path = os.path.join(VIS, 'demo_usa.png')
+    # fig.savefig(path, dpi=300)
