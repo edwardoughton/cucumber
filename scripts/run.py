@@ -82,8 +82,10 @@ def read_emissions_lut(path):
     regions = data['region'].unique()
     scenarios = data['scenario'].unique()
     data = data.to_dict('records')
-
+    print(regions)
     for region in regions:
+        
+        # if region == 'na'
         region_dict = {}
         for scenario in scenarios:
             technologies = {}
@@ -137,10 +139,10 @@ def load_on_grid_mix(country, energy_scenario, path):
     # data.to_csv(os.path.join(BASE_PATH,'test.csv'), index=False)
 
     for idx, item in data.iterrows():
-        
+
         if not item['REGION'] == iea_classification:
             continue
-        
+
         product = item['PRODUCT'].lower()
         if product == 'modern bioenergy and renewable waste':
             product = 'bioenergy'
@@ -153,7 +155,7 @@ def load_on_grid_mix(country, energy_scenario, path):
         elif product == 'natural gas: unabated':
             product = 'unabated natural gas'
 
-        on_grid_mix[product] = item['share']
+        on_grid_mix[product] = item['share'] #* 100
 
     return on_grid_mix
 
@@ -175,7 +177,10 @@ def collect_results(countries):
     
     output = pd.DataFrame(output)
     filename = 'global_results.csv'.format(iso3)
-    path_out = os.path.join(OUTPUT, '..', 'global_results', filename)
+    folder = os.path.join(OUTPUT, '..', 'global_results')
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    path_out = os.path.join(folder, filename)
     output.to_csv(path_out, index=False)
 
     return
@@ -202,8 +207,8 @@ if __name__ == '__main__':
         iso3 = country['iso3']
         country.update(PARAMETERS)
 
-        if not iso3 == "GBR":
-            continue
+        # if not iso3 == "ARG":
+        #     continue
 
         print('--Working on {}'.format(iso3))
         
@@ -223,7 +228,9 @@ if __name__ == '__main__':
             path_in = os.path.join(folder, filename)
             energy_scenario = option.split('_')[3]
             on_grid_mix = load_on_grid_mix(country, energy_scenario, path_in)
-
+            # print(emissions_lut)
+            # print('---')
+            # print(on_grid_mix)
             filename = 'decile_data.csv'
             path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
             deciles = pd.read_csv(path_out)#[:1]
@@ -233,6 +240,7 @@ if __name__ == '__main__':
             deciles['backhaul'] = option.split('_')[2]
             deciles['energy_scenario'] = option.split('_')[3]
             # deciles['year'] = option.split('_')[4]
+            # deciles = deciles[deciles['decile'] == 1]
 
             deciles = deciles.to_dict('records')#[9:10]
 
@@ -273,11 +281,6 @@ if __name__ == '__main__':
         filename = 'results_{}.csv'.format(iso3)
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
-
-        # energy_output = pd.DataFrame(energy_output)
-        # filename = 'energy_{}.csv'.format(iso3)
-        # path_out = os.path.join(OUTPUT_COUNTRY, filename)
-        # energy_output.to_csv(path_out, index=False)
 
         emissions_output = pd.DataFrame(emissions_output)
         filename = 'emissions_{}.csv'.format(iso3)

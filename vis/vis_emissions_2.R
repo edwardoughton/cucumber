@@ -100,7 +100,7 @@ plot1 =
               position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
-  labs(title=expression(paste("(A) Total Cell Site Operational Emissions (", CO[2], ") by World Bank Income Group.")),
+  labs(title=expression(paste("(A) Total Mobile Site Operational Emissions (", CO[2], ") by World Bank Income Group.")),
        fill=NULL,
        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
@@ -172,7 +172,7 @@ plot2 =
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title=expression(paste("(B) Total Cell Site Operational Emissions (", CO[2], ") by World Bank Region.")),
+  labs(title=expression(paste("(B) Total Mobile Site Operational Emissions (", CO[2], ") by World Bank Region.")),
        fill=NULL,
        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +
@@ -255,7 +255,7 @@ plot3 =
             vjust =-0.7, hjust =.3, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title=expression(paste("Total Cell Site Operational Emissions by Income Group")),
+  labs(title=expression(paste("Total Mobile Site Operational Emissions by Income Group")),
        fill=NULL,
        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +
@@ -334,7 +334,7 @@ plot4 =
             vjust =-0.7, hjust =.3, angle = 0)+
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title=expression(paste("Total Cell Site Operational Emissions by Income Group")),
+  labs(title=expression(paste("Total Mobile Site Operational Emissions by Income Group")),
        fill=NULL,
        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +

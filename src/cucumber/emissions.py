@@ -28,7 +28,7 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
     emissions = []
 
     for decile in deciles:
-        
+
         decile_dict = {}
         existing_total_emissions_t_co2 = 0
         new_total_emissions_t_co2 = 0
@@ -44,20 +44,20 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
             energy_type_key = 'existing_emissions_t_co2_' + energy_type
             existing_energy_kwh = (float(decile['total_existing_energy_kwh']) * 
                 percentage)
-            existing_emissions_t_co2 = round(existing_energy_kwh * 
-                float(emissions_by_type_kg) / 1000, 5
+            existing_emissions_t_co2 = round((existing_energy_kwh * 
+                float(emissions_by_type_kg)) / 1000, 5
             )
 
             decile_dict[energy_type_key] = existing_emissions_t_co2
             existing_total_emissions_t_co2 += existing_emissions_t_co2
-
+            # print(existing_emissions_t_co2)
             energy_type_key = 'new_emissions_t_co2_' + energy_type
             new_energy_kwh = (float(decile['total_new_energy_kwh']) * 
                 percentage)
             new_emissions_t_co2 = round(
                 new_energy_kwh * float(emissions_by_type_kg) / 1000, 5
             )
-
+            # print(new_emissions_t_co2, new_energy_kwh, float(emissions_by_type_kg))
             decile_dict[energy_type_key] = new_emissions_t_co2
             new_total_emissions_t_co2 += new_emissions_t_co2
 
@@ -85,7 +85,7 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
         decile_dict['total_existing_emissions_t_co2'] = existing_total_emissions_t_co2
         decile_dict['total_new_emissions_t_co2'] = new_total_emissions_t_co2
         decile.update(decile_dict)
-
+        # print(decile_dict)
         output.append(decile) #dict2.update(dict1)
-  
+    # print(output[0]['existing_emissions_t_co2_oil'])
     return output, emissions
