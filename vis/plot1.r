@@ -2,6 +2,10 @@
 library(tidyverse)
 library(ggpubr)
 library("viridis") 
+# install.packages("directlabels")
+library(directlabels)
+
+color = "D"
 
 #############
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
@@ -23,18 +27,40 @@ data$region_name = factor(data$region,
                             'WE'
                           ),
                           labels = c(
-                            'Central Eastern Europe',
-                            'India, Nepal, Bhutan',
-                            'Latin America',
-                            'Middle East and North Africa',
-                            'North America',
-                            'North East Asia',
-                            'South East Asia and Oceania',
-                            'Sub-Saharan Africa',
-                            'Western Europe'
+                            'Central/Eastern Europe (CCE)',
+                            'India, Nepal, Bhutan (INB)',
+                            'Latin America (LATAM)',
+                            'Middle East and North Africa (MENA)',
+                            'North America (NA)',
+                            'North East Asia (NEA)',
+                            'Southeast Asia and Oceania (SEAO)',
+                            'Sub-Saharan Africa (SSA)',
+                            'Western Europe (WE)'
                           )
 )
 
+# cols <- c(
+#   'Central/Eastern Europe' = "#440154FF" ,
+#   'India, Nepal, Bhutan'= "#472D7BFF" ,
+#   'LATAM'= "#3B528BFF",
+#   'MENA'= "#2C728EFF",
+#   'North America' = "#21908CFF",
+#   'North East Asia' = "#27AD81FF",
+#   'SEA and Oceania' = "#5DC863FF",
+#   'Sub-Saharan Africa' = "#AADC32FF",
+#   'Western Europe' = "#FDE725FF"
+# )
+cols <- c(
+  'Central/Eastern Europe (CCE)' = "#440154FF" ,
+  'India, Nepal, Bhutan (INB)'= "#472D7BFF" ,
+  'Latin America (LATAM)'= "#3B528BFF",
+  'Middle East and North Africa (MENA)'= "#2C728EFF",
+  'North America (NA)' = "#21908CFF",
+  'North East Asia (NEA)' = "#27AD81FF",
+  'Southeast Asia and Oceania (SEAO)' = "#5DC863FF",
+  'Sub-Saharan Africa (SSA)' = "#AADC32FF",
+  'Western Europe (WE)' = "#FDE725FF"
+)
 totals <- data %>%
   group_by(year) %>%
   summarize(total = signif(sum(value/1e3))) #convert kwh -> twh
@@ -53,7 +79,9 @@ plot1 =
   scale_x_continuous(expand = c(-0.05, 0), limits=c(2015,2024),
                      breaks = seq(2015,2024, by = 1)) +
   scale_y_continuous(expand = c(-0.01, 0), limits=c(0,8)) +
-  scale_color_viridis_d(option = "C") +
+  scale_fill_manual(
+    values = cols,
+  ) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 0, hjust=0.5),
         # legend.text = element_text(size = 6),
@@ -62,9 +90,9 @@ plot1 =
         # panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
         # panel.grid.minor = element_line(colour="grey95",size = rel(0.25))
   ) +
-  guides(color = guide_legend(ncol = 5, nrow = 2),
-         linetype = guide_legend(ncol = 5, nrow = 2),
-         group = guide_legend(ncol = 5, nrow = 2),
+  guides(fill = guide_legend(ncol = 3, nrow = 3),
+         linetype = guide_legend(ncol = 3, nrow = 3),
+         group = guide_legend(ncol = 3, nrow = 3),
   )
 
 #############
@@ -74,49 +102,65 @@ data <- read.csv(file.path(folder, 'plot1_data', filename))
 unique(data$region)
 
 data$region_name = factor(data$region,
-                     levels = c(
-                       'CEE',
-                       'INB',
-                       'LATAM',
-                       'MENA',
-                       'NAM',
-                       'NEA',
-                       'SEAO',
-                       'SSA',
-                       'WE'
-                     ),
-                     labels = c(
-                       'Central Eastern Europe',
-                       'India, Nepal, Bhutan',
-                       'LATAM',
-                       'MENA',
-                       'North America',
-                       'North East Asia',
-                       'South East Asia and Oceania',
-                       'Sub-Saharan Africa',
-                       'Western Europe'
-                     )
+                          levels = c(
+                            'CEE',
+                            'INB',
+                            'LATAM',
+                            'MENA',
+                            'NAM',
+                            'NEA',
+                            'SEAO',
+                            'SSA',
+                            'WE'
+                          ),
+                          labels = c(
+                            'CEE',
+                            'INB',
+                            'LATAM',
+                            'MENA',
+                            'NAM',
+                            'NEA',
+                            'SEAO',
+                            'SSA',
+                            'WE'
+                          )
 )
 
-plot2 = ggplot(data, aes(x=year, y=value, group=region_name, 
-                         color=region_name)) +
-  geom_line(aes(linetype=region_name)) +
+cols <- c(
+  'CEE' = "#440154FF" ,
+  'INB'= "#472D7BFF" ,
+  'LATAM'= "#3B528BFF",
+  'MENA'= "#2C728EFF",
+  'NA' = "#21908CFF",
+  'NEA' = "#27AD81FF",
+  'SEAO' = "#5DC863FF",
+  'SSA' = "#AADC32FF",
+  'WE' = "#FDE725FF"
+)
+plot2 =
+  ggplot(data, aes(x = year, y = value, group = region_name, colour = region_name)) +
+  geom_line(aes( colour = region_name)) +
+  geom_dl(aes(label = region_name), method = list(dl.trans(x = x + 0.1), "last.points", cex = 0.6)) +
+  # geom_dl(aes(label = region_name), method = list(dl.trans(x = x - 0.2), "first.points", cex = 0.8)) +
   labs(title="(B) Global Monthly Data Traffic.",
        subtitle="Reported annually by region.",
        x=NULL,
        y = "Monthly Traffic (GB/Smartphone)",
-       color='', linetype='', group='')+
+       color='', linetype='', group='') +
   theme_bw() +
-  scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
+  scale_x_continuous(expand = c(0, 0), limits=c(2016,2023.8),
+                     breaks= seq(2016,2027, 1)) +
   scale_y_continuous(expand = c(0, 0), limits=c(0,35)) +
-  scale_color_viridis(discrete = TRUE, option = "C")+
-  # scale_fill_viridis(discrete = TRUE) +
+  # scale_color_viridis(discrete = TRUE, option = color, guide = 'none')+
+    scale_colour_manual(
+    values = cols,
+  ) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 0, hjust=.2),
   ) +
-  guides(color = guide_legend(ncol = 5, nrow = 2),
-         linetype = guide_legend(ncol = 5, nrow = 2),
-         group = guide_legend(ncol = 5, nrow = 2),
+  guides(color = guide_legend(ncol = 3, nrow = 3),
+         linetype = guide_legend(ncol = 3, nrow = 3),
+         group = guide_legend(ncol = 3, nrow = 3),
   )
 
 #############
@@ -130,7 +174,6 @@ data = data[(data$group != 'connected'),]
 
 data$income_year = paste(data$income, data$year)
 
-
 data$income_year = factor(data$income_year,
                           levels = c(
                             'LDCs 2020','LDCs 2021','LDCs 2022',
@@ -141,7 +184,7 @@ data$income_year = factor(data$income_year,
                           labels = c(
                 'LDC 2020','LDC 2021','LDC 2022',
                 'LMIC 2020','LMIC 2021','LMIC 2022',
-                'UMIC 2020','UMIC 2021','UMIC 2022',  
+                'UMIC 2020','UMIC 2021','UMIC 2022',
                 'HIC 2020','HIC 2021','HIC 2022'
                           )
 )
@@ -151,7 +194,7 @@ data$group = factor(data$group,
                     labels = c('Uncovered','Covered Without Smartphone','Connected')
 )
 
-plot3 = ggplot(data, aes(x=income_year, y=value, group=group, 
+plot3 = ggplot(data, aes(x=income_year, y=value, group=group,
                  fill=group)) + #coord_flip() +
   geom_bar(position="dodge", stat="identity") +
   geom_text(aes(label = paste(round(value,0),"%")),vjust=.5,hjust=-.2, size=3,
@@ -164,8 +207,8 @@ plot3 = ggplot(data, aes(x=income_year, y=value, group=group,
   theme_bw() +
   # scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
   scale_y_continuous(expand = c(0, 0), limits=c(0,100)) +
-  scale_color_viridis(discrete = TRUE, option = "C") +
-  scale_fill_viridis(discrete = TRUE, option = "D", direction=-1, alpha=.85) +
+  # scale_color_viridis(discrete = TRUE, option = "C") +
+  scale_fill_viridis(discrete = TRUE, option = color, direction=-1, alpha=.85) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 65, hjust=1),
         legend.text = element_text(size = 8),
@@ -215,7 +258,7 @@ data$group = factor(data$group,
                     levels = c('coverage_gap','usage_gap','connected'),
                     labels = c('Coverage Gap','Usage Gap','Connected')
 )
-plot4 = ggplot(data, aes(x=region_year, y=value, group=group, 
+plot4 = ggplot(data, aes(x=region_year, y=value, group=group,
                            fill=group)) + #coord_flip() +
   geom_bar(position="dodge", stat="identity") +
   geom_text(aes(label = paste(round(value,0),"%")),vjust=.5,hjust=-.2, size=3,
@@ -228,8 +271,7 @@ plot4 = ggplot(data, aes(x=region_year, y=value, group=group,
   theme_bw() +
   # scale_x_continuous(expand = c(0, 0), limits=c(2016,2023)) +
   scale_y_continuous(expand = c(0, 0), limits=c(0,100)) +
-  # scale_color_viridis(discrete = TRUE, option = "C") +
-  scale_fill_viridis(discrete = TRUE, option = "D", direction=-1, alpha=.85) +
+  scale_fill_viridis(discrete = TRUE, option = color, direction=-1, alpha=.85) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 65, hjust=1),
         legend.text = element_text(size = 8),
@@ -243,7 +285,7 @@ plot4 = ggplot(data, aes(x=region_year, y=value, group=group,
          group = guide_legend(ncol = 5, nrow = 2),
   )
 
-panel1 <- ggarrange(plot1, plot2, 
+panel1 <- ggarrange(plot1, plot2,
                    ncol = 2, nrow = 1, align = c("hv"),
                    common.legend = TRUE,
                    legend='bottom'#,
