@@ -28,7 +28,7 @@ def tech_options():
     """
     output = []
 
-    capacities = [20, 30, 40]
+    capacities = [20, 30, 40] 
     generations = ['4G', '5G']
     backhaul_types = ['wireless', 'fiber']
     energy_scenarios = ['sps-2022','sps-2030','aps-2030']
@@ -75,74 +75,18 @@ PARAMETERS = {
     'cost_wireless_large': 80000,
     #all values in kwh per hour
     #roughly 5 kwh per site
-    'energy_equipment_kwh': 0.249,
-    'energy_wireless_small_kwh': .06, 
-    'energy_wireless_medium_kwh': .06,
-    'energy_wireless_large_kwh': .06,
+    'energy_equipment_kwh': 5, #0.249,
+    'energy_wireless_small_kwh': 2, 
+    'energy_wireless_medium_kwh': 3,
+    'energy_wireless_large_kwh': 4,
     'energy_fiber_kwh': .06,
-    'energy_core_node_kwh': 0,
-    'energy_regional_node_kwh': 0,
+    # 'energy_core_node_kwh': 0,
+    # 'energy_regional_node_kwh': 0,
     #https://blog.wirelessmoves.com/2019/08/cell-site-power-consumption.html
     #https://www.gsma.com/mobilefordevelopment/wp-content/uploads/2015/01/140617-GSMA-report-draft-vF-KR-v7.pdf
+    #https://medium.com/@zodhyatech/how-much-energy-does-a-cell-tower-consume-7efc2c8cdfbf 
 }
 
-
-EMISSIONS_FACTORS = {
-    'oil': {
-        'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
-    },
-    'natural gas': {
-        'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
-    },
-    'coal': {
-        'carbon_per_kWh': 1, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.0001, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.01, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.01, #kgs of PM10 per kWh
-    },
-    'nuclear': {
-        'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
-    },
-    'hydro': {
-        'carbon_per_kWh': 0.01, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.0000009, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.00007, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.00002, #kgs of PM10 per kWh
-    },
-    'diesel': {
-        'carbon_per_kWh': 0.5, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.00009, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.007, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.002, #kgs of PM10 per kWh
-    },
-    'renewables': {
-        'carbon_per_kWh': 0.1, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
-    },
-    'solar pv': {
-        'carbon_per_kWh': 0.1, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
-    },
-    'wind': {
-        'carbon_per_kWh': 0.1, #kgs of carbon per kWh
-        # 'nitrogen_oxide_per_kWh':0.000001, #kgs of nitrogen oxide (NOx) per kWh
-        # 'sulpher_dioxide_per_kWh': 0.0001, #kgs of sulpher dioxide (SO2) per kWh
-        # 'pm10_per_kWh': 0.00001, #kgs of PM10 per kWh
-    }
-}
 
 if __name__ == '__main__':
 

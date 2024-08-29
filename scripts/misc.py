@@ -36,8 +36,15 @@ def find_country_list(continent_list):
 
     for index, country in data.iterrows():
 
+        # if not country['iso3'] == 'CAN':
+        #     continue
         if country['ignore'] == 1:
             continue
+        
+        # if country['iea_classification'] == 'North America':
+        #     iea_classification = 'NA'
+        # else:
+        #     iea_classification = country['iea_classification']
 
         output.append({
             'country_name': country['country'],

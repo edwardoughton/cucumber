@@ -1,74 +1,27 @@
 iso3,iso2,country,continent,gid_region,lowest,ignore,Population,iea_classification,wb_region,income
-CHN,CN,China,Asia,2,2,0,1412360000,China,East Asia and Pacific,UMIC
-IND,IN,India,Asia,2,2,0,1393409033,India,South Asia,LMIC
-USA,US,United States of America (the),North America,2,2,0,331893745,United States,North America,HIC
-IDN,ID,Indonesia,Asia,1,2,0,276361788,AsiaPAC,East Asia and Pacific,UMIC
-PAK,PK,Pakistan,Asia,1,2,0,225199929,AsiaPAC,South Asia,LMIC
-BRA,BR,Brazil,South America,1,2,0,213993441,Brazil,Latin America and Caribbean,UMIC
 NGA,NG,Nigeria,Africa,1,2,0,211400704,Africa,Sub-Saharan Africa,LMIC
-BGD,BD,Bangladesh,Asia,2,2,0,166303494,AsiaPAC,South Asia,LMIC
-RUS,RU,Russian Federation (the),Asia,1,2,0,143446060,Russia,Europe and Central Asia,UMIC
-MEX,MX,Mexico,North America,1,2,0,130262220,NA,North America,UMIC
-JPN,JP,Japan,Asia,1,2,0,125681593,Japan,East Asia and Pacific,HIC
 ETH,ET,Ethiopia,Africa,1,2,0,117876226,Africa,Sub-Saharan Africa,LIC
-PHL,PH,Philippines (the),Asia,1,2,0,111046910,AsiaPAC,East Asia and Pacific,LMIC
 EGY,EG,Egypt,Africa,1,2,0,104258327,Africa,Middle East and North Africa,LMIC
-VNM,VN,Viet Nam,Asia,1,2,0,98168829,AsiaPAC,East Asia and Pacific,LMIC
 COD,CD,Congo (the Democratic Republic of the),Africa,1,2,0,92377986,Africa,Sub-Saharan Africa,LIC
-TUR,TR,Turkey,Europe,1,2,0,85042736,Europe,Europe and Central Asia,UMIC
-IRN,IR,Iran (Islamic Republic of),Asia,1,2,0,85028760,ME,Middle East and North Africa,UMIC
-DEU,DE,Germany,Europe,1,2,0,83129285,EU,Europe and Central Asia,HIC
-THA,TH,Thailand,Asia,1,2,0,69950844,AsiaPAC,East Asia and Pacific,UMIC
-FRA,FR,France,Europe,2,2,0,67499343,EU,Europe and Central Asia,HIC
-GBR,GB,United Kingdom,Europe,2,2,0,67326569,Europe,Europe and Central Asia,HIC
 TZA,TZ,Tanzania,Africa,1,2,0,61498438,Africa,Sub-Saharan Africa,LMIC
 ZAF,ZA,South Africa,Africa,1,2,0,60041996,Africa,Sub-Saharan Africa,UMIC
-ITA,IT,Italy,Europe,1,2,0,59066225,EU,Europe and Central Asia,HIC
 KEN,KE,Kenya,Africa,1,2,0,54985702,Africa,Sub-Saharan Africa,LMIC
-MMR,MM,Myanmar,Asia,1,2,0,54806014,AsiaPAC,East Asia and Pacific,LMIC
-KOR,KR,Korea (the Republic of),Asia,1,2,0,51744876,AsiaPAC,East Asia and Pacific,HIC
-COL,CO,Colombia,South America,1,2,0,51265841,CSA,Latin America and Caribbean,UMIC
-ESP,ES,Spain,Europe,2,2,0,47326687,EU,Europe and Central Asia,HIC
 UGA,UG,Uganda,Africa,1,2,0,47123533,Africa,Sub-Saharan Africa,LIC
-ARG,AR,Argentina,South America,2,2,0,45808747,CSA,Latin America and Caribbean,UMIC
 SDN,SD,Sudan (the),Africa,1,2,0,44909351,Africa,Sub-Saharan Africa,LIC
 DZA,DZ,Algeria,Africa,2,2,0,44616626,Africa,Middle East and North Africa,LMIC
-UKR,UA,Ukraine,Europe,1,2,0,43814581,Europe,Europe and Central Asia,LMIC
-IRQ,IQ,Iraq,Asia,1,2,0,41179351,ME,Middle East and North Africa,UMIC
-AFG,AF,Afghanistan,Asia,2,2,0,39835428,ME,South Asia,LIC
-CAN,CA,Canada,North America,2,2,0,38246108,NA,North America,HIC
-POL,PL,Poland,Europe,1,2,0,37781024,EU,Europe and Central Asia,HIC
 MAR,MA,Morocco,Africa,1,2,0,37344787,Africa,Middle East and North Africa,LMIC
-SAU,SA,Saudi Arabia,Asia,1,1,0,35340680,ME,Middle East and North Africa,HIC
-UZB,UZ,Uzbekistan,Asia,1,2,0,34915100,Eurasia,Europe and Central Asia,LMIC
 AGO,AO,Angola,Africa,2,2,0,33933611,Africa,Sub-Saharan Africa,LMIC
-PER,PE,Peru,South America,1,2,0,33359416,CSA,Latin America and Caribbean,UMIC
-MYS,MY,Malaysia,Asia,1,2,0,32776195,AsiaPAC,East Asia and Pacific,UMIC
 MOZ,MZ,Mozambique,Africa,1,2,0,32163045,Africa,Sub-Saharan Africa,LIC
 GHA,GH,Ghana,Africa,2,2,0,31732128,Africa,Sub-Saharan Africa,LMIC
-YEM,YE,Yemen,Asia,2,2,0,30490639,ME,Middle East and North Africa,LIC
-NPL,NP,Nepal,Asia,1,2,0,29674920,AsiaPAC,East Asia and Pacific,LMIC
-VEN,VE,Venezuela (Bolivarian Republic of),South America,1,2,0,28704947,CSA,Latin America and Caribbean,UMIC
 MDG,MG,Madagascar,Africa,1,2,0,28427333,Africa,Sub-Saharan Africa,LIC
 CMR,CM,Cameroon,Africa,1,2,0,27224262,Africa,Sub-Saharan Africa,LMIC
 CIV,HR,Côte d'Ivoire,Africa,1,2,0,27053629,Africa,Sub-Saharan Africa,LMIC
-PRK,KP,Korea (the Democratic People's Republic of),Asia,1,2,1,25887045,AsiaPAC,East Asia and Pacific,LIC
-AUS,AU,Australia,Oceania,2,2,0,25739256,AsiaPAC,East Asia and Pacific,HIC
 NER,NE,Niger (the),Africa,1,2,0,25130810,Africa,Sub-Saharan Africa,LIC
-LKA,LK,Sri Lanka,Asia,1,2,0,22156000,AsiaPAC,South Asia,LMIC
 BFA,BF,Burkina Faso,Africa,1,2,0,21497097,Africa,Sub-Saharan Africa,LIC
 MLI,ML,Mali,Africa,1,2,0,20855724,Africa,Sub-Saharan Africa,LIC
 MWI,MW,Malawi,Africa,1,2,0,19647681,Africa,Sub-Saharan Africa,LIC
-CHL,CL,Chile,South America,1,2,0,19212362,CSA,Latin America and Caribbean,HIC
-ROU,RO,Romania,Europe,1,2,0,19115146,EU,Europe and Central Asia,HIC
-KAZ,KZ,Kazakhstan,Asia,1,2,0,19002586,Eurasia,Europe and Central Asia,UMIC
 ZMB,ZM,Zambia,Africa,2,2,0,18920657,Africa,Sub-Saharan Africa,LMIC
-SYR,SY,Syrian Arab Republic,Asia,1,2,0,18275704,ME,Middle East and North Africa,LIC
-ECU,EC,Ecuador,South America,1,2,0,17888474,CSA,Latin America and Caribbean,UMIC
-NLD,NL,Netherlands (the),Europe,1,2,0,17533405,EU,Europe and Central Asia,HIC
 SEN,SN,Senegal,Africa,1,2,0,17196308,Africa,Sub-Saharan Africa,LMIC
-GTM,GT,Guatemala,North America,1,2,0,17109746,CSA,Latin America and Caribbean,UMIC
-KHM,KH,Cambodia,Asia,1,2,0,16946446,AsiaPAC,East Asia and Pacific,LMIC
 TCD,TD,Chad,Africa,1,2,0,16914985,Africa,Sub-Saharan Africa,LIC
 SOM,SO,Somalia,Africa,1,2,0,16359500,Africa,Sub-Saharan Africa,LIC
 ZWE,ZW,Zimbabwe,Africa,2,2,0,15092171,Africa,Sub-Saharan Africa,LMIC
@@ -77,106 +30,162 @@ RWA,RW,Rwanda,Africa,1,2,0,13276517,Africa,Sub-Saharan Africa,LIC
 BEN,BJ,Benin,Africa,1,1,0,12451031,Africa,Sub-Saharan Africa,LMIC
 BDI,BI,Burundi,Africa,1,2,0,12255429,Africa,Sub-Saharan Africa,LIC
 TUN,TN,Tunisia,Africa,1,2,0,11935764,Africa,Middle East and North Africa,LMIC
-BOL,BO,Bolivia (Plurinational State of),South America,2,2,0,11832936,CSA,Latin America and Caribbean,LMIC
-BEL,BE,Belgium,Europe,2,2,0,11587882,EU,Europe and Central Asia,HIC
-HTI,HT,Haiti,North America,1,2,0,11541683,CSA,Latin America and Caribbean,LIC
 SSD,SS,South Sudan,Africa,1,1,0,11381377,Africa,Sub-Saharan Africa,LIC
-CUB,CW,Cuba,North America,1,2,0,11317498,CSA,Latin America and Caribbean,UMIC
-DOM,DO,Dominican Republic (the),North America,1,2,0,10953714,CSA,Latin America and Caribbean,UMIC
-CZE,CI,Czechia,Europe,1,2,0,10703446,EU,Europe and Central Asia,HIC
-GRC,GR,Greece,Europe,1,2,0,10664568,EU,Europe and Central Asia,HIC
-SWE,SE,Sweden,Europe,1,2,0,10415811,EU,Europe and Central Asia,HIC
-PRT,PT,Portugal,Europe,1,2,0,10299423,EU,Europe and Central Asia,HIC
-JOR,JO,Jordan,Asia,1,2,0,10269022,ME,Middle East and North Africa,UMIC
-AZE,AZ,Azerbaijan,Asia,1,1,0,10145212,Eurasia,Europe and Central Asia,UMIC
-HND,HN,Honduras,North America,1,2,0,10062994,CSA,Latin America and Caribbean,LMIC
-ARE,AE,United Arab Emirates (the),Asia,1,2,0,9991083,ME,Middle East and North Africa,HIC
-TJK,TJ,Tajikistan,Asia,1,2,0,9749625,Eurasia,Europe and Central Asia,LIC
-HUN,HU,Hungary,Europe,1,2,0,9709886,EU,Europe and Central Asia,HIC
-ISR,IL,Israel,Asia,1,1,0,9364000,Europe,Europe and Central Asia,HIC
-BLR,BY,Belarus,Europe,2,2,0,9340314,Europe,Europe and Central Asia,UMIC
-PNG,PG,Papua New Guinea,Oceania,1,2,0,9119005,AsiaPAC,East Asia and Pacific,LMIC
-AUT,AT,Austria,Europe,1,1,0,8956279,EU,Europe and Central Asia,HIC
-CHE,CH,Switzerland,Europe,1,2,0,8697723,Europe,Europe and Central Asia,HIC
 TGO,TG,Togo,Africa,1,2,0,8478242,Africa,Sub-Saharan Africa,LIC
 SLE,SL,Sierra Leone,Africa,1,2,0,8141343,Africa,Sub-Saharan Africa,LIC
-HKG,HK,Hong Kong,Asia,1,1,0,7413100,AsiaPAC,East Asia and Pacific,HIC
-LAO,LA,Lao People's Democratic Republic (the),Asia,1,2,0,7379358,AsiaPAC,East Asia and Pacific,LMIC
-PRY,PY,Paraguay,South America,1,2,0,7219641,CSA,Latin America and Caribbean,UMIC
 LBY,LY,Libya,Africa,1,1,0,6958538,Africa,Middle East and North Africa,UMIC
-BGR,BG,Bulgaria,Europe,1,2,0,6899125,EU,Europe and Central Asia,UMIC
-SRB,RS,Serbia,Europe,1,2,0,6844078,Europe,Europe and Central Asia,UMIC
-LBN,LB,Lebanon,Asia,1,2,0,6769151,ME,Middle East and North Africa,UMIC
-NIC,NI,Nicaragua,North America,1,2,0,6702379,CSA,Latin America and Caribbean,LMIC
-KGZ,KG,Kyrgyzstan,Asia,1,2,0,6694200,Eurasia,Europe and Central Asia,LMIC
-SLV,SV,El Salvador,North America,1,2,0,6518500,CSA,Latin America and Caribbean,LMIC
-TKM,TM,Turkmenistan,Asia,1,1,0,6117933,Eurasia,Europe and Central Asia,UMIC
-DNK,DK,Denmark,Europe,1,2,0,5856733,EU,Europe and Central Asia,HIC
 COG,CG,Congo (the),Africa,1,2,0,5657017,Africa,Sub-Saharan Africa,LMIC
-FIN,FI,Finland,Europe,1,2,0,5541696,EU,Europe and Central Asia,HIC
-SGP,SG,Singapore,Asia,1,1,0,5453566,AsiaPAC,East Asia and Pacific,HIC
-SVK,SK,Slovakia,Europe,1,2,0,5447247,EU,Europe and Central Asia,HIC
-NOR,NO,Norway,Europe,1,2,0,5408320,Europe,Europe and Central Asia,HIC
-OMN,OM,Oman,Asia,1,2,0,5223376,ME,Middle East and North Africa,HIC
 LBR,LR,Liberia,Africa,1,2,0,5180208,Africa,Sub-Saharan Africa,LIC
-CRI,CR,Costa Rica,North America,1,2,0,5139053,CSA,Latin America and Caribbean,UMIC
-NZL,NZ,New Zealand,Oceania,1,2,0,5122600,AsiaPAC,East Asia and Pacific,HIC
-IRL,IE,Ireland,Europe,1,1,0,5028230,EU,Europe and Central Asia,HIC
-PSE,PS,"Palestine, State of",Asia,1,1,1,4922749,,,
 CAF,CF,Central African Republic (the),Africa,1,2,0,4919987,Africa,Sub-Saharan Africa,LIC
 MRT,MR,Mauritania,Africa,1,1,0,4775110,Africa,Middle East and North Africa,LMIC
-PAN,PA,Panama,North America,1,2,0,4381583,CSA,Latin America and Caribbean,HIC
-KWT,KW,Kuwait,Asia,1,1,0,4328553,ME,Middle East and North Africa,HIC
-HRV,CU,Croatia,Europe,1,1,0,3899000,EU,Europe and Central Asia,HIC
-GEO,GE,Georgia,Asia,1,2,0,3708610,Eurasia,Europe and Central Asia,UMIC
-URY,UY,Uruguay,South America,1,2,0,3485152,CSA,Latin America and Caribbean,HIC
-MNG,MN,Mongolia,Asia,1,2,0,3329282,AsiaPAC,East Asia and Pacific,LMIC
-PRI,PR,Puerto Rico,North America,1,1,0,3263584,CSA,Latin America and Caribbean,HIC
-BIH,BA,Bosnia and Herzegovina,Europe,2,2,0,3263459,Europe,Europe and Central Asia,UMIC
-JAM,JM,Jamaica,North America,1,1,0,2973462,CSA,Latin America and Caribbean,UMIC
-ARM,AM,Armenia,Asia,1,1,0,2968128,Eurasia,Europe and Central Asia,UMIC
-QAT,QA,Qatar,Asia,1,1,0,2930524,ME,Middle East and North Africa,HIC
-ALB,AL,Albania,Europe,2,2,0,2811666,Europe,Europe and Central Asia,UMIC
-LTU,LT,Lithuania,Europe,1,2,0,2795321,EU,Europe and Central Asia,HIC
 NAM,NA,Namibia,Africa,1,2,0,2587344,Africa,Sub-Saharan Africa,UMIC
-MDA,MD,Moldova (the Republic of),Europe,1,1,0,2573928,Europe,Europe and Central Asia,LMIC
 GMB,GM,Gambia (the),Africa,1,2,0,2486937,Africa,Sub-Saharan Africa,LIC
 BWA,BW,Botswana,Africa,2,2,0,2397240,Africa,Sub-Saharan Africa,UMIC
 GAB,GA,Gabon,Africa,1,2,0,2278829,Africa,Sub-Saharan Africa,UMIC
 LSO,LS,Lesotho,Africa,1,1,0,2159067,Africa,Sub-Saharan Africa,LMIC
-SVN,SI,Slovenia,Europe,1,2,0,2107007,EU,Europe and Central Asia,HIC
-MKD,MK,Republic of North Macedonia,Europe,1,1,1,2065092,,,
 GNB,GW,Guinea-Bissau,Africa,1,2,0,2015490,Africa,Sub-Saharan Africa,LIC
-LVA,LV,Latvia,Europe,1,2,0,1883162,EU,Europe and Central Asia,HIC
-BHR,BH,Bahrain,Asia,1,1,0,1748295,ME,Middle East and North Africa,HIC
 GNQ,GQ,Equatorial Guinea,Africa,1,2,0,1449891,Africa,Sub-Saharan Africa,UMIC
-TTO,TT,Trinidad and Tobago,North America,1,1,0,1403374,CSA,Latin America and Caribbean,HIC
-TLS,TL,Timor-Leste,Asia,1,2,0,1343875,AsiaPAC,East Asia and Pacific,LMIC
-EST,EE,Estonia,Europe,1,2,0,1329254,EU,Europe and Central Asia,HIC
 MUS,MU,Mauritius,Africa,1,1,0,1266060,Africa,Sub-Saharan Africa,HIC
-CYP,CZ,Cyprus,Europe,1,1,0,1215588,EU,Europe and Central Asia,HIC
 SWZ,SZ,Eswatini,Africa,1,1,0,1172369,Africa,Sub-Saharan Africa,LMIC
 DJI,DJ,Djibouti,Africa,1,2,0,1002197,Africa,Middle East and North Africa,LMIC
-FJI,FJ,Fiji,Oceania,1,1,1,902899,AsiaPAC,East Asia and Pacific,UMIC
-COM,KM,Comoros (the),Africa,0,0,1,888456,,,
-GUY,GY,Guyana,South America,1,2,1,790329,CSA,Latin America and Caribbean,UMIC
-BTN,BT,Bhutan,Asia,2,2,1,779900,AsiaPAC,East Asia and Pacific,LMIC
-SLB,SB,Solomon Islands,Oceania,1,1,1,703995,,,
-MAC,MO,Macao,Asia,1,1,1,658391,AsiaPAC,East Asia and Pacific,HIC
-LUX,LU,Luxembourg,Europe,1,1,1,639070,EU,Europe and Central Asia,HIC
-MNE,ME,Montenegro,Europe,1,1,1,620173,Europe,Europe and Central Asia,UMIC
-SUR,SR,Suriname,South America,1,2,1,591798,CSA,Latin America and Caribbean,UMIC
+COM,KM,Comoros (the),Africa,0,0,1,888456,Africa,,
 CPV,CV,Cabo Verde,Africa,1,1,1,561901,Africa,Sub-Saharan Africa,LMIC
-MDV,MV,Maldives,Asia,0,0,1,543620,EU,Europe and Central Asia,HIC
-MLT,MT,Malta,Europe,1,2,1,516869,,,
-BRN,BN,Brunei Darussalam,Asia,1,2,1,441532,AsiaPAC,East Asia and Pacific,HIC
-BLZ,BZ,Belize,North America,1,1,1,404915,CSA,Latin America and Caribbean,UMIC
-BHS,BS,Bahamas (the),North America,1,1,1,396914,,,
+SYC,SC,Seychelles,Africa,1,1,1,99202,Africa,Sub-Saharan Africa,HIC
+ERI,ER,Eritrea,Africa,1,2,1,0,Africa,Sub-Saharan Africa,LIC
+IDN,ID,Indonesia,Asia,1,2,0,276361788,Asia Pacific,East Asia and Pacific,UMIC
+PAK,PK,Pakistan,Asia,1,2,0,225199929,Asia Pacific,South Asia,LMIC
+BGD,BD,Bangladesh,Asia,2,2,0,166303494,Asia Pacific,South Asia,LMIC
+PHL,PH,Philippines (the),Asia,1,2,0,111046910,Asia Pacific,East Asia and Pacific,LMIC
+VNM,VN,Viet Nam,Asia,1,2,0,98168829,Asia Pacific,East Asia and Pacific,LMIC
+THA,TH,Thailand,Asia,1,2,0,69950844,Asia Pacific,East Asia and Pacific,UMIC
+MMR,MM,Myanmar,Asia,1,2,0,54806014,Asia Pacific,East Asia and Pacific,LMIC
+KOR,KR,Korea (the Republic of),Asia,1,2,0,51744876,Asia Pacific,East Asia and Pacific,HIC
+MYS,MY,Malaysia,Asia,1,2,0,32776195,Asia Pacific,East Asia and Pacific,UMIC
+NPL,NP,Nepal,Asia,1,2,0,29674920,Asia Pacific,East Asia and Pacific,LMIC
+PRK,KP,Korea (the Democratic People's Republic of),Asia,1,2,1,25887045,Asia Pacific,East Asia and Pacific,LIC
+AUS,AU,Australia,Oceania,2,2,0,25739256,Asia Pacific,East Asia and Pacific,HIC
+LKA,LK,Sri Lanka,Asia,1,2,0,22156000,Asia Pacific,South Asia,LMIC
+KHM,KH,Cambodia,Asia,1,2,0,16946446,Asia Pacific,East Asia and Pacific,LMIC
+PNG,PG,Papua New Guinea,Oceania,1,2,0,9119005,Asia Pacific,East Asia and Pacific,LMIC
+HKG,HK,Hong Kong,Asia,1,1,0,7413100,Asia Pacific,East Asia and Pacific,HIC
+LAO,LA,Lao People's Democratic Republic (the),Asia,1,2,0,7379358,Asia Pacific,East Asia and Pacific,LMIC
+SGP,SG,Singapore,Asia,1,1,0,5453566,Asia Pacific,East Asia and Pacific,HIC
+NZL,NZ,New Zealand,Oceania,1,2,0,5122600,Asia Pacific,East Asia and Pacific,HIC
+MNG,MN,Mongolia,Asia,1,2,0,3329282,Asia Pacific,East Asia and Pacific,LMIC
+TLS,TL,Timor-Leste,Asia,1,2,0,1343875,Asia Pacific,East Asia and Pacific,LMIC
+FJI,FJ,Fiji,Oceania,1,1,1,902899,Asia Pacific,East Asia and Pacific,UMIC
+BTN,BT,Bhutan,Asia,2,2,1,779900,Asia Pacific,East Asia and Pacific,LMIC
+SLB,SB,Solomon Islands,Oceania,1,1,1,703995,Asia Pacific,,
+MAC,MO,Macao,Asia,1,1,1,658391,Asia Pacific,East Asia and Pacific,HIC
+BRN,BN,Brunei Darussalam,Asia,1,2,1,441532,Asia Pacific,East Asia and Pacific,HIC
+VUT,VU,Vanuatu,Oceania,1,1,1,314464,Asia Pacific,East Asia and Pacific,LMIC
+NCL,NC,New Caledonia,Oceania,1,2,1,272620,Asia Pacific,East Asia and Pacific,HIC
+TWN,TW,Taiwan (Province of China),Asia,1,2,1,0,Asia Pacific,East Asia and Pacific,UMIC
+BRA,BR,Brazil,South America,1,2,0,213993441,Brazil,Latin America and Caribbean,UMIC
+CHN,CN,China,Asia,2,2,0,1412360000,China,East Asia and Pacific,UMIC
+COL,CO,Colombia,South America,1,2,0,51265841,Central and South America,Latin America and Caribbean,UMIC
+ARG,AR,Argentina,South America,2,2,0,45808747,Central and South America,Latin America and Caribbean,UMIC
+PER,PE,Peru,South America,1,2,0,33359416,Central and South America,Latin America and Caribbean,UMIC
+VEN,VE,Venezuela (Bolivarian Republic of),South America,1,2,0,28704947,Central and South America,Latin America and Caribbean,UMIC
+CHL,CL,Chile,South America,1,2,0,19212362,Central and South America,Latin America and Caribbean,HIC
+ECU,EC,Ecuador,South America,1,2,0,17888474,Central and South America,Latin America and Caribbean,UMIC
+GTM,GT,Guatemala,North America,1,2,0,17109746,Central and South America,Latin America and Caribbean,UMIC
+BOL,BO,Bolivia (Plurinational State of),South America,2,2,0,11832936,Central and South America,Latin America and Caribbean,LMIC
+HTI,HT,Haiti,North America,1,2,0,11541683,Central and South America,Latin America and Caribbean,LIC
+CUB,CW,Cuba,North America,1,2,0,11317498,Central and South America,Latin America and Caribbean,UMIC
+DOM,DO,Dominican Republic (the),North America,1,2,0,10953714,Central and South America,Latin America and Caribbean,UMIC
+HND,HN,Honduras,North America,1,2,0,10062994,Central and South America,Latin America and Caribbean,LMIC
+PRY,PY,Paraguay,South America,1,2,0,7219641,Central and South America,Latin America and Caribbean,UMIC
+NIC,NI,Nicaragua,North America,1,2,0,6702379,Central and South America,Latin America and Caribbean,LMIC
+SLV,SV,El Salvador,North America,1,2,0,6518500,Central and South America,Latin America and Caribbean,LMIC
+CRI,CR,Costa Rica,North America,1,2,0,5139053,Central and South America,Latin America and Caribbean,UMIC
+PAN,PA,Panama,North America,1,2,0,4381583,Central and South America,Latin America and Caribbean,HIC
+URY,UY,Uruguay,South America,1,2,0,3485152,Central and South America,Latin America and Caribbean,HIC
+PRI,PR,Puerto Rico,North America,1,1,0,3263584,Central and South America,Latin America and Caribbean,HIC
+JAM,JM,Jamaica,North America,1,1,0,2973462,Central and South America,Latin America and Caribbean,UMIC
+TTO,TT,Trinidad and Tobago,North America,1,1,0,1403374,Central and South America,Latin America and Caribbean,HIC
+GUY,GY,Guyana,South America,1,2,1,790329,Central and South America,Latin America and Caribbean,UMIC
+SUR,SR,Suriname,South America,1,2,1,591798,Central and South America,Latin America and Caribbean,UMIC
+BLZ,BZ,Belize,North America,1,1,1,404915,Central and South America,Latin America and Caribbean,UMIC
+BRB,BB,Barbados,North America,1,1,1,287708,Central and South America,Latin America and Caribbean,HIC
+GRD,GD,Grenada,North America,1,1,1,113015,Central and South America,Latin America and Caribbean,UMIC
+DMA,DM,Dominica,North America,1,1,1,72172,Central and South America,Latin America and Caribbean,UMIC
+GUF,GF,French Guiana,South America,1,2,1,0,Central and South America,Latin America and Caribbean,UMIC
+GLP,GP,Guadeloupe,North America,1,1,1,0,Central and South America,Latin America and Caribbean,LIC
+MTQ,MQ,Martinique,North America,1,1,1,0,Central and South America,Latin America and Caribbean,LMIC
+DEU,DE,Germany,Europe,1,2,0,83129285,European Union,Europe and Central Asia,HIC
+FRA,FR,France,Europe,2,2,0,67499343,European Union,Europe and Central Asia,HIC
+ITA,IT,Italy,Europe,1,2,0,59066225,European Union,Europe and Central Asia,HIC
+ESP,ES,Spain,Europe,2,2,0,47326687,European Union,Europe and Central Asia,HIC
+POL,PL,Poland,Europe,1,2,0,37781024,European Union,Europe and Central Asia,HIC
+ROU,RO,Romania,Europe,1,2,0,19115146,European Union,Europe and Central Asia,HIC
+NLD,NL,Netherlands (the),Europe,1,2,0,17533405,European Union,Europe and Central Asia,HIC
+BEL,BE,Belgium,Europe,2,2,0,11587882,European Union,Europe and Central Asia,HIC
+CZE,CI,Czechia,Europe,1,2,0,10703446,European Union,Europe and Central Asia,HIC
+GRC,GR,Greece,Europe,1,2,0,10664568,European Union,Europe and Central Asia,HIC
+SWE,SE,Sweden,Europe,1,2,0,10415811,European Union,Europe and Central Asia,HIC
+PRT,PT,Portugal,Europe,1,2,0,10299423,European Union,Europe and Central Asia,HIC
+HUN,HU,Hungary,Europe,1,2,0,9709886,European Union,Europe and Central Asia,HIC
+AUT,AT,Austria,Europe,1,1,0,8956279,European Union,Europe and Central Asia,HIC
+BGR,BG,Bulgaria,Europe,1,2,0,6899125,European Union,Europe and Central Asia,UMIC
+DNK,DK,Denmark,Europe,1,2,0,5856733,European Union,Europe and Central Asia,HIC
+FIN,FI,Finland,Europe,1,2,0,5541696,European Union,Europe and Central Asia,HIC
+SVK,SK,Slovakia,Europe,1,2,0,5447247,European Union,Europe and Central Asia,HIC
+IRL,IE,Ireland,Europe,1,1,0,5028230,European Union,Europe and Central Asia,HIC
+HRV,CU,Croatia,Europe,1,1,0,3899000,European Union,Europe and Central Asia,HIC
+LTU,LT,Lithuania,Europe,1,2,0,2795321,European Union,Europe and Central Asia,HIC
+SVN,SI,Slovenia,Europe,1,2,0,2107007,European Union,Europe and Central Asia,HIC
+LVA,LV,Latvia,Europe,1,2,0,1883162,European Union,Europe and Central Asia,HIC
+EST,EE,Estonia,Europe,1,2,0,1329254,European Union,Europe and Central Asia,HIC
+CYP,CZ,Cyprus,Europe,1,1,0,1215588,European Union,Europe and Central Asia,HIC
+LUX,LU,Luxembourg,Europe,1,1,1,639070,European Union,Europe and Central Asia,HIC
+MDV,MV,Maldives,Asia,0,0,1,543620,European Union,Europe and Central Asia,HIC
+MLT,MT,Malta,Europe,1,2,1,516869,European Union,,
+UZB,UZ,Uzbekistan,Asia,1,2,0,34915100,Eurasia,Europe and Central Asia,LMIC
+KAZ,KZ,Kazakhstan,Asia,1,2,0,19002586,Eurasia,Europe and Central Asia,UMIC
+AZE,AZ,Azerbaijan,Asia,1,1,0,10145212,Eurasia,Europe and Central Asia,UMIC
+TJK,TJ,Tajikistan,Asia,1,2,0,9749625,Eurasia,Europe and Central Asia,LIC
+KGZ,KG,Kyrgyzstan,Asia,1,2,0,6694200,Eurasia,Europe and Central Asia,LMIC
+TKM,TM,Turkmenistan,Asia,1,1,0,6117933,Eurasia,Europe and Central Asia,UMIC
+GEO,GE,Georgia,Asia,1,2,0,3708610,Eurasia,Europe and Central Asia,UMIC
+ARM,AM,Armenia,Asia,1,1,0,2968128,Eurasia,Europe and Central Asia,UMIC
+TUR,TR,Turkey,Europe,1,2,0,85042736,Europe,Europe and Central Asia,UMIC
+GBR,GB,United Kingdom,Europe,2,2,0,67326569,Europe,Europe and Central Asia,HIC
+UKR,UA,Ukraine,Europe,1,2,0,43814581,Europe,Europe and Central Asia,LMIC
+ISR,IL,Israel,Asia,1,1,0,9364000,Europe,Europe and Central Asia,HIC
+BLR,BY,Belarus,Europe,2,2,0,9340314,Europe,Europe and Central Asia,UMIC
+CHE,CH,Switzerland,Europe,1,2,0,8697723,Europe,Europe and Central Asia,HIC
+SRB,RS,Serbia,Europe,1,2,0,6844078,Europe,Europe and Central Asia,UMIC
+NOR,NO,Norway,Europe,1,2,0,5408320,Europe,Europe and Central Asia,HIC
+BIH,BA,Bosnia and Herzegovina,Europe,2,2,0,3263459,Europe,Europe and Central Asia,UMIC
+ALB,AL,Albania,Europe,2,2,0,2811666,Europe,Europe and Central Asia,UMIC
+MDA,MD,Moldova (the Republic of),Europe,1,1,0,2573928,Europe,Europe and Central Asia,LMIC
+MNE,ME,Montenegro,Europe,1,1,1,620173,Europe,Europe and Central Asia,UMIC
 ISL,IS,Iceland,Europe,1,2,1,372295,Europe,Europe and Central Asia,HIC
-VUT,VU,Vanuatu,Oceania,1,1,1,314464,AsiaPAC,East Asia and Pacific,LMIC
-BRB,BB,Barbados,North America,1,1,1,287708,CSA,Latin America and Caribbean,HIC
+IMN,IM,Isle of Man,Europe,1,1,1,85410,Europe,Europe and Central Asia,HIC
+IND,IN,India,Asia,2,2,0,1393409033,India,South Asia,LMIC
+JPN,JP,Japan,Asia,1,2,0,125681593,Japan,East Asia and Pacific,HIC
+IRN,IR,Iran (Islamic Republic of),Asia,1,2,0,85028760,Middle East,Middle East and North Africa,UMIC
+IRQ,IQ,Iraq,Asia,1,2,0,41179351,Middle East,Middle East and North Africa,UMIC
+AFG,AF,Afghanistan,Asia,2,2,0,39835428,Middle East,South Asia,LIC
+SAU,SA,Saudi Arabia,Asia,1,1,0,35340680,Middle East,Middle East and North Africa,HIC
+YEM,YE,Yemen,Asia,2,2,0,30490639,Middle East,Middle East and North Africa,LIC
+SYR,SY,Syrian Arab Republic,Asia,1,2,0,18275704,Middle East,Middle East and North Africa,LIC
+JOR,JO,Jordan,Asia,1,2,0,10269022,Middle East,Middle East and North Africa,UMIC
+ARE,AE,United Arab Emirates (the),Asia,1,2,0,9991083,Middle East,Middle East and North Africa,HIC
+LBN,LB,Lebanon,Asia,1,2,0,6769151,Middle East,Middle East and North Africa,UMIC
+OMN,OM,Oman,Asia,1,2,0,5223376,Middle East,Middle East and North Africa,HIC
+KWT,KW,Kuwait,Asia,1,1,0,4328553,Middle East,Middle East and North Africa,HIC
+QAT,QA,Qatar,Asia,1,1,0,2930524,Middle East,Middle East and North Africa,HIC
+BHR,BH,Bahrain,Asia,1,1,0,1748295,Middle East,Middle East and North Africa,HIC
+MEX,MX,Mexico,North America,1,2,0,130262220,North America,North America,UMIC
+CAN,CA,Canada,North America,2,2,0,38246108,North America,North America,HIC
+BHS,BS,Bahamas (the),North America,1,1,1,396914,,,
+RUS,RU,Russian Federation (the),Asia,1,2,0,143446060,Russia,Europe and Central Asia,UMIC
+USA,US,United States of America (the),North America,2,2,0,331893745,United States,North America,HIC
+PSE,PS,"Palestine, State of",Asia,1,1,1,4922749,,,
+MKD,MK,Republic of North Macedonia,Europe,1,1,1,2065092,,,
 PYF,PF,French Polynesia,Oceania,1,1,1,282534,,,
-NCL,NC,New Caledonia,Oceania,1,2,1,272620,AsiaPAC,East Asia and Pacific,HIC
 STP,ST,Sao Tome and Principe,Africa,1,1,1,223364,,,
 WSM,WS,Samoa,Oceania,1,1,1,200144,,,
 LCA,LC,Saint Lucia,North America,1,1,1,184401,,,
@@ -184,16 +193,12 @@ GUM,GU,Guam,Oceania,1,1,1,170184,,,
 CUW,CY,Curaçao,North America,0,0,1,152369,,,
 KIR,KI,Kiribati,Oceania,0,0,1,121388,,,
 FSM,FM,Micronesia (Federated States of),Oceania,1,1,1,116255,,,
-GRD,GD,Grenada,North America,1,1,1,113015,CSA,Latin America and Caribbean,UMIC
 VCT,VC,Saint Vincent and the Grenadines,North America,1,1,1,111269,,,
 ABW,AW,Aruba,North America,0,0,1,107195,,,
 TON,TO,Tonga,Oceania,1,1,1,106759,,,
 VIR,VI,Virgin Islands (U.S.),North America,1,1,1,105870,,,
-SYC,SC,Seychelles,Africa,1,1,1,99202,Africa,Sub-Saharan Africa,HIC
 ATG,AG,Antigua and Barbuda,North America,1,1,1,98728,,,
-IMN,IM,Isle of Man,Europe,1,1,1,85410,Europe,Europe and Central Asia,HIC
 AND,AD,Andorra,Europe,1,1,1,77354,,,
-DMA,DM,Dominica,North America,1,1,1,72172,CSA,Latin America and Caribbean,UMIC
 CYM,KY,Cayman Islands (the),North America,1,1,1,66498,,,
 BMU,BM,Bermuda,North America,1,1,1,63867,,,
 MHL,MH,Marshall Islands (the),Oceania,1,1,1,59618,,,
@@ -222,17 +227,13 @@ IOT,IO,British Indian Ocean Territory (the),Asia,1,2,1,0,,,
 CXR,CX,Christmas Island,Asia,1,1,1,0,,,
 CCK,CC,Cocos (Keeling) Islands (the),Asia,1,1,1,0,,,
 COK,CK,Cook Islands (the),Oceania,0,0,1,0,,,
-ERI,ER,Eritrea,Africa,1,2,1,0,Africa,Sub-Saharan Africa,LIC
 FLK,FK,Falkland Islands (the) [Malvinas],South America,0,0,1,0,,,
-GUF,GF,French Guiana,South America,1,2,1,0,CSA,Latin America and Caribbean,UMIC
 ATF,TF,French Southern Territories (the),Antarctica,1,1,1,0,,,
-GLP,GP,Guadeloupe,North America,1,1,1,0,CSA,Latin America and Caribbean,LIC
 GGY,GG,Guernsey,Europe,1,1,1,0,,,
 HMD,HM,Heard Island and McDonald Islands,Antarctica,1,1,1,0,,,
 VAT,VA,Holy See (the),Europe,1,1,1,0,,,
 JEY,JE,Jersey,Europe,1,1,1,0,,,
 XKO,,Kosovo,,0,0,1,0,,,
-MTQ,MQ,Martinique,North America,1,1,1,0,CSA,Latin America and Caribbean,LMIC
 MYT,YT,Mayotte,Africa,1,2,1,0,,,
 MSR,MS,Montserrat,North America,1,1,1,0,,,
 NIU,NU,Niue,Oceania,0,0,1,0,,,
@@ -244,7 +245,6 @@ SHN,SH,"Saint Helena, Ascension and Tristan da Cunha",Africa,1,1,1,0,,,
 SPM,PM,Saint Pierre and Miquelon,North America,1,1,1,0,,,
 SGS,GS,South Georgia and the South Sandwich Islands,Antarctica,1,1,1,0,,,
 SJM,SJ,Svalbard and Jan Mayen,Europe,1,1,1,0,,,
-TWN,TW,Taiwan (Province of China),Asia,1,2,1,0,AsiaPAC,East Asia and Pacific,UMIC
 TKL,TK,Tokelau,Oceania,1,1,1,0,,,
 UMI,UM,United States Minor Outlying Islands (the),Oceania,1,1,1,0,,,
 WLF,WF,Wallis and Futuna,Oceania,1,1,1,0,,,
