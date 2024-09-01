@@ -30,8 +30,8 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
     for decile in deciles:
 
         decile_dict = {}
-        existing_total_emissions_t_co2 = 0
-        new_total_emissions_t_co2 = 0
+        existing_network_emissions_t_co2 = 0
+        new_network_emissions_t_co2 = 0
     
         region = country['iea_classification']
         scenario = decile['energy_scenario']
@@ -42,24 +42,24 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
             emissions_by_type_kg = emissions_by_type / 1000
 
             energy_type_key = 'existing_emissions_t_co2_' + energy_type
-            existing_energy_kwh = (float(decile['total_existing_energy_kwh']) * 
+            existing_energy_kwh = (float(decile['network_existing_energy_kwh']) * 
                 percentage)
             existing_emissions_t_co2 = round((existing_energy_kwh * 
                 float(emissions_by_type_kg)) / 1000, 5
             )
 
             decile_dict[energy_type_key] = existing_emissions_t_co2
-            existing_total_emissions_t_co2 += existing_emissions_t_co2
+            existing_network_emissions_t_co2 += existing_emissions_t_co2
             # print(existing_emissions_t_co2)
             energy_type_key = 'new_emissions_t_co2_' + energy_type
-            new_energy_kwh = (float(decile['total_new_energy_kwh']) * 
+            new_energy_kwh = (float(decile['network_new_energy_kwh']) * 
                 percentage)
             new_emissions_t_co2 = round(
                 new_energy_kwh * float(emissions_by_type_kg) / 1000, 5
             )
             # print(new_emissions_t_co2, new_energy_kwh, float(emissions_by_type_kg))
             decile_dict[energy_type_key] = new_emissions_t_co2
-            new_total_emissions_t_co2 += new_emissions_t_co2
+            new_network_emissions_t_co2 += new_emissions_t_co2
 
             emissions.append({
                 'country_name': country['country_name'],
@@ -72,6 +72,7 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
                 'generation': decile['generation'],
                 'backhaul': decile['backhaul'],
                 'energy_scenario': decile['energy_scenario'],
+                'sharing_scenario': decile['sharing_scenario'],
                 'income': country['income'],
                 'wb_region': country['wb_region'],
                 'iea_classification': country['iea_classification'],
@@ -82,8 +83,8 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
                 'new_emissions_t_co2': new_emissions_t_co2,
             })
 
-        decile_dict['total_existing_emissions_t_co2'] = existing_total_emissions_t_co2
-        decile_dict['total_new_emissions_t_co2'] = new_total_emissions_t_co2
+        decile_dict['network_existing_emissions_t_co2'] = existing_network_emissions_t_co2
+        decile_dict['network_new_emissions_t_co2'] = new_network_emissions_t_co2
         decile.update(decile_dict)
         # print(decile_dict)
         output.append(decile) #dict2.update(dict1)

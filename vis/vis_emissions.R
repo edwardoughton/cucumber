@@ -7,10 +7,9 @@ folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'global_results.csv'
 data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
 
-# data = data[(data$capacity != 30),]
+data = data[(data$sharing_scenario == 'baseline'),]
 
 data$tech = paste(data$generation, data$backhaul)
-
 
 data = select(data, GID_0, #capacity,
               tech, capacity, energy_scenario,

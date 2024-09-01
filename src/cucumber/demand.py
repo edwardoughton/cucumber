@@ -38,19 +38,24 @@ def estimate_demand(country, deciles):
         decile['iea_classification'] = country['iea_classification']
 
         decile['population_with_smartphones'] = (
-            decile['population_total'] *
-            (country['smartphone_penetration']))
+            decile['population_total']  *
+            country['smartphone_penetration'])
 
+        decile['smartphones_on_network'] = (
+            decile['population_with_smartphones'] / decile['operators_passive']
+            )
+        print(decile['sharing_scenario'], decile['smartphones_on_network'],
+              decile['population_with_smartphones'], decile['operators_passive'])
         scenario_per_user_mbps = get_per_user_capacity(
             country, 
             'suburban', 
-            decile
+            decile 
         )
 
         #demand_mbps_km2 : float
         #total demand in mbps / km^2.
         decile['demand_mbps_km2'] = (
-            (decile['population_with_smartphones'] *
+            (decile['smartphones_on_network'] *
             scenario_per_user_mbps / #User demand in Mbps
             decile['area_km2']
             ))
@@ -110,4 +115,5 @@ def get_per_user_capacity(country, geotype, option):
 
     else:
         return 'Did not recognise geotype'
+
 

@@ -39,7 +39,7 @@ def assess_energy(country, deciles, on_grid_mix):
             selected_backhaul = fiber_bh_kwh
 
         existing_site_energy_kwh = (
-            decile['total_existing_sites'] * site_kwh * #kwh per site
+            decile['network_existing_sites'] * site_kwh * #kwh per site
             24 * 365
         )
         # print(decile['total_existing_sites'], site_kwh, 24, 365)
@@ -49,19 +49,19 @@ def assess_energy(country, deciles, on_grid_mix):
         )
 
         #get energy use for existing sites in 1 year
-        decile['total_existing_energy_kwh'] = (
+        decile['network_existing_energy_kwh'] = (
             existing_site_energy_kwh + existing_backhaul_energy_kwh
         )
 
         new_site_energy_kwh = (
-            decile['total_new_sites'] * site_kwh * #kwh per site
+            decile['network_new_sites'] * site_kwh * #kwh per site
             24 * 365
         )
         new_backhaul_energy_kwh = (
             (decile['backhaul_new'] * selected_backhaul * 24 * 365)
         )
         #get energy use for new sites in 1 year
-        decile['total_new_energy_kwh'] = (
+        decile['network_new_energy_kwh'] = (
             new_site_energy_kwh + new_backhaul_energy_kwh
         )
 
@@ -70,11 +70,11 @@ def assess_energy(country, deciles, on_grid_mix):
         for energy_type, percentage in on_grid_mix.items():
 
             existing_energy_kwh = round(
-                float(decile['total_existing_energy_kwh']) * 
+                float(decile['network_existing_energy_kwh']) * 
                 percentage, 3
             )
             new_energy_kwh = round(
-                float(decile['total_new_energy_kwh']) * 
+                float(decile['network_new_energy_kwh']) * 
                 percentage, 3
             )
             # print(float(decile['total_existing_energy_kwh']), percentage)
@@ -93,8 +93,8 @@ def assess_energy(country, deciles, on_grid_mix):
                 'wb_region': country['wb_region'],
                 'iea_classification': country['iea_classification'],
                 'product': energy_type,
-                'total_existing_energy_kwh': existing_energy_kwh,
-                'new_existing_energy_kwh': new_energy_kwh,
+                'network_existing_energy_kwh': existing_energy_kwh,
+                'network_new_energy_kwh': new_energy_kwh,
             })
 
     return output, energy

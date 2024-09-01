@@ -67,7 +67,10 @@ def setup_deciles():
         'capacity': '40', 
         'generation': '5G', 
         'backhaul': 'wireless', 
-        'energy_scenario': 'aps-2030'
+        'energy_scenario': 'aps-2030',
+        'sharing_scenario': 'baseline',
+        'operators_active': 4,
+        'operators_passive': 4,
     }, 
     {
         'GID_0': 'GBR', 
@@ -85,7 +88,10 @@ def setup_deciles():
         'capacity': '40', 
         'generation': '5G', 
         'backhaul': 'wireless', 
-        'energy_scenario': 'aps-2030'
+        'energy_scenario': 'aps-2030',
+        'sharing_scenario': 'baseline',
+        'operators_active': 4,
+        'operators_passive': 4,
     }
 ]
 

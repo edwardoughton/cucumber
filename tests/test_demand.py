@@ -14,15 +14,68 @@ def test_estimate_demand(
     )
 
     assert answer[0]['population_with_smartphones'] == (
-        answer[0]['population_total'] * 
+        setup_deciles[0]['population_total'] * 
         setup_country['smartphone_penetration']
     )
 
+    assert answer[0]['smartphones_on_network'] == (
+        setup_deciles[0]['population_with_smartphones'] / 
+        setup_deciles[0]['operators_active']
+    )
+
     answer2 = round(
-        (answer[0]['population_with_smartphones'] * 0.59) / 
+        (answer[0]['smartphones_on_network'] * 0.59) / 
         answer[0]['area_km2']
     )
     assert round(answer[0]['demand_mbps_km2']) == answer2
+
+    #test_sharing passive
+    decile = setup_deciles[0]
+    decile['sharing_scenario'] = 'passive'
+    decile['operators_active'] = 4
+    decile['operators_passive'] = 1
+
+    answer = estimate_demand(
+        setup_country, [decile]
+    )
+
+    assert answer[0]['smartphones_on_network'] == (
+        (setup_deciles[0]['population_total'] * 
+        setup_country['smartphone_penetration']) /
+        setup_deciles[0]['operators_active']
+    )
+
+    #test_sharing active
+    decile = setup_deciles[0]
+    decile['sharing_scenario'] = 'active'
+    decile['operators_active'] = 1
+    decile['operators_passive'] = 1
+
+    answer = estimate_demand(
+        setup_country, [decile]
+    )
+
+    assert answer[0]['smartphones_on_network'] == (
+        (setup_deciles[0]['population_total'] * 
+        setup_country['smartphone_penetration']) /
+        setup_deciles[0]['operators_active']
+    )
+
+    #test_sharing srn
+    decile = setup_deciles[0]
+    decile['sharing_scenario'] = 'srn'
+    decile['operators_active'] = 4
+    decile['operators_passive'] = 4
+
+    answer = estimate_demand(
+        setup_country, [decile]
+    )
+
+    assert answer[0]['smartphones_on_network'] == (
+        (setup_deciles[0]['population_total'] * 
+        setup_country['smartphone_penetration']) /
+        setup_deciles[0]['operators_active']
+    )
 
 
 def test_get_per_user_capacity(setup_country, setup_deciles):

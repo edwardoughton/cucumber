@@ -20,7 +20,7 @@ from cucumber.energy import assess_energy
 from cucumber.emissions import assess_emissions
 from cucumber.costs import assess_cost
 
-from options import tech_options, PARAMETERS
+from options import all_options, PARAMETERS
 from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
@@ -82,7 +82,7 @@ def read_emissions_lut(path):
     regions = data['region'].unique()
     scenarios = data['scenario'].unique()
     data = data.to_dict('records')
-    print(regions)
+
     for region in regions:
         
         # if region == 'na'
@@ -160,6 +160,46 @@ def load_on_grid_mix(country, energy_scenario, path):
     return on_grid_mix
 
 
+def find_networks(country, deciles):
+    """
+    Find the number of networks in use.
+    
+    """
+    output = []
+
+    for decile in deciles:
+
+        #if baseline, return the normal number of operators
+        if decile['sharing_scenario'] == 'baseline':
+            decile['operators_active'] = country['operators']
+            decile['operators_passive'] = country['operators']
+
+        #if passive/active, share infra
+        elif decile['sharing_scenario'] == 'passive':
+            decile['operators_active'] = country['operators']
+            decile['operators_passive'] = 1
+
+        #if passive/active, share infra
+        elif decile['sharing_scenario'] == 'active':
+            decile['operators_active'] = 1
+            decile['operators_passive'] = 1
+
+        #if srn and urban/suburban, return the normal number of operators
+        elif decile['sharing_scenario'] == 'srn':
+            if decile['decile'] in [1,2,3]:
+                decile['operators_active'] = country['operators']
+                decile['operators_passive'] = country['operators']
+            
+            #if srn and rural, 
+            else:
+                decile['operators_active'] = 1
+                decile['operators_passive'] = 1
+    
+        output.append(decile)
+
+    return output
+
+
 def collect_results(countries):
     """
     
@@ -189,7 +229,10 @@ def collect_results(countries):
 if __name__ == '__main__':
 
     countries = find_country_list([])
-    options = tech_options()
+    # options_t = tech_options()
+    # options_s = sharing_options()
+    # options = options_t + options_s
+    options = all_options()
 
     if not os.path.exists(OUTPUT):
         os.makedirs(OUTPUT)
@@ -207,8 +250,8 @@ if __name__ == '__main__':
         iso3 = country['iso3']
         country.update(PARAMETERS)
 
-        # if not iso3 == "ARG":
-        #     continue
+        if not iso3 == "GBR":
+            continue
 
         print('--Working on {}'.format(iso3))
         
@@ -222,7 +265,7 @@ if __name__ == '__main__':
         emissions_output = []
 
         for option in options:
-            
+
             folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
             filename = 'WEO2023_Extended_Data_Regions.csv'
             path_in = os.path.join(folder, filename)
@@ -239,53 +282,60 @@ if __name__ == '__main__':
             deciles['generation'] = option.split('_')[1]
             deciles['backhaul'] = option.split('_')[2]
             deciles['energy_scenario'] = option.split('_')[3]
+            deciles['sharing_scenario'] = option.split('_')[4]
             # deciles['year'] = option.split('_')[4]
-            # deciles = deciles[deciles['decile'] == 1]
+            deciles = deciles[deciles['decile'] == 7]
 
             deciles = deciles.to_dict('records')#[9:10]
+            deciles = find_networks(country, deciles)
 
             deciles = estimate_demand(
                 country,
                 deciles,
             )
 
-            deciles = estimate_supply(
-                country,
-                deciles,
-                capacity_lut,
-            )
+            # deciles = estimate_supply(
+            #     country,
+            #     deciles,
+            #     capacity_lut,
+            # )
 
-            deciles, energy = assess_energy(
-                country,
-                deciles,
-                on_grid_mix
-            )
+    #         deciles, energy = assess_energy(
+    #             country,
+    #             deciles,
+    #             on_grid_mix
+    #         )
 
-            deciles, emissions = assess_emissions(
-                country,
-                deciles,
-                on_grid_mix,
-                emissions_lut
-            )
+    #         deciles, emissions = assess_emissions(
+    #             country,
+    #             deciles,
+    #             on_grid_mix,
+    #             emissions_lut
+    #         )
 
-            deciles = assess_cost(
-                country,
-                deciles,
-            )
+    #         deciles = assess_cost(
+    #             country,
+    #             deciles,
+    #         )
 
-            output = output + deciles
-            energy_output = energy_output + energy
-            emissions_output = emissions_output + emissions
+    #         output = output + deciles
+    #         energy_output = energy_output + energy
+    #         emissions_output = emissions_output + emissions
 
-        output = pd.DataFrame(output)
-        filename = 'results_{}.csv'.format(iso3)
-        path_out = os.path.join(OUTPUT_COUNTRY, filename)
-        output.to_csv(path_out, index=False)
+    #     output = pd.DataFrame(output)
+    #     filename = 'results_{}.csv'.format(iso3)
+    #     path_out = os.path.join(OUTPUT_COUNTRY, filename)
+    #     output.to_csv(path_out, index=False)
 
-        emissions_output = pd.DataFrame(emissions_output)
-        filename = 'emissions_{}.csv'.format(iso3)
-        path_out = os.path.join(OUTPUT_COUNTRY, filename)
-        emissions_output.to_csv(path_out, index=False)
+    #     # output = output[[
+    #     #     'country_name','iso3','decile','capacity','generation',
+    #     #     'backhaul','energy_scenario','sharing_scenario','income',
+    #     #     'wb_region','iea_classification','product','' 
+            
+    #     #     ]]
+    #     # filename = 'emissions_{}.csv'.format(iso3)
+    #     # path_out = os.path.join(OUTPUT_COUNTRY, filename)
+    #     # emissions_output.to_csv(path_out, index=False)
 
-    collect_results(countries)
+    # collect_results(countries)
     
