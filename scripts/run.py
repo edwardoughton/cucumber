@@ -281,7 +281,7 @@ if __name__ == '__main__':
             deciles['backhaul'] = option.split('_')[2]
             deciles['energy_scenario'] = option.split('_')[3]
             deciles['sharing_scenario'] = option.split('_')[4]
-            # deciles = deciles[deciles['decile'] == 7]
+            deciles = deciles[deciles['decile'] == 7]
 
             deciles = deciles.to_dict('records')#[9:10]
 
@@ -324,23 +324,47 @@ if __name__ == '__main__':
         output.to_csv(path_out, index=False)
 
         output = output[[
-            'GID_0','decile','capacity','generation',
-            'backhaul','energy_scenario','sharing_scenario','income',
-            'wb_region','iea_classification',#'product',
+            'GID_0','decile',
+            'capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario',
+            # 'income','wb_region','iea_classification',#'product',
             'population_with_smartphones','smartphones_on_network',
             'network_required_sites', 
             'network_existing_sites',
             'network_upgraded_sites','network_new_sites',
             'total_upgraded_sites','total_new_sites', 
-            'network_existing_energy_kwh','network_new_energy_kwh',
+            # 'network_existing_energy_kwh','network_new_energy_kwh',
             'total_existing_energy_kwh','total_new_energy_kwh',
-            'network_existing_emissions_t_co2','network_new_emissions_t_co2',
+            # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
             'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
             'total_new_cost_usd'
             ]]
-        filename = 'emissions_{}.csv'.format(iso3)
+        filename = 'decile_emissions_{}.csv'.format(iso3)
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
 
-    collect_results(countries)
+        output = output[[
+            'GID_0',#'decile',
+            'capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario',
+            #'income', 'wb_region','iea_classification',#'product',
+            'population_with_smartphones','smartphones_on_network',
+            'network_required_sites', 
+            'network_existing_sites',
+            'network_upgraded_sites','network_new_sites',
+            'total_upgraded_sites','total_new_sites', 
+            # 'network_existing_energy_kwh','network_new_energy_kwh',
+            'total_existing_energy_kwh','total_new_energy_kwh',
+            # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
+            'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
+            'total_new_cost_usd'
+            ]]
+        output = output.groupby([
+            'GID_0','capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario'], as_index=False).sum()
+        filename = 'national_emissions_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        output.to_csv(path_out, index=False)
+
+    # collect_results(countries)
     
