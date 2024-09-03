@@ -31,7 +31,7 @@ def all_options():
     capacities = [20, 30, 40] 
     generations = ['4G', '5G']
     backhaul_types = ['wireless', 'fiber']
-    energy_scenarios = ['sps-2022','sps-2030','aps-2030']
+    energy_scenarios = ['sps-2022', 'sps-2030','aps-2030']
     sharing_scenarios = ['baseline','passive','active','srn']
 
     for capacity in capacities:

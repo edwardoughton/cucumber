@@ -37,13 +37,13 @@ def assess_energy(country, deciles, on_grid_mix):
         baseline_net_handle = 'baseline' + '_' + decile['geotype']
         baseline_networks = country['networks'][baseline_net_handle]
 
-        if decile['sharing_scenario'] in ['active', 'srn']:
-            net_handle = decile['sharing_scenario'] + '_' + decile['geotype']
-            networks = country['networks'][net_handle]
-            network_division = (networks/baseline_networks)
+        # if decile['sharing_scenario'] in ['active', 'srn']:
+        #     net_handle = decile['sharing_scenario'] + '_' + decile['geotype']
+        #     networks = country['networks'][net_handle]
+        #     network_division = (networks/baseline_networks)
 
-        else:
-            network_division = 1
+        # else:
+        #     network_division = 1
 
         if decile['backhaul'] == 'wireless':
             selected_backhaul = wireless_bh_kwh
@@ -76,8 +76,8 @@ def assess_energy(country, deciles, on_grid_mix):
 
         # else:
         #     print('Did not reognize sharing scenario')
-        
-        existing_site_energy_kwh = (decile['network_existing_sites'] * site_kwh * 24 * 365) #* network_division #kwh per site
+        # print(country['operators'])
+        existing_site_energy_kwh = ((decile['total_existing_sites'] / decile['networks']) * site_kwh * 24 * 365) #* network_division #kwh per site
         existing_backhaul_energy_kwh = ((math.floor(decile['backhaul_wireless'] / decile['networks']) * wireless_bh_kwh * 24 * 365) + (math.floor(decile['backhaul_fiber'] / decile['networks']) * fiber_bh_kwh * 24 * 365)) #* network_division #kwh per site
         new_site_energy_kwh = (decile['network_new_sites'] * site_kwh * 24 * 365) #* network_division #kwh per site
         new_backhaul_energy_kwh = ((decile['backhaul_new'] * selected_backhaul * 24 * 365)) #* network_division
