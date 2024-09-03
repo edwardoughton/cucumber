@@ -44,7 +44,21 @@ def setup_country():
     'energy_wireless_large_kwh': 1, 
     'energy_fiber_kwh': 1, 
     'energy_core_node_kwh': 0, 
-    'energy_regional_node_kwh': 0
+    'energy_regional_node_kwh': 0,
+    'networks': {
+        'baseline_urban': 4,
+        'baseline_suburban': 4,
+        'baseline_rural': 4,
+        'passive_urban': 4,
+        'passive_suburban': 4,
+        'passive_rural': 4,
+        'active_urban': 1,
+        'active_suburban': 1,
+        'active_rural': 1,
+        'srn_urban': 4,
+        'srn_suburban': 4,
+        'srn_rural': 1,
+        },
     }
 
 
@@ -67,7 +81,8 @@ def setup_deciles():
         'capacity': '40', 
         'generation': '5G', 
         'backhaul': 'wireless', 
-        'energy_scenario': 'aps-2030'
+        'energy_scenario': 'aps-2030',
+        'sharing_scenario': 'baseline',       
     }, 
     {
         'GID_0': 'GBR', 
@@ -85,7 +100,8 @@ def setup_deciles():
         'capacity': '40', 
         'generation': '5G', 
         'backhaul': 'wireless', 
-        'energy_scenario': 'aps-2030'
+        'energy_scenario': 'aps-2030',
+        'sharing_scenario': 'baseline',
     }
 ]
 

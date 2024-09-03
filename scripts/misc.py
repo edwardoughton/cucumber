@@ -55,6 +55,7 @@ def find_country_list(continent_list):
             'income': country['income'],
             'wb_region': country['wb_region'],
             'iea_classification': country['iea_classification'],
+            'operators': country['operators']
             # 'subs_growth_low': float(country['subs_growth_low']),
             # 'subs_growth_baseline': float(country['subs_growth_baseline']),
             # 'subs_growth_high': float(country['subs_growth_high']),

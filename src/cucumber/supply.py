@@ -40,7 +40,7 @@ def estimate_supply(country, deciles, capacity_lut):
             capacity_lut
         )
 
-        decile['total_required_sites'] = math.ceil(
+        decile['network_required_sites'] = math.ceil(
             total_site_density *
             decile['area_km2']
         )
@@ -64,6 +64,7 @@ def estimate_supply(country, deciles, capacity_lut):
 
 
 def find_site_density(country, decile, capacity_lut):
+
     """
     For a given decile, estimate the number of needed sites.
 
@@ -276,23 +277,6 @@ def find_frequencies(country):
     return
 
 
-# def find_target(geotype, option):
-#     """
-#     Find speed target.
-
-#     """
-#     if geotype == 'urban':
-#         target = int(option['scenario'].split('_')[1])
-#     elif geotype == 'suburban':
-#         target = int(option['scenario'].split('_')[2])
-#     elif geotype == 'rural':
-#         target = int(option['scenario'].split('_')[3])
-#     else:
-#         print('Did not recognize geotype when trying to find speed target')
-
-#     return target
-
-
 def lookup_capacity(capacity_lut, env, ant_type, frequency,
     generation, ci):
     """
@@ -371,34 +355,40 @@ def estimate_site_upgrades(country, decile):
         Contains all decileal data.
 
     """
+    decile['network_existing_sites'] = (
+        decile['total_existing_sites'] / decile['networks'])
+    
+    decile['network_existing_sites_4G'] = (
+        decile['total_existing_sites_4G'] / decile['networks'])
+    
     #estimate upgrades
-    if decile['total_required_sites'] > decile['total_existing_sites']:
-        if decile['total_existing_sites'] > 0:
-            if decile['generation'] == '4G' and decile['total_existing_sites_4G'] > 0 :
-                decile['total_upgraded_sites'] = (decile['total_existing_sites'] - decile['total_existing_sites_4G'])
+    if decile['network_required_sites'] > decile['network_existing_sites']:
+        if decile['network_existing_sites'] > 0:
+            if decile['generation'] == '4G' and decile['network_existing_sites_4G'] > 0 :
+                decile['network_upgraded_sites'] = (decile['network_existing_sites'] - decile['network_existing_sites_4G'])
             else:
-                decile['total_upgraded_sites'] = decile['total_existing_sites']
+                decile['network_upgraded_sites'] = decile['network_existing_sites']
         else:
-            decile['total_upgraded_sites'] = 0
+            decile['network_upgraded_sites'] = 0
     else:
-        if decile['generation'] == '4G' and decile['total_existing_sites_4G'] > 0 :
-            to_upgrade = decile['total_required_sites'] - decile['total_existing_sites_4G']
-            decile['total_upgraded_sites'] = to_upgrade if to_upgrade >= 0 else 0
+        if decile['generation'] == '4G' and decile['network_existing_sites_4G'] > 0 :
+            to_upgrade = decile['network_required_sites'] - decile['network_existing_sites_4G']
+            decile['network_upgraded_sites'] = to_upgrade if to_upgrade >= 0 else 0
         else:
-            decile['total_upgraded_sites'] = decile['total_required_sites']
+            decile['network_upgraded_sites'] = decile['network_required_sites']
 
     #estimate new sites
     if decile['generation'] == '4G':
-        decile['total_new_sites'] = (decile['total_required_sites'] - 
-            (decile['total_existing_sites_4G'] + decile['total_upgraded_sites'])
+        decile['network_new_sites'] = (decile['network_required_sites'] - 
+            (decile['network_existing_sites_4G'] + decile['network_upgraded_sites'])
         )
     if decile['generation'] == '5G':
-        decile['total_new_sites'] = (decile['total_required_sites'] - 
-            (decile['total_upgraded_sites'])
+        decile['network_new_sites'] = (decile['network_required_sites'] - 
+            (decile['network_upgraded_sites'])
         )
 
-    if decile['total_new_sites'] < 0:
-        decile['total_new_sites'] = 0
+    if decile['network_new_sites'] < 0:
+        decile['network_new_sites'] = 0
 
     return decile
 
@@ -421,24 +411,23 @@ def estimate_backhaul_upgrades(country, decile):
         Contains all decileal data.
         
     """
-    total_sites = decile['total_upgraded_sites'] + decile['total_new_sites']
+    network_sites = decile['network_upgraded_sites'] + decile['network_new_sites']
 
     if decile['backhaul'] == 'fiber':
 
-        decile['backhaul_existing'] = decile['backhaul_fiber'] 
-
-        if decile['backhaul_existing'] < total_sites:
-            decile['backhaul_new'] =  math.ceil(total_sites - decile['backhaul_existing'])
+        decile['backhaul_existing'] = math.floor(decile['backhaul_fiber'] / decile['networks'])
+        if decile['backhaul_existing'] < network_sites:
+            decile['backhaul_new'] =  math.ceil(network_sites - decile['backhaul_existing'])
         else:
             decile['backhaul_new'] = 0
 
     elif decile['backhaul'] == 'wireless':
 
-        decile['backhaul_existing'] = (decile['backhaul_wireless'] +
-            decile['backhaul_fiber']) 
+        decile['backhaul_existing'] = math.floor((decile['backhaul_wireless'] +
+            decile['backhaul_fiber']) / decile['networks'])
 
-        if decile['backhaul_existing'] < total_sites:
-            decile['backhaul_new'] =  math.ceil(total_sites - decile['backhaul_existing'])
+        if decile['backhaul_existing'] < network_sites:
+            decile['backhaul_new'] =  math.ceil(network_sites - decile['backhaul_existing'])
         else:
             decile['backhaul_new'] = 0
 
