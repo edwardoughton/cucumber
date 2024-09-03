@@ -64,6 +64,7 @@ def estimate_supply(country, deciles, capacity_lut):
 
 
 def find_site_density(country, decile, capacity_lut):
+
     """
     For a given decile, estimate the number of needed sites.
 
@@ -276,23 +277,6 @@ def find_frequencies(country):
     return
 
 
-# def find_target(geotype, option):
-#     """
-#     Find speed target.
-
-#     """
-#     if geotype == 'urban':
-#         target = int(option['scenario'].split('_')[1])
-#     elif geotype == 'suburban':
-#         target = int(option['scenario'].split('_')[2])
-#     elif geotype == 'rural':
-#         target = int(option['scenario'].split('_')[3])
-#     else:
-#         print('Did not recognize geotype when trying to find speed target')
-
-#     return target
-
-
 def lookup_capacity(capacity_lut, env, ant_type, frequency,
     generation, ci):
     """
@@ -372,10 +356,10 @@ def estimate_site_upgrades(country, decile):
 
     """
     decile['network_existing_sites'] = (
-        decile['total_existing_sites'] / decile['operators_passive'])
-    print(decile['sharing_scenario'], decile['network_existing_sites'], decile['total_existing_sites'], decile['operators_passive'])
+        decile['total_existing_sites'] / decile['networks'])
+    
     decile['network_existing_sites_4G'] = (
-        decile['total_existing_sites_4G'] / decile['operators_passive'])
+        decile['total_existing_sites_4G'] / decile['networks'])
     
     #estimate upgrades
     if decile['network_required_sites'] > decile['network_existing_sites']:
@@ -431,8 +415,7 @@ def estimate_backhaul_upgrades(country, decile):
 
     if decile['backhaul'] == 'fiber':
 
-        decile['backhaul_existing'] = decile['backhaul_fiber'] 
-
+        decile['backhaul_existing'] = math.floor(decile['backhaul_fiber'] / decile['networks'])
         if decile['backhaul_existing'] < network_sites:
             decile['backhaul_new'] =  math.ceil(network_sites - decile['backhaul_existing'])
         else:
@@ -440,8 +423,8 @@ def estimate_backhaul_upgrades(country, decile):
 
     elif decile['backhaul'] == 'wireless':
 
-        decile['backhaul_existing'] = (decile['backhaul_wireless'] +
-            decile['backhaul_fiber']) 
+        decile['backhaul_existing'] = math.floor((decile['backhaul_wireless'] +
+            decile['backhaul_fiber']) / decile['networks'])
 
         if decile['backhaul_existing'] < network_sites:
             decile['backhaul_new'] =  math.ceil(network_sites - decile['backhaul_existing'])
