@@ -93,7 +93,7 @@ subset$value = subset$value / 1e6 #convert t -> mt
 
 max_value = max(round(subset$value,3)) + (max(round(subset$value,3))/5)
 
-plot1 =
+# plot1 =
   ggplot(subset, aes(x = tech, y = value, fill=income)) +
   geom_bar(stat="identity", position='dodge') +
   geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
