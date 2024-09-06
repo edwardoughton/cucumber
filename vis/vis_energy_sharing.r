@@ -6,11 +6,12 @@ folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 filename = 'global_results.csv'
 data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
-data = data[(data$sharing_scenario == 'baseline'),]
+data = data[(data$capacity == 30),]
 data$tech = paste(data$generation, data$backhaul)
 
 data = select(data, GID_0, #capacity,
-              tech, capacity, energy_scenario,
+              tech, #capacity, 
+              energy_scenario, sharing_scenario,
               income, wb_region,
               population_total, area_km2,
               # population_with_phones,
@@ -23,7 +24,7 @@ data = select(data, GID_0, #capacity,
 )
 
 data = data %>%
-  group_by(GID_0, tech, capacity, energy_scenario,
+  group_by(GID_0, tech, sharing_scenario, energy_scenario,
            income, wb_region) %>%
   summarise(
     population_total = round(sum(population_total, na.rm=TRUE),0),
@@ -46,11 +47,11 @@ data$tech = factor(
   labels = c('4G (W)','4G (F)', '5G (W)', '5G (F)')
 )
 
-data$capacity = factor(
-  data$capacity,
-  levels = c(20, 30, 40),
-  labels = c('20 GB / Month / Smartphone', '30 GB / Month / Smartphone',
-             '40 GB / Month / Smartphone')
+data$sharing_scenario = factor(
+  data$sharing_scenario,
+  levels = c('baseline','passive','active','srn'),
+  labels = c('Baseline (No Sharing)','Passive Sharing',
+             'Active Sharing','Shared Rural Network (SRN)')
 )
 
 data$energy_scenario = factor(
@@ -64,7 +65,7 @@ data$energy_scenario = factor(
 data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 
 #### Emissions: income group
-subset = select(data, income, tech, capacity,
+subset = select(data, income, tech, sharing_scenario,
                 total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
@@ -82,7 +83,7 @@ subset$income = factor(
 )
 
 subset <- subset %>%
-  group_by(income, tech, capacity) %>%
+  group_by(income, tech, sharing_scenario) %>%
   summarize(
     value = sum(value)
     )
@@ -105,7 +106,7 @@ plot1 =
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
-  facet_grid(~capacity)
+  facet_grid(~sharing_scenario)
 
 # dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 # path = file.path(folder, 'figures',  'energy.png')
@@ -113,7 +114,7 @@ plot1 =
 # while (!is.null(dev.list()))  dev.off()
 
 #### Emissions demand: regions
-subset = select(data, wb_region, tech, capacity,
+subset = select(data, wb_region, tech, sharing_scenario,
                 total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
@@ -135,7 +136,7 @@ subset$wb_region = factor(
 )
 
 subset <- subset %>%
-  group_by(wb_region, tech, capacity) %>%
+  group_by(wb_region, tech, sharing_scenario) %>%
   summarize(
     value = sum(value)
   )
@@ -167,7 +168,7 @@ max_value = max(round(subset$value,3)) + + (max(round(subset$value,3))/5)
 plot2 =
   ggplot(subset, aes(x = tech, y = value, fill=wb_region)) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
+  geom_text(aes(label = paste(round(value,0),"")), size=1.6, vjust=.5,hjust=-.2,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
@@ -177,7 +178,7 @@ plot2 =
        x = NULL, y="Terawatt Hours (tWhs)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
-  facet_grid(~capacity)
+  facet_grid(~sharing_scenario)
 
 panel = ggarrange(
   plot1,
@@ -188,156 +189,6 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'energy_panel.png')
+path = file.path(folder, 'figures', 'energy_panel_sharing.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
-while (!is.null(dev.list()))  dev.off()
-
-#### emissions: new vs old
-subset = select(data, tech, capacity, income,
-                total_existing_energy_kwh, total_new_energy_kwh)
-
-subset <- subset %>%
-  pivot_longer(
-    cols = `total_existing_energy_kwh`:`total_new_energy_kwh`,
-    names_to = "metric",
-    values_to = "value"
-  )
-
-subset$income = factor(
-  subset$income,
-  levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income\nCountries (LICs)','Lower-Middle Income\nCountries (LMICs)',
-             'Upper-Middle Income\nCountries (LMICs)','High Income\nCountries (HICs)')
-)
-
-subset$metric = factor(
-  subset$metric,
-  levels = c('total_new_energy_kwh','total_existing_energy_kwh'),
-  labels = c('New', 'Existing')
-)
-
-subset <- subset %>%
-  group_by(metric, tech, capacity, income) %>%
-  summarize(
-    value = sum(value)
-  )
-
-subset$value = subset$value / 1e9 #convert kwh -> twh
-
-df_errorbar <-
-  subset |>
-  group_by(metric, tech, capacity, income) |>
-  summarize(
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  ) |>
-  group_by(tech, capacity, income) |>
-  summarize(
-    metric = 'New',
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  )
-
-max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-
-plot3 =
-  ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-  geom_bar(stat="identity", position='stack') +
-  geom_text(data = df_errorbar,
-            aes(label = paste(round(value,0),"")), size = 2,angle=0,
-            vjust =-0.7, hjust =.3, angle = 0)+
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title="Total Mobile Site Energy Consumption by Income Group",
-       fill=NULL,
-       subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Terawatt Hours")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
-  facet_grid(income~capacity)
-
-dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'energy_new_vs_existing_income.png')
-ggsave(path, units="in", width=8, height=8, dpi=300)
-while (!is.null(dev.list()))  dev.off()
-
-#### emissions: new vs old
-subset = select(data, tech, capacity, wb_region,
-                total_existing_energy_kwh, total_new_energy_kwh)
-
-subset <- subset %>%
-  pivot_longer(
-    cols = `total_existing_energy_kwh`:`total_new_energy_kwh`,
-    names_to = "metric",
-    values_to = "value"
-  )
-
-subset$wb_region = factor(
-  subset$wb_region,
-  levels = c('East Asia and Pacific','Europe and Central Asia',
-             'Latin America and Caribbean','Middle East and North Africa',
-             'North America','South Asia','Sub-Saharan Africa'
-  ),
-  labels = c('East Asia\nand Pacific','Europe and\nCentral Asia',
-             'Latin America and\nCaribbean','Middle East and\nNorth Africa',
-             'North\nAmerica','South\nAsia','Sub-Saharan\nAfrica')
-)
-
-subset$metric = factor(
-  subset$metric,
-  levels = c('total_new_energy_kwh','total_existing_energy_kwh'),
-  labels = c('New', 'Existing')
-)
-
-subset <- subset %>%
-  group_by(metric, tech, capacity, wb_region) %>%
-  summarize(
-    value = sum(value)
-  )
-
-subset$value = subset$value / 1e9 #convert kwh -> twh
-
-# totals <- subset %>%
-#   group_by(tech, capacity) %>%
-#   summarize(value = signif(sum(value))) #convert kwh -> twh
-
-df_errorbar <-
-  subset |>
-  group_by(metric, tech, capacity, wb_region) |>
-  summarize(
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  ) |>
-  group_by(tech, capacity, wb_region) |>
-  summarize(
-    metric = 'New',
-    # low = sum(low),
-    value = sum(value)#,
-    # high = sum(high)
-  )
-
-max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-
-plot4 =
-  ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-  geom_bar(stat="identity", position='stack') +
-  geom_text(data = df_errorbar,
-            aes(label = paste(round(value,1),"")), size = 2,angle=0,
-            vjust =-0.7, hjust =.3, angle = 0)+
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title="Total Mobile Site Energy Consumption by Income Group",
-       fill=NULL,
-       subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Terawatt Hours") +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
-  facet_grid(wb_region~capacity)
-
-dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'energy_new_vs_existing_regions.png')
-ggsave(path, units="in", width=8, height=10, dpi=300)
 while (!is.null(dev.list()))  dev.off()

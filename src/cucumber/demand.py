@@ -27,15 +27,16 @@ def estimate_demand(country, deciles):
     output = []
 
     for decile in deciles:
-
-        if decile['decile'] == 1:
+        # print(decile['decile'])
+        if int(decile['decile']) == 1:
             decile['geotype'] = 'urban'
-        elif decile['decile'] in [2,3]: 
+        elif int(decile['decile']) in [2,3]: 
             decile['geotype'] = 'suburban'
-        elif decile['decile'] in [4,5,6,7,8,9,10]: 
+        elif int(decile['decile']) in [4,5,6,7,8,9,10]: 
             decile['geotype'] = 'rural'
         else:
             print('Did not recognize decile number')
+            # continue
 
         net_handle = decile['sharing_scenario'] + '_' + decile['geotype']
         decile['networks'] = country['networks'][net_handle]
@@ -43,10 +44,9 @@ def estimate_demand(country, deciles):
         if not decile['area_km2'] > 0:
             continue
 
-        geotype = decile['geotype'].split(' ')[0]
-
         decile['income'] = country['income']
         decile['wb_region'] = country['wb_region']
+        decile['adb_region'] = country['adb_region']
         decile['iea_classification'] = country['iea_classification']
 
         decile['population_with_smartphones'] = (

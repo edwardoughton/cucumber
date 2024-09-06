@@ -75,6 +75,7 @@ def assess_emissions(country, deciles, on_grid_mix, emissions_lut):
                 'sharing_scenario': decile['sharing_scenario'],
                 'income': country['income'],
                 'wb_region': country['wb_region'],
+                'adb_region': country['adb_region'],
                 'iea_classification': country['iea_classification'],
                 'product': energy_type,
                 'existing_energy_kwh': existing_energy_kwh,

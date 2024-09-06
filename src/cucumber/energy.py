@@ -89,14 +89,8 @@ def assess_energy(country, deciles, on_grid_mix):
 
         for energy_type, percentage in on_grid_mix.items():
 
-            existing_energy_kwh = round(
-                float(decile['network_existing_energy_kwh']) * 
-                percentage, 3
-            )
-            new_energy_kwh = round(
-                float(decile['network_new_energy_kwh']) * 
-                percentage, 3
-            )
+            existing_energy_kwh = float(decile['network_existing_energy_kwh']) * percentage
+            new_energy_kwh = float(decile['network_new_energy_kwh']) * percentage
 
             energy.append({
                 'country_name': country['country_name'],
@@ -111,6 +105,7 @@ def assess_energy(country, deciles, on_grid_mix):
                 'energy_scenario': decile['energy_scenario'],
                 'income': country['income'],
                 'wb_region': country['wb_region'],
+                'adb_region': country['adb_region'],
                 'iea_classification': country['iea_classification'],
                 'product': energy_type,
                 'network_existing_energy_kwh': existing_energy_kwh,

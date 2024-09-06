@@ -4,17 +4,21 @@ library(ggpubr)
 
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
+folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'global_results.csv'
-data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
-
-# data = data[(data$capacity != 30),]
+data <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
+ls = c("ARM","AZE","GEO","KAZ","KGZ","TJK","TKM","UZB","CHN","HKG","KOR","MNG",
+       "TWN","BTN","NPL","MDV","AFG","BGD","IND","PAK","LKA","BRN","KHM","IDN",
+       "LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM","FJI","PNG","VUT","COK",
+       "KIR","MHL","FSM","NRU","NIU","PLW","WSM","SLB","TON","TUV")
+data = data%>% filter(GID_0 %in% ls)
 data = data[(data$sharing_scenario == 'baseline'),]
 
 data$tech = paste(data$generation, data$backhaul)
 
 data = select(data, GID_0, tech, capacity, 
               energy_scenario,
-              income, wb_region,
+              income, adb_region,
               population_total, area_km2, 
               # population_with_phones, 
               population_with_smartphones,
@@ -27,7 +31,7 @@ data = select(data, GID_0, tech, capacity,
 
 data = data %>%
   group_by(GID_0, tech, capacity, energy_scenario,
-           income, wb_region) %>%
+           income, adb_region) %>%
   summarise(
     population_total = round(sum(population_total, na.rm=TRUE),0), 
     area_km2 = round(sum(area_km2, na.rm=TRUE),0), 
@@ -66,9 +70,34 @@ data$energy_scenario = factor(
 
 data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 
-data = data %>% ungroup() 
+data$income = factor(
+  data$income,
+  levels = c('LIC','LMIC','UMIC','HIC'),
+  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
+             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
+)
+
+data$adb_region = factor(
+  data$adb_region,
+  levels = c('Caucasus and Central Asia','East Asia',
+             'South Asia','Southeast Asia','The Pacific'
+  ),
+  labels = c('Caucasus and Central Asia','East Asia',
+             'South Asia','Southeast Asia','The Pacific')
+)
+
+subset = data %>% ungroup()
+unique_smartphones = select(subset, GID_0, income, population_with_smartphones)
+unique_smartphones = unique(unique_smartphones)
+total_smartphones = unique_smartphones %>%
+  group_by(income) %>%
+  summarize(
+    population_with_smartphones = sum(population_with_smartphones)
+  )
+remove(unique_smartphones)
 
 #### Emissions: income group
+data = data %>% ungroup() 
 subset = select(data, income, tech, capacity,
                 population_with_smartphones,
                 total_new_emissions_t_co2, 
@@ -97,13 +126,6 @@ subset <- subset %>%
     values_to = "value"
   )
 
-subset$income = factor(
-  subset$income,
-  levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
-             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
-)
-
 subset <- subset %>%
   group_by(income, tech, capacity) %>%
   summarize(
@@ -119,22 +141,22 @@ plot1 =
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
-  labs(title=expression(paste("(A) Cell Site Operational Emissions Per Smartphone (", CO[2], ") by World Bank Income Group.")),
+  labs(title=expression(paste("(A) Cell Site Operational Emissions Per Served Smartphone (", CO[2], ") by Income Group.")),
        fill=NULL,
-       subtitle = "Interval bars reflect estimates for low and high adoption scenarios for...",
+       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)
 
-subset = select(data, wb_region, tech, capacity,
+subset = select(data, adb_region, tech, capacity,
                 population_with_smartphones,
                 total_new_emissions_t_co2, 
                 total_existing_emissions_t_co2)
 
 subset = subset %>%
-  group_by(wb_region, tech, capacity) %>%
+  group_by(adb_region, tech, capacity) %>%
   summarize(
     population_with_smartphones = sum(population_with_smartphones),
     total_new_emissions_t_co2 = sum(total_new_emissions_t_co2), 
@@ -156,19 +178,8 @@ subset <- subset %>%
     values_to = "value"
   )
 
-subset$wb_region = factor(
-  subset$wb_region,
-  levels = c('East Asia and Pacific','Europe and Central Asia',
-             'Latin America and Caribbean','Middle East and North Africa',
-             'North America','South Asia','Sub-Saharan Africa'
-  ),
-  labels = c('East Asia and Pacific','Europe and Central Asia',
-             'Latin America and Caribbean','Middle East and North Africa',
-             'North America','South Asia','Sub-Saharan Africa')
-)
-
 subset <- subset %>%
-  group_by(wb_region, tech, capacity) %>%
+  group_by(adb_region, tech, capacity) %>%
   summarize(
     value = sum(value)
   )
@@ -176,15 +187,15 @@ subset <- subset %>%
 max_value = max(round(subset$value,3)) + (max(round(subset$value,3))/5)
 
 plot2 = 
-  ggplot(subset, aes(x = tech, y = value, fill=wb_region)) +
+  ggplot(subset, aes(x = tech, y = value, fill=adb_region)) +
   geom_bar(stat="identity", position='dodge') +
   geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title=expression(paste("(B) Cell Site Operational Emissions Per Smartphone (", CO[2], ") by World Bank Region.")),
+  labs(title=expression(paste("(B) Cell Site Operational Emissions Per Served Smartphone (", CO[2], ") by Region.")),
        fill=NULL,
-       subtitle = "Interval bars reflect estimates for low and high adoption scenarios for...",
+       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
