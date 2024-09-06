@@ -57,16 +57,18 @@ def process_country_shapes(country):
 
     single_country = countries[countries.GID_0 == iso3].reset_index()
 
-    # if not iso3 == 'MDV':
-    single_country['geometry'] = single_country.apply(
-        remove_small_shapes, axis=1)
+    if not iso3 in ['MDV','COK','KIR','MHL','NIU']:
+        single_country['geometry'] = single_country.apply(
+            remove_small_shapes, axis=1)
 
     # print('Adding ISO country code and other global information')
     glob_info_path = os.path.join(BASE_PATH, 'global_information.csv')
     load_glob_info = pd.read_csv(glob_info_path, encoding = "ISO-8859-1",
         keep_default_na=False)
+    # print(load_glob_info[load_glob_info['iso3'] == 'MDV'])
+    # print(single_country.columns, load_glob_info.columns)
     single_country = single_country.merge(
-        load_glob_info,left_on='GID_0', right_on='ISO_3digit')
+        load_glob_info, left_on='GID_0', right_on='iso3')
 
     # print('Exporting processed country shape')
     single_country.to_file(shape_path, driver='ESRI Shapefile')
@@ -111,8 +113,9 @@ def process_regions(country):
         # exclusions = country['regions_to_exclude_GID_1']
         # regions = regions[~regions['GID_1'].astype(str).str.startswith(tuple(exclusions))]
 
-        regions['geometry'] = regions.apply(remove_small_shapes, axis=1)
-
+        if not iso3 in ['MDV','COK','KIR','MHL','NIU']:
+            regions['geometry'] = regions.apply(remove_small_shapes, axis=1)
+        print(regions)
         try:
             regions.to_file(path_processed, driver='ESRI Shapefile')
         except:
@@ -204,8 +207,8 @@ def get_regional_data(country):
         os.mkdir(folder)
     path_output = os.path.join(folder, filename)
 
-    if os.path.exists(path_output):
-        return print('Regional data already exists')
+    # if os.path.exists(path_output):
+    #     return print('Regional data already exists')
 
     path_country = os.path.join(DATA_INTERMEDIATE, iso3,
         'national_outline.shp')
@@ -215,10 +218,16 @@ def get_regional_data(country):
     path_settlements = os.path.join(DATA_INTERMEDIATE, iso3,
         'settlements.tif')
 
-    filename = 'regions_{}_{}.shp'.format(level, iso3)
-    folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
-    path = os.path.join(folder, filename)
-    regions = gpd.read_file(path)#[:1]
+    if not iso3 in ['MDV','COK','KIR','MHL','NIU']:
+        filename = 'regions_{}_{}.shp'.format(level, iso3)
+        folder = os.path.join(DATA_INTERMEDIATE, iso3, 'regions')
+        path = os.path.join(folder, filename)
+        regions = gpd.read_file(path)#[:1]
+    else:
+        filename = 'national_outline.shp'
+        folder = os.path.join(DATA_INTERMEDIATE, iso3)
+        path = os.path.join(folder, filename)
+        regions = gpd.read_file(path)#[:1]
 
     results = []
 
@@ -565,15 +574,19 @@ def load_regions(country, path, sites_lut):
     data_initial = []
 
     regions = pd.read_csv(path)
-
+    regions = regions[regions['population'] > 0]
     regions = regions.sort_values(by='population_km2', ascending=True)
 
-    deciles = [10,9,8,7,6,5,4,3,2,1]
-    regions['decile'] = pd.qcut(regions['population_km2'],
-        q=10,
-        labels=deciles,
-        duplicates='drop'
-        )
+    if not country['iso3'] in ['MDV','COK','KIR','MHL','NIU']:
+        deciles = [10,9,8,7,6,5,4,3,2,1]
+        regions['decile'] = pd.qcut(regions['population_km2'],
+            q=10,
+            labels=deciles,
+            duplicates='drop'
+            )
+    else:
+        n = len(regions)
+        regions.insert(len(regions.columns), 'decile', range(1, n + 1))
 
     regions = regions.to_dict('records')
 
@@ -702,15 +715,19 @@ def get_regional_data_lut(country):
         return
 
     data = pd.read_csv(path)
-
+    data = data[data['population'] > 0 ]
     data = data.sort_values(by='population_km2', ascending=True)
 
-    deciles = [10,9,8,7,6,5,4,3,2,1]
-    data['decile'] = pd.qcut(data['population_km2'],
-        q=10,
-        labels=deciles,
-        duplicates='drop'
-        )
+    if not country['iso3'] in ['MDV','COK','KIR','MHL','NIU']:
+        deciles = [10,9,8,7,6,5,4,3,2,1]
+        data['decile'] = pd.qcut(data['population_km2'],
+            q=10,
+            labels=deciles,
+            duplicates='drop'
+            )
+    else:
+        n = len(data)
+        data.insert(len(data.columns), 'decile', range(1, n + 1))
 
     # data = data.to_dict('records')
     # output = output + data
@@ -732,11 +749,13 @@ if __name__ == '__main__':
 
     for country in countries:
 
-        if not country['iso3'] == 'GBR':
+        # if not country['iso3'] == 'PLW':
+        #     continue
+        if "{}".format(country['adb_region']) == 'nan':
             continue
-
-    #     print('----')
-    #     print('-- Working on {}'.format(country['country_name']))
+        print(country['adb_region'])
+        print('----')
+        print('-- Working on {}'.format(country['country_name']))
 
         # process_country_shapes(country)
 
@@ -748,6 +767,6 @@ if __name__ == '__main__':
 
         # process_unconstrained_site_estimation(country)
 
-        # generate_deciles(country)
+        generate_deciles(country)
 
-        # get_regional_data_lut(country)
+        get_regional_data_lut(country)

@@ -205,9 +205,14 @@ def collect_results(countries):
 
     for country in countries:
 
+        if "{}".format(country['adb_region']) == 'nan':
+            continue
+
         iso3 = country['iso3']
         filename = 'results_{}.csv'.format(iso3)
         path = os.path.join(OUTPUT, iso3, filename)
+        if not os.path.exists(path):
+            print('Path does not exist: {}'.format(path))
         data = pd.read_csv(path)
         data = data.to_dict('records')
         output = output + data
@@ -246,12 +251,15 @@ if __name__ == '__main__':
 
     for country in tqdm(countries):#[::-1]:#[:1]:
 
+        # if "{}".format(country['adb_region']) == 'nan':
+        #     continue
+        
         iso3 = country['iso3']
         country.update(PARAMETERS)
         country['networks'] = country_parameters[country['iso3']]['networks']
 
-        if not iso3 == "GBR":
-            continue
+        # if not iso3 == "PLW":
+        #     continue
 
         print('--Working on {}'.format(iso3))
         
@@ -275,13 +283,14 @@ if __name__ == '__main__':
             filename = 'decile_data.csv'
             path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
             deciles = pd.read_csv(path_out)#[:1]
+
             # capacity_generation_backhaul_energy_year
             deciles['capacity'] = option.split('_')[0]
             deciles['generation'] = option.split('_')[1]
             deciles['backhaul'] = option.split('_')[2]
             deciles['energy_scenario'] = option.split('_')[3]
             deciles['sharing_scenario'] = option.split('_')[4]
-            deciles = deciles[deciles['decile'] == 7]
+            # deciles = deciles[deciles['decile'] == 7]
 
             deciles = deciles.to_dict('records')#[9:10]
 
@@ -313,12 +322,14 @@ if __name__ == '__main__':
                 country,
                 deciles,
             )
-
+            
             output = output + deciles
             energy_output = energy_output + energy
             emissions_output = emissions_output + emissions
 
         output = pd.DataFrame(output)
+        if len(output) == 0:
+            continue
         filename = 'results_{}.csv'.format(iso3)
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
@@ -329,6 +340,7 @@ if __name__ == '__main__':
             'backhaul','energy_scenario','sharing_scenario',
             # 'income','wb_region','iea_classification',#'product',
             'population_with_smartphones','smartphones_on_network',
+            'demand_mbps_km2',
             'network_required_sites', 
             'network_existing_sites',
             'network_upgraded_sites','network_new_sites',
@@ -349,6 +361,7 @@ if __name__ == '__main__':
             'backhaul','energy_scenario','sharing_scenario',
             #'income', 'wb_region','iea_classification',#'product',
             'population_with_smartphones','smartphones_on_network',
+            'demand_mbps_km2',
             'network_required_sites', 
             'network_existing_sites',
             'network_upgraded_sites','network_new_sites',
@@ -366,5 +379,5 @@ if __name__ == '__main__':
         path_out = os.path.join(OUTPUT_COUNTRY, filename)
         output.to_csv(path_out, index=False)
 
-    # collect_results(countries)
+    collect_results(countries)
     

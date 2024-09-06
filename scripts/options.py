@@ -31,8 +31,8 @@ def all_options():
     capacities = [20, 30, 40] 
     generations = ['4G', '5G']
     backhaul_types = ['wireless', 'fiber']
-    energy_scenarios = ['sps-2022', 'sps-2030','aps-2030']
-    sharing_scenarios = ['baseline','passive','active','srn']
+    energy_scenarios = ['aps-2030']#['sps-2022', 'sps-2030','aps-2030']
+    sharing_scenarios = ['baseline']#,'passive','active','srn']
 
     for capacity in capacities:
         for generation in generations:
@@ -49,41 +49,6 @@ def all_options():
                             output.append(option)
 
     return output
-
-
-# def sharing_options():
-#     """
-#     Generate sharing strategy options.
-
-#     sps = Stated Policies Scenario
-#     aps = Announced Pledges Scenario
-
-#     capacity_generation_backhaul_energy_year
-
-#     """
-#     output = []
-
-#     capacities = [20, 30, 40] 
-#     generations = ['4G', '5G']
-#     backhaul_types = ['wireless', 'fiber']
-#     energy_scenarios = ['sps-2022','sps-2030','aps-2030']
-#     sharing_scenarios = ['baseline','passive','active','srn']
-
-#     for capacity in capacities:
-#         for generation in generations:
-#                 for backhaul in backhaul_types:
-#                     for energy_scenario in energy_scenarios:
-#                         for sharing_scenario in sharing_scenarios:
-#                             option = '{}_{}_{}_{}_{}'.format(
-#                                 capacity,
-#                                 generation,
-#                                 backhaul,
-#                                 energy_scenario,
-#                                 sharing_scenario
-#                             )
-#                             output.append(option)
-
-#     return output
 
 
 PARAMETERS = {
@@ -130,4 +95,3 @@ if __name__ == '__main__':
 
     print(all_options())
 
-    # print(sharing_options())
