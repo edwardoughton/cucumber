@@ -179,7 +179,7 @@ plot2 =
   labs(title=expression(paste("(B) Cell Site Operational Emissions (", CO[2], ") by Region.")),
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-       x = NULL, y=expression(paste("Kilotonnes of ", CO[2])), sep="")  +
+       x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)

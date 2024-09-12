@@ -5,14 +5,19 @@ library(ggpubr)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 filename = 'global_results.csv'
-data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
+data <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
+ls = c("ARM","AZE","GEO","KAZ","KGZ","TJK","TKM","UZB","CHN","HKG","KOR","MNG",
+       "TWN","BTN","NPL","MDV","AFG","BGD","IND","PAK","LKA","BRN","KHM","IDN",
+       "LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM","FJI","PNG","VUT","COK",
+       "KIR","MHL","FSM","NRU","NIU","PLW","WSM","SLB","TON","TUV")
+data = data%>% filter(GID_0 %in% ls)
 data = data[(data$capacity == 30),]
 data$tech = paste(data$generation, data$backhaul)
 
 data = select(data, GID_0, #capacity,
               tech, #capacity, 
               energy_scenario, sharing_scenario,
-              income, wb_region,
+              income, adb_region,
               population_total, area_km2,
               # population_with_phones,
               population_with_smartphones,
@@ -25,7 +30,7 @@ data = select(data, GID_0, #capacity,
 
 data = data %>%
   group_by(GID_0, tech, sharing_scenario, energy_scenario,
-           income, wb_region) %>%
+           income, adb_region) %>%
   summarise(
     population_total = round(sum(population_total, na.rm=TRUE),0),
     area_km2 = round(sum(area_km2, na.rm=TRUE),0),
@@ -99,10 +104,10 @@ plot1 =
               position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
-  labs(title="(A) Total Mobile Site Energy Consumption by World Bank Income Group.",
+  labs(title="(A) Infrastructure Sharing Cell Site Energy Consumption by Income Group.",
        fill=NULL,
-       subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Kilowatt Hours (kWh)")  +
+       subtitle = "Reported for 30 GB/Month and the IEA Announced Policy Scenario 2030.",
+       x = NULL, y="Terawatt Hours (tWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
@@ -114,7 +119,7 @@ plot1 =
 # while (!is.null(dev.list()))  dev.off()
 
 #### Emissions demand: regions
-subset = select(data, wb_region, tech, sharing_scenario,
+subset = select(data, adb_region, tech, sharing_scenario,
                 total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
@@ -124,19 +129,17 @@ subset <- subset %>%
     values_to = "value"
   )
 
-subset$wb_region = factor(
-  subset$wb_region,
-  levels = c('East Asia and Pacific','Europe and Central Asia',
-             'Latin America and Caribbean','Middle East and North Africa',
-             'North America','South Asia','Sub-Saharan Africa'
+subset$adb_region = factor(
+  subset$adb_region,
+  levels = c('Caucasus and Central Asia','East Asia',
+             'South Asia','Southeast Asia','The Pacific'
   ),
-  labels = c('East Asia and Pacific','Europe and Central Asia',
-             'Latin America and Caribbean','Middle East and North Africa',
-             'North America','South Asia','Sub-Saharan Africa')
+  labels = c('Caucasus and Central Asia','East Asia',
+             'South Asia','Southeast Asia','The Pacific')
 )
 
 subset <- subset %>%
-  group_by(wb_region, tech, sharing_scenario) %>%
+  group_by(adb_region, tech, sharing_scenario) %>%
   summarize(
     value = sum(value)
   )
@@ -145,7 +148,7 @@ subset$value = subset$value / 1e9 #convert kwh -> twh
 
 # df_errorbar <-
 #   subset |>
-#   group_by(wb_region, tech, energy_scenario) |>
+#   group_by(adb_region, tech, energy_scenario) |>
 #   summarize(
 #     # low = sum(low),
 #     value = sum(value)#,
@@ -153,7 +156,7 @@ subset$value = subset$value / 1e9 #convert kwh -> twh
 #   ) |>
 #   group_by(tech, energy_scenario) |>
 #   summarize(
-#     wb_region = 'South Asia',
+#     adb_region = 'South Asia',
 #     # low = sum(low),
 #     value = sum(value)#,
 #     # high = sum(high)
@@ -166,15 +169,15 @@ max_value = max(round(subset$value,3)) + + (max(round(subset$value,3))/5)
 # min_value[min_value > 0] = 0
 
 plot2 =
-  ggplot(subset, aes(x = tech, y = value, fill=wb_region)) +
+  ggplot(subset, aes(x = tech, y = value, fill=adb_region)) +
   geom_bar(stat="identity", position='dodge') +
   geom_text(aes(label = paste(round(value,0),"")), size=1.6, vjust=.5,hjust=-.2,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title="(B) Total Mobile Site Energy Consumption by World Bank Region.",
+  labs(title="(B) Infrastructure Sharing Cell Site Energy Consumption by Region.",
        fill=NULL,
-       subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
+       subtitle = "Reported for 30 GB/Month and the IEA Announced Policy Scenario 2030.",
        x = NULL, y="Terawatt Hours (tWhs)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
