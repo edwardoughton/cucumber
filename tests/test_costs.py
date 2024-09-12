@@ -70,18 +70,18 @@ def test_assess_cost(setup_country, setup_deciles):
     )
 
     assert answer[0]['network_cost_equipment_usd'] == 40000
-    assert answer[0]['network_cost_site_build_usd'] == 30000
+    assert answer[0]['network_cost_site_build_usd'] == 30000 / setup_deciles[0]['networks']
     assert answer[0]['network_cost_installation_usd'] == 30000
     assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400
     assert answer[0]['network_cost_power_usd'] == 3000
-    assert answer[0]['network_new_cost_usd'] == 110400
+    assert answer[0]['network_new_cost_usd'] == 87900 
 
-    assert answer[0]['total_cost_equipment_usd'] == 40000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_site_build_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_installation_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_operation_and_maintenance_usd'] == 7400 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_power_usd'] == 3000 * setup_deciles[0]['networks']
-    assert answer[0]['total_new_cost_usd'] == 110400 * setup_deciles[0]['networks']
+    assert answer[0]['total_cost_equipment_usd'] == (40000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_site_build_usd'] == (30000 * (1 / answer[0]['networks'])) 
+    assert answer[0]['total_cost_installation_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_operation_and_maintenance_usd'] == (7400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_power_usd'] == (3000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_new_cost_usd'] == 351600.0
 
     #active sharing
     setup_deciles[0]['population_with_smartphones'] = 4000
@@ -95,19 +95,19 @@ def test_assess_cost(setup_country, setup_deciles):
         [setup_deciles[0]],
     )
 
-    assert answer[0]['network_cost_equipment_usd'] == 40000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_site_build_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_installation_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_power_usd'] == 3000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_new_cost_usd'] == 110400 * (setup_deciles[0]['networks'] / 4)
+    assert answer[0]['network_cost_equipment_usd'] == 40000 
+    assert answer[0]['network_cost_site_build_usd'] == 30000 
+    assert answer[0]['network_cost_installation_usd'] == 30000 
+    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 
+    assert answer[0]['network_cost_power_usd'] == 3000 
+    assert answer[0]['network_new_cost_usd'] == 110400 
 
-    assert answer[0]['total_cost_equipment_usd'] == 40000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_site_build_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_installation_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_operation_and_maintenance_usd'] == 7400 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_power_usd'] == 3000 * setup_deciles[0]['networks']
-    assert answer[0]['total_new_cost_usd'] == 110400 * setup_deciles[0]['networks']
+    assert answer[0]['total_cost_equipment_usd'] == (40000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_site_build_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_installation_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_operation_and_maintenance_usd'] == (7400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_power_usd'] == (3000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_new_cost_usd'] == (110400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
 
     #srn sharing
     setup_deciles[0]['population_with_smartphones'] = 4000
@@ -122,23 +122,23 @@ def test_assess_cost(setup_country, setup_deciles):
         [setup_deciles[0]],
     )
 
-    assert answer[0]['network_cost_equipment_usd'] == 40000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_site_build_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_installation_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_power_usd'] == 3000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_new_cost_usd'] == 110400 * (setup_deciles[0]['networks'] / 4)
+    assert answer[0]['network_cost_equipment_usd'] == 40000 
+    assert answer[0]['network_cost_site_build_usd'] == 30000 
+    assert answer[0]['network_cost_installation_usd'] == 30000 
+    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 
+    assert answer[0]['network_cost_power_usd'] == 3000 
+    assert answer[0]['network_new_cost_usd'] == 110400 
 
-    assert answer[0]['total_cost_equipment_usd'] == 40000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_site_build_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_installation_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_operation_and_maintenance_usd'] == 7400 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_power_usd'] == 3000 * setup_deciles[0]['networks']
-    assert answer[0]['total_new_cost_usd'] == 110400 * setup_deciles[0]['networks']
+    assert answer[0]['total_cost_equipment_usd'] == (40000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_site_build_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_installation_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_operation_and_maintenance_usd'] == (7400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_power_usd'] == (3000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_new_cost_usd'] == (110400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
 
     #srn sharing
     setup_deciles[0]['population_with_smartphones'] = 4000
-    setup_deciles[0]['smartphones_on_network'] = 1000
+    setup_deciles[0]['smartphones_on_network'] = 4000
     setup_deciles[0]['network_new_sites'] = 1
     setup_deciles[0]['geotype'] = 'rural'
     setup_deciles[0]['networks'] = 1
@@ -149,16 +149,16 @@ def test_assess_cost(setup_country, setup_deciles):
         [setup_deciles[0]],
     )
 
-    assert answer[0]['network_cost_equipment_usd'] == 40000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_site_build_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_installation_usd'] == 30000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_cost_power_usd'] == 3000 * (setup_deciles[0]['networks'] / 4)
-    assert answer[0]['network_new_cost_usd'] == 110400 * (setup_deciles[0]['networks'] / 4)
+    assert answer[0]['network_cost_equipment_usd'] == 40000 
+    assert answer[0]['network_cost_site_build_usd'] == 30000 
+    assert answer[0]['network_cost_installation_usd'] == 30000 
+    assert answer[0]['network_cost_operation_and_maintenance_usd'] == 7400 
+    assert answer[0]['network_cost_power_usd'] == 3000 
+    assert answer[0]['network_new_cost_usd'] == 110400 
 
-    assert answer[0]['total_cost_equipment_usd'] == 40000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_site_build_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_installation_usd'] == 30000 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_operation_and_maintenance_usd'] == 7400 * setup_deciles[0]['networks']
-    assert answer[0]['total_cost_power_usd'] == 3000 * setup_deciles[0]['networks']
-    assert answer[0]['total_new_cost_usd'] == 110400 * setup_deciles[0]['networks']
+    assert answer[0]['total_cost_equipment_usd'] == (40000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_site_build_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_installation_usd'] == (30000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_operation_and_maintenance_usd'] == (7400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_cost_power_usd'] == (3000 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']
+    assert answer[0]['total_new_cost_usd'] == (110400 / answer[0]['smartphones_on_network']) * answer[0]['population_with_smartphones']

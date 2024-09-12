@@ -9,9 +9,9 @@ def test_assess_energy(
     ):
 
     #baseline sharing
-    setup_deciles[0]['network_existing_sites'] = 1
+    setup_deciles[0]['total_existing_sites'] = 4
     setup_deciles[0]['network_new_sites'] = 0
-    setup_deciles[0]['backhaul_wireless'] = 1
+    setup_deciles[0]['backhaul_wireless'] = 4
     setup_deciles[0]['backhaul_fiber'] = 0
     setup_deciles[0]['backhaul_new'] = 0
     setup_deciles[0]['networks'] = 4
@@ -26,7 +26,7 @@ def test_assess_energy(
     assert round(energy[0]['network_existing_energy_kwh']) == 2841 
 
     #baseline sharing
-    setup_deciles[0]['network_existing_sites'] = 0
+    setup_deciles[0]['total_existing_sites'] = 0
     setup_deciles[0]['network_new_sites'] = 1
     setup_deciles[0]['backhaul_wireless'] = 0
     setup_deciles[0]['backhaul_fiber'] = 0
@@ -43,9 +43,9 @@ def test_assess_energy(
     assert results[0]['network_new_energy_kwh'] == 8760
 
     #passive sharing
-    setup_deciles[0]['network_existing_sites'] = 1
+    setup_deciles[0]['total_existing_sites'] = 4
     setup_deciles[0]['network_new_sites'] = 0
-    setup_deciles[0]['backhaul_wireless'] = 1
+    setup_deciles[0]['backhaul_wireless'] = 4
     setup_deciles[0]['backhaul_fiber'] = 0
     setup_deciles[0]['backhaul_new'] = 0
     setup_deciles[0]['networks'] = 4
@@ -61,9 +61,9 @@ def test_assess_energy(
     assert round(energy[0]['network_existing_energy_kwh']) == 2841 
 
     #active sharing
-    setup_deciles[0]['network_existing_sites'] = 1
+    setup_deciles[0]['total_existing_sites'] = 4
     setup_deciles[0]['network_new_sites'] = 0
-    setup_deciles[0]['backhaul_wireless'] = 1
+    setup_deciles[0]['backhaul_wireless'] = 4
     setup_deciles[0]['backhaul_fiber'] = 0
     setup_deciles[0]['backhaul_new'] = 0
     setup_deciles[0]['networks'] = 1
@@ -75,13 +75,16 @@ def test_assess_energy(
         setup_on_grid_mix
     )
 
-    assert results[0]['network_existing_energy_kwh'] == 4380
-    assert round(energy[0]['network_existing_energy_kwh']) == 710 
+    #energy * 4 sites * (site + backhaul)
+    assert results[0]['network_existing_energy_kwh'] == (8760*4*2) 
+    
+    #energy * 4 sites * (site + backhaul) * 0.16 for perc share of generation mix
+    assert round(energy[0]['network_existing_energy_kwh']) == round((8760*4*2) * 0.16213)
 
     #srn sharing - urban
-    setup_deciles[0]['network_existing_sites'] = 1
+    setup_deciles[0]['total_existing_sites'] = 4
     setup_deciles[0]['network_new_sites'] = 0
-    setup_deciles[0]['backhaul_wireless'] = 1
+    setup_deciles[0]['backhaul_wireless'] = 4
     setup_deciles[0]['backhaul_fiber'] = 0
     setup_deciles[0]['backhaul_new'] = 0
     setup_deciles[0]['networks'] = 1
@@ -93,13 +96,15 @@ def test_assess_energy(
         setup_on_grid_mix
     )
 
-    assert results[0]['network_existing_energy_kwh'] == 17520.0
-    assert round(energy[0]['network_existing_energy_kwh']) == 2841 
+    #energy * 4 sites * (site + backhaul)
+    assert results[0]['network_existing_energy_kwh'] == (8760*4*2) 
+    #energy * 4 sites * (site + backhaul) * 0.16 for perc share of generation mix
+    assert round(energy[0]['network_existing_energy_kwh']) == round((8760*4*2) * 0.16213)
 
     #srn sharing - rural
-    setup_deciles[0]['network_existing_sites'] = 1
+    setup_deciles[0]['network_existing_sites'] = 4
     setup_deciles[0]['network_new_sites'] = 0
-    setup_deciles[0]['backhaul_wireless'] = 1
+    setup_deciles[0]['backhaul_wireless'] = 4
     setup_deciles[0]['backhaul_fiber'] = 0
     setup_deciles[0]['backhaul_new'] = 0
     setup_deciles[0]['networks'] = 1
@@ -112,5 +117,7 @@ def test_assess_energy(
         setup_on_grid_mix
     )
 
-    assert results[0]['network_existing_energy_kwh'] == 4380
-    assert round(energy[0]['network_existing_energy_kwh']) == 710
+    #energy * 4 sites * (site + backhaul)
+    assert results[0]['network_existing_energy_kwh'] == (8760*4*2) 
+    #energy * 4 sites * (site + backhaul) * 0.16 for perc share of generation mix
+    assert round(energy[0]['network_existing_energy_kwh']) == round((8760*4*2) * 0.16213)

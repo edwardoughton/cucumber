@@ -263,6 +263,7 @@ def get_regional_data(country):
 
         results.append({
             'GID_0': region['GID_0'],
+            'country_name': country['country_name'],
             'GID_id': region[gid_level],
             'GID_level': gid_level,
             'population': (population_summation if population_summation else 0),
@@ -729,10 +730,7 @@ def get_regional_data_lut(country):
         n = len(data)
         data.insert(len(data.columns), 'decile', range(1, n + 1))
 
-    # data = data.to_dict('records')
-    # output = output + data
-
-    # output = pd.DataFrame(output)
+    data['satellite'] = np.where(data['population_km2'] < 5, 1, 0)
 
     filename = 'regional_data_deciles.csv'
     folder = os.path.join(DATA_INTERMEDIATE, country['iso3'], 'population')
@@ -763,7 +761,7 @@ if __name__ == '__main__':
 
         # process_settlement_layer(country)
 
-        # get_regional_data(country)
+        get_regional_data(country)
 
         # process_unconstrained_site_estimation(country)
 

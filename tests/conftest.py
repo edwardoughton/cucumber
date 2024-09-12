@@ -7,6 +7,7 @@ def setup_country():
     'GID_0': 'GBR',
     'income': 'HIC',
     'wb_region': 'SSA',
+    'adb_region': 'Europe',
     'backhaul_fiber_perc': 50,
     'country_name': 'United Kingdom', 
     'iso3': 'GBR', 
