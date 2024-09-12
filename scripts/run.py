@@ -228,6 +228,37 @@ def collect_results(countries):
     return
 
 
+def collect_satellite_areas(countries):
+    """
+        
+    """
+    output = []
+
+    for country in countries:
+
+        if "{}".format(country['adb_region']) == 'nan':
+            continue
+
+        iso3 = country['iso3']
+        filename = 'regional_data_deciles.csv'
+        path = os.path.join(DATA_INTERMEDIATE, iso3, 'population',filename)
+        if not os.path.exists(path):
+            print('Path does not exist: {}'.format(path))
+        data = pd.read_csv(path)
+        data = data.to_dict('records')
+        output = output + data
+    
+    output = pd.DataFrame(output)
+    filename = 'satellite_areas.csv'.format(iso3)
+    folder = os.path.join(OUTPUT, '..', 'global_results')
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    path_out = os.path.join(folder, filename)
+    output.to_csv(path_out, index=False)
+
+    return
+
+
 if __name__ == '__main__':
 
     countries = find_country_list([])
@@ -251,8 +282,8 @@ if __name__ == '__main__':
 
     for country in tqdm(countries):#[::-1]:#[:1]:
 
-        # if "{}".format(country['adb_region']) == 'nan':
-        #     continue
+        if "{}".format(country['adb_region']) == 'nan':
+            continue
         
         iso3 = country['iso3']
         country.update(PARAMETERS)
@@ -380,4 +411,6 @@ if __name__ == '__main__':
         output.to_csv(path_out, index=False)
 
     collect_results(countries)
+
+    collect_satellite_areas(countries)
     

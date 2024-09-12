@@ -105,7 +105,7 @@ plot1 =
   labs(title="(A) Cell Site Energy Consumption by Income Group.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Kilowatt Hours (kWh)")  +
+       x = NULL, y="Terawatt Hours (tWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=2)) +
   scale_fill_viridis_d() +
@@ -176,7 +176,7 @@ plot2 =
   labs(title="(B) Cell Site Energy Consumption by Region.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Terawatt Hours (tWhs)")  +
+       x = NULL, y="Terawatt Hours (tWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)

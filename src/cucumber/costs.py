@@ -78,7 +78,7 @@ def assess_cost(country, deciles):
             decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build']) * (1 / decile['networks'])
         else:
             decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build'])
-        # print(decile['sharing_scenario'], round(decile['network_cost_site_build_usd']/1e9,3), (1/decile['networks']))
+
         decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment'])
         decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation'])
         decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance'])
@@ -91,34 +91,35 @@ def assess_cost(country, deciles):
             decile['network_cost_operation_and_maintenance_usd'] +
             decile['network_cost_power_usd']  
         )
-        # print(decile['sharing_scenario'],decile['network_new_cost_usd']/1e9)
-        ms = 100 / decile['networks']
         
         #sites
-        decile['total_required_sites'] = calc(decile, 'network_required_sites', ms)
-        decile['total_upgraded_sites'] = calc(decile, 'network_upgraded_sites', ms)
-        decile['total_new_sites'] = calc(decile, 'network_new_sites', ms)
+        decile['total_required_sites'] = calc(decile, 'network_required_sites')
+        decile['total_upgraded_sites'] = calc(decile, 'network_upgraded_sites')
+        decile['total_new_sites'] = calc(decile, 'network_new_sites')
         
         #energy/emissions
-        decile['total_existing_energy_kwh'] = calc(decile, 'network_existing_energy_kwh', ms)
-        decile['total_new_energy_kwh'] = calc(decile, 'network_new_energy_kwh', ms)
-        decile['total_existing_emissions_t_co2'] = calc(decile, 'network_existing_emissions_t_co2', ms)
-        decile['total_new_emissions_t_co2'] = calc(decile, 'network_new_emissions_t_co2', ms)
+        decile['total_existing_energy_kwh'] = calc(decile, 'network_existing_energy_kwh')
+        decile['total_new_energy_kwh'] = calc(decile, 'network_new_energy_kwh')
+        decile['total_existing_emissions_t_co2'] = calc(decile, 'network_existing_emissions_t_co2')
+        decile['total_new_emissions_t_co2'] = calc(decile, 'network_new_emissions_t_co2')
 
         #costs
-        decile['total_new_cost_usd'] = calc(decile, 'network_new_cost_usd', ms)
-        decile['total_cost_equipment_usd'] = calc(decile, 'network_cost_equipment_usd', ms)
-        decile['total_cost_site_build_usd'] = calc(decile, 'network_cost_site_build_usd', ms)
-        decile['total_cost_installation_usd'] = calc(decile, 'network_cost_installation_usd', ms)
-        decile['total_cost_operation_and_maintenance_usd'] = calc(decile, 'network_cost_operation_and_maintenance_usd', ms)
-        decile['total_cost_power_usd'] = calc(decile, 'network_cost_power_usd', ms)
+        decile['total_new_cost_usd'] = calc(decile, 'network_new_cost_usd')
+        decile['total_cost_equipment_usd'] = calc(decile, 'network_cost_equipment_usd')
+        if decile['sharing_scenario'] =='passive':
+            decile['total_cost_site_build_usd'] = decile['network_cost_site_build_usd']
+        else:
+            decile['total_cost_site_build_usd'] = calc(decile, 'network_cost_site_build_usd')
+        decile['total_cost_installation_usd'] = calc(decile, 'network_cost_installation_usd')
+        decile['total_cost_operation_and_maintenance_usd'] = calc(decile, 'network_cost_operation_and_maintenance_usd')
+        decile['total_cost_power_usd'] = calc(decile, 'network_cost_power_usd')
 
         output.append(decile)
 
     return output
 
 
-def calc(decile, metric, ms):
+def calc(decile, metric):
     """
 
     """
