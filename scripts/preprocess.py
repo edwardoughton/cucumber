@@ -264,6 +264,7 @@ def get_regional_data(country):
         results.append({
             'GID_0': region['GID_0'],
             'country_name': country['country_name'],
+            'adb_region': country['adb_region'],
             'GID_id': region[gid_level],
             'GID_level': gid_level,
             'population': (population_summation if population_summation else 0),
