@@ -12,7 +12,7 @@ import numpy as np
 from itertools import tee
 from collections import OrderedDict
 
-from cucumber.path_loss import path_loss_calculator
+from cucumber.path_loss import path_loss_calculator, lognormal_dist_values
 
 np.random.seed(42)
 
@@ -92,10 +92,15 @@ class SimulationManager(object):
         """
         results = []
 
-        for receiver in self.receivers.values():
+        random_variations = lognormal_dist_values(6, 3, 42, len(self.receivers))
+
+        for index, receiver in enumerate(self.receivers.values()):
+
+            random_variation = random_variations[index:index+1][0]
 
             path_loss, r_model, r_distance = self.estimate_path_loss(
-                receiver, frequency, environment, simulation_parameters, generation
+                receiver, frequency, environment, simulation_parameters, 
+                random_variation
             )
 
             received_power = self.estimate_received_power(self.transmitter,
@@ -103,7 +108,8 @@ class SimulationManager(object):
             )
 
             interference, i_model, ave_distance, ave_inf_pl = self.estimate_interference(
-                receiver, frequency, environment, simulation_parameters, generation)
+                receiver, frequency, environment, simulation_parameters, 
+                random_variations[::-1])
 
             noise = self.estimate_noise(
                 bandwidth
@@ -150,7 +156,7 @@ class SimulationManager(object):
 
 
     def estimate_path_loss(self, receiver, frequency, environment,
-        simulation_parameters, generation):
+        simulation_parameters, random_variation):
         """
 
         Function to calculate the path loss between a transmitter
@@ -164,8 +170,6 @@ class SimulationManager(object):
             The carrier frequency for the chosen spectrum band (GHz).
         environment : string
             Either urban, suburban or rural.
-        generation : string
-            The technology generation type.
 
         Returns
         -------
@@ -198,7 +202,8 @@ class SimulationManager(object):
         path_loss, variation = path_loss_calculator(
             strt_distance,
             frequency,
-            simulation_parameters
+            simulation_parameters,
+            random_variation
         )
 
         return path_loss, 'fspl', strt_distance#, type_of_sight
@@ -248,7 +253,7 @@ class SimulationManager(object):
 
 
     def estimate_interference(self, receiver, frequency, environment,
-        simulation_parameters, generation):
+        simulation_parameters, random_variation):
         """
         Calculate interference from other sites.
 
@@ -288,7 +293,7 @@ class SimulationManager(object):
         ave_distance = 0
         ave_pl = 0
 
-        for interfering_transmitter in self.interfering_transmitters.values():
+        for index, interfering_transmitter in enumerate(self.interfering_transmitters.values()):
 
 
             temp_line = LineString(
@@ -312,12 +317,13 @@ class SimulationManager(object):
             else:
                 type_of_sight = 'nlos'
 
-            seed_value = (simulation_parameters['seed_value2_{}'.format(generation)] +
-                        simulation_parameters['seed_value2_{}'.format(environment)]
-            )
+            # seed_value = (simulation_parameters['seed_value2_{}'.format(generation)] +
+            #             simulation_parameters['seed_value2_{}'.format(environment)]
+            # )
 
             path_loss, variation = path_loss_calculator(
-                interference_strt_distance, frequency, simulation_parameters)
+                interference_strt_distance, frequency, 
+                simulation_parameters, random_variation[index:index+1][0])
 
             received_interference = self.estimate_received_power(
                 interfering_transmitter,
@@ -420,10 +426,11 @@ class SimulationManager(object):
 
         """
         raw_received_power = 10**received_power
-
+        # print('received power', raw_received_power, received_power)
         interference_list = []
         for value in interference:
             output_value = 10**value
+            # print('received interference', output_value, value)
             interference_list.append(output_value)
 
         interference_list.sort(reverse=True)

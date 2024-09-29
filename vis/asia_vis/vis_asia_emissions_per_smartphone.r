@@ -73,8 +73,8 @@ data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 data$income = factor(
   data$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
-             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
+  labels = c('Low Income','Lower-Middle Income',
+             'Upper-Middle Income','High Income')
 )
 
 data$adb_region = factor(
@@ -146,7 +146,7 @@ plot1 =
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  guides(fill=guide_legend(nrow=2)) +
+  guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)
 
@@ -210,6 +210,6 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'emissions_per_smartphone_panel.png')
+path = file.path(folder, 'figures', 'd_emissions_per_smartphone_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()

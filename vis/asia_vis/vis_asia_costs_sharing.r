@@ -63,8 +63,8 @@ subset = select(data, income, tech, sharing_scenario,
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
-             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
+  labels = c('Low Income','Lower-Middle Income',
+             'Upper-Middle Income','High Income')
 )
 
 subset <- subset %>%
@@ -89,7 +89,7 @@ plot1 =
          subtitle = "Reported for Emerging Asia for 30 GB/Month.",
          x = NULL, y="Financial Cost (US$Bn)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  guides(fill=guide_legend(nrow=2)) +
+  guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
   facet_grid(~sharing_scenario)
 
@@ -176,6 +176,6 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'cost_panel_sharing.png')
+path = file.path(folder, 'figures', 'h_cost_panel_sharing.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()

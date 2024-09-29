@@ -17,9 +17,11 @@ studies between different radio services or systems.
 """
 import numpy as np
 from math import pi, sqrt, log10
+import random
 
 
-def path_loss_calculator(distance, frequency, simulation_parameters):
+def path_loss_calculator(distance, frequency, simulation_parameters, 
+                         random_variation):
     """
     Calculate the free space path loss in decibels.
 
@@ -48,26 +50,28 @@ def path_loss_calculator(distance, frequency, simulation_parameters):
     """
     path_loss = 20*log10(distance) + 20*log10(frequency) + 32.44
 
-    random_variations = generate_log_normal_dist_value(
-        frequency,
-        2, #simulation_parameters['mu'],
-        10, #simulation_parameters['sigma'],
-        39, #simulation_parameters['seed_value'],
-        10, #simulation_parameters['iterations']
-    )
-
-    random_variation = random_variations[0]
-
+    # random_variations = generate_log_normal_dist_value(
+    #     frequency,
+    #     6, #simulation_parameters['mu'], #2, 
+    #     3, #simulation_parameters['sigma'], #10, 
+    #     42, #simulation_parameters[f'seed_value2_{generation}'], #39, 
+    #     2000 #10, 
+    # )
+    # print(index)
+    # random_int = random.randint(0,simulation_parameters['iterations']-1)
+    # random_variation = random_variations[index]
+    # print(path_loss,  random_variation)
     return path_loss + random_variation, random_variation
 
 
-def generate_log_normal_dist_value(frequency, mu, sigma, seed_value, draws):
+def lognormal_dist_values(mu, sigma, seed_value, draws):
     """
     Generates random values using a lognormal distribution, given a specific mean (mu)
     and standard deviation (sigma).
     Original function in pysim5G/path_loss.py.
     The parameters mu and sigma in np.random.lognormal are not the mean and STD of the
     lognormal distribution. They are the mean and STD of the underlying normal distribution.
+
     Parameters
     ----------
     frequency : float
@@ -85,15 +89,15 @@ def generate_log_normal_dist_value(frequency, mu, sigma, seed_value, draws):
     random_variation : float
         Mean of the random variation over the specified itations.
     """
-    if seed_value == None:
-        pass
-    else:
-        frequency_seed_value = seed_value * frequency * 100
-        np.random.seed(int(str(frequency_seed_value)[:2]))
+    # if seed_value == None:
+    #     pass
+    # else:
+    #     frequency_seed_value = seed_value * frequency * 100
+    #     np.random.seed(int(str(frequency_seed_value)[:2]))
 
     normal_std = np.sqrt(np.log10(1 + (sigma/mu)**2))
     normal_mean = np.log10(mu) - normal_std**2 / 2
 
-    random_variation  = np.random.lognormal(normal_mean, normal_std, draws)
+    random_variations = np.random.lognormal(normal_mean, normal_std, draws)
 
-    return random_variation
+    return random_variations

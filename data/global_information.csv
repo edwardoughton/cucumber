@@ -1,38 +1,38 @@
 iso3,iso2,country,continent,continent2,gid_region,lowest,ignore,Population,iea_classification,wb_region,income,operators,adb_region
 ARM,AM,Armenia,Asia,Europe,1,1,0,2968128,Eurasia,Europe and Central Asia,UMIC,3,Caucasus and Central Asia
 AZE,AZ,Azerbaijan,Asia,Europe,1,1,0,10145212,Eurasia,Europe and Central Asia,UMIC,3,Caucasus and Central Asia
-GEO,GE,Georgia,Asia,Europe,1,2,0,3708610,Eurasia,Europe and Central Asia,UMIC,2,Caucasus and Central Asia
-KAZ,KZ,Kazakhstan,Asia,Europe,1,2,0,19002586,Eurasia,Europe and Central Asia,UMIC,4,Caucasus and Central Asia
-KGZ,KG,Kyrgyzstan,Asia,Europe,1,2,0,6694200,Eurasia,Europe and Central Asia,LMIC,3,Caucasus and Central Asia
-TJK,TJ,Tajikistan,Asia,Europe,1,2,0,9749625,Eurasia,Europe and Central Asia,LIC,5,Caucasus and Central Asia
+GEO,GE,Georgia,Asia,Europe,2,2,0,3708610,Eurasia,Europe and Central Asia,UMIC,2,Caucasus and Central Asia
+KAZ,KZ,Kazakhstan,Asia,Europe,2,2,0,19002586,Eurasia,Europe and Central Asia,UMIC,4,Caucasus and Central Asia
+KGZ,KG,Kyrgyzstan,Asia,Europe,2,2,0,6694200,Eurasia,Europe and Central Asia,LMIC,3,Caucasus and Central Asia
+TJK,TJ,Tajikistan,Asia,Europe,2,2,0,9749625,Eurasia,Europe and Central Asia,LIC,5,Caucasus and Central Asia
 TKM,TM,Turkmenistan,Asia,Europe,1,1,0,6117933,Eurasia,Europe and Central Asia,UMIC,2,Caucasus and Central Asia
-UZB,UZ,Uzbekistan,Asia,Europe,1,2,0,34915100,Eurasia,Europe and Central Asia,LMIC,4,Caucasus and Central Asia
+UZB,UZ,Uzbekistan,Asia,Europe,2,2,0,34915100,Eurasia,Europe and Central Asia,LMIC,4,Caucasus and Central Asia
 CHN,CN,China,Asia,NE Asia,2,2,0,1412360000,China,East Asia and Pacific,UMIC,3,East Asia
 HKG,HK,Hong Kong,Asia,NE Asia,1,1,0,7413100,Asia Pacific,East Asia and Pacific,HIC,5,East Asia
-KOR,KR,Korea (the Republic of),Asia,NE Asia,1,2,0,51744876,Asia Pacific,East Asia and Pacific,HIC,3,East Asia
-MNG,MN,Mongolia,Asia,NE Asia,1,2,0,3329282,Asia Pacific,East Asia and Pacific,LMIC,3,East Asia
-TWN,TW,Taiwan (Province of China),Asia,NE Asia,1,2,0,0,Asia Pacific,East Asia and Pacific,UMIC,4,East Asia
+KOR,KR,Korea (the Republic of),Asia,NE Asia,2,2,0,51744876,Asia Pacific,East Asia and Pacific,HIC,3,East Asia
+MNG,MN,Mongolia,Asia,NE Asia,2,2,0,3329282,Asia Pacific,East Asia and Pacific,LMIC,3,East Asia
+TWN,TW,Taiwan (Province of China),Asia,NE Asia,2,2,0,0,Asia Pacific,East Asia and Pacific,UMIC,4,East Asia
 BTN,BT,Bhutan,Asia,S&SE Asia,2,2,0,779900,Asia Pacific,East Asia and Pacific,LMIC,2,South Asia
-NPL,NP,Nepal,Asia,S&SE Asia,1,2,0,29674920,Asia Pacific,East Asia and Pacific,LMIC,2,South Asia
+NPL,NP,Nepal,Asia,S&SE Asia,2,2,0,29674920,Asia Pacific,East Asia and Pacific,LMIC,2,South Asia
 MDV,MV,Maldives,Asia,S&SE Asia,0,0,0,543620,European Union,Europe and Central Asia,HIC,3,South Asia
 AFG,AF,Afghanistan,Asia,S&SE Asia,2,2,0,39835428,Middle East,South Asia,LIC,4,South Asia
 BGD,BD,Bangladesh,Asia,S&SE Asia,2,2,0,166303494,Asia Pacific,South Asia,LMIC,5,South Asia
 IND,IN,India,Asia,S&SE Asia,2,2,0,1393409033,India,South Asia,LMIC,5,South Asia
-PAK,PK,Pakistan,Asia,S&SE Asia,1,2,0,225199929,Asia Pacific,South Asia,LMIC,4,South Asia
-LKA,LK,Sri Lanka,Asia,S&SE Asia,1,2,0,22156000,Asia Pacific,South Asia,LMIC,4,South Asia
-BRN,BN,Brunei Darussalam,Asia,S&SE Asia,1,2,0,441532,Asia Pacific,East Asia and Pacific,HIC,2,Southeast Asia
-KHM,KH,Cambodia,Asia,S&SE Asia,1,2,0,16946446,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
-IDN,ID,Indonesia,Asia,S&SE Asia,1,2,0,276361788,Asia Pacific,East Asia and Pacific,UMIC,4,Southeast Asia
-LAO,LA,Lao People's Democratic Republic (the),Asia,S&SE Asia,1,2,0,7379358,Asia Pacific,East Asia and Pacific,LMIC,4,Southeast Asia
-MYS,MY,Malaysia,Asia,S&SE Asia,1,2,0,32776195,Asia Pacific,East Asia and Pacific,UMIC,4,Southeast Asia
-MMR,MM,Myanmar,Asia,S&SE Asia,1,2,0,54806014,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
-PHL,PH,Philippines (the),Asia,S&SE Asia,1,2,0,111046910,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
+PAK,PK,Pakistan,Asia,S&SE Asia,2,2,0,225199929,Asia Pacific,South Asia,LMIC,4,South Asia
+LKA,LK,Sri Lanka,Asia,S&SE Asia,2,2,0,22156000,Asia Pacific,South Asia,LMIC,4,South Asia
+BRN,BN,Brunei Darussalam,Asia,S&SE Asia,2,2,0,441532,Asia Pacific,East Asia and Pacific,HIC,2,Southeast Asia
+KHM,KH,Cambodia,Asia,S&SE Asia,2,2,0,16946446,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
+IDN,ID,Indonesia,Asia,S&SE Asia,2,2,0,276361788,Asia Pacific,East Asia and Pacific,UMIC,4,Southeast Asia
+LAO,LA,Lao People's Democratic Republic (the),Asia,S&SE Asia,2,2,0,7379358,Asia Pacific,East Asia and Pacific,LMIC,4,Southeast Asia
+MYS,MY,Malaysia,Asia,S&SE Asia,2,2,0,32776195,Asia Pacific,East Asia and Pacific,UMIC,4,Southeast Asia
+MMR,MM,Myanmar,Asia,S&SE Asia,2,2,0,54806014,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
+PHL,PH,Philippines (the),Asia,S&SE Asia,2,2,0,111046910,Asia Pacific,East Asia and Pacific,LMIC,3,Southeast Asia
 SGP,SG,Singapore,Asia,S&SE Asia,1,1,0,5453566,Asia Pacific,East Asia and Pacific,HIC,3,Southeast Asia
-THA,TH,Thailand,Asia,S&SE Asia,1,2,0,69950844,Asia Pacific,East Asia and Pacific,UMIC,5,Southeast Asia
-TLS,TL,Timor-Leste,Asia,S&SE Asia,1,2,0,1343875,Asia Pacific,East Asia and Pacific,LMIC,2,Southeast Asia
-VNM,VN,Viet Nam,Asia,S&SE Asia,1,2,0,98168829,Asia Pacific,East Asia and Pacific,LMIC,8,Southeast Asia
+THA,TH,Thailand,Asia,S&SE Asia,2,2,0,69950844,Asia Pacific,East Asia and Pacific,UMIC,5,Southeast Asia
+TLS,TL,Timor-Leste,Asia,S&SE Asia,2,2,0,1343875,Asia Pacific,East Asia and Pacific,LMIC,2,Southeast Asia
+VNM,VN,Viet Nam,Asia,S&SE Asia,2,2,0,98168829,Asia Pacific,East Asia and Pacific,LMIC,8,Southeast Asia
 FJI,FJ,Fiji,Oceania,S&SE Asia,1,1,0,902899,Asia Pacific,East Asia and Pacific,UMIC,2,The Pacific
-PNG,PG,Papua New Guinea,Oceania,S&SE Asia,1,2,0,9119005,Asia Pacific,East Asia and Pacific,LMIC,2,The Pacific
+PNG,PG,Papua New Guinea,Oceania,S&SE Asia,2,2,0,9119005,Asia Pacific,East Asia and Pacific,LMIC,2,The Pacific
 VUT,VU,Vanuatu,Oceania,S&SE Asia,1,1,0,314464,Asia Pacific,East Asia and Pacific,LMIC,3,The Pacific
 COK,CK,Cook Islands (the),Oceania,S&SE Asia,0,0,0,0,,,HIC,1,The Pacific
 KIR,KI,Kiribati,Oceania,S&SE Asia,0,0,0,121388,,,LMIC,2,The Pacific
@@ -45,8 +45,8 @@ WSM,WS,Samoa,Oceania,S&SE Asia,1,1,0,200144,,,LMIC,1,The Pacific
 SLB,SB,Solomon Islands,Oceania,S&SE Asia,1,1,0,703995,Asia Pacific,,LMIC,2,The Pacific
 TON,TO,Tonga,Oceania,S&SE Asia,1,1,0,106759,,,UMIC,2,The Pacific
 TUV,TV,Tuvalu,Oceania,S&SE Asia,1,1,0,11925,,,UMIC,1,The Pacific
-JPN,JP,Japan,Asia,NE Asia,1,2,0,125681593,Japan,East Asia and Pacific,HIC,4,
-PRK,KP,Korea (the Democratic People's Republic of),Asia,NE Asia,1,2,1,25887045,Asia Pacific,East Asia and Pacific,LIC,2,
+JPN,JP,Japan,Asia,NE Asia,2,2,0,125681593,Japan,East Asia and Pacific,HIC,4,
+PRK,KP,Korea (the Democratic People's Republic of),Asia,NE Asia,2,2,1,25887045,Asia Pacific,East Asia and Pacific,LIC,2,
 MAC,MO,Macao,Asia,NE Asia,1,1,1,658391,Asia Pacific,East Asia and Pacific,HIC,4,
 AUS,AU,Australia,Oceania,S&SE Asia,2,2,0,25739256,Asia Pacific,East Asia and Pacific,HIC,4,
 NCL,NC,New Caledonia,Oceania,S&SE Asia,1,2,1,272620,Asia Pacific,East Asia and Pacific,HIC,1,

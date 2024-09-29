@@ -179,12 +179,12 @@ def obtain_percentile_values(results, transmission_type, parameters, confidence_
 
         noise_values.append(result['noise'])
 
-        sinr = result['sinr']
-
-        if sinr == None:
-            sinr = 0
-        else:
-            sinr_values.append(sinr)
+        sinr_values.append(result['sinr'])
+        # print(sinr_values)
+        # if sinr == None:
+        #     sinr = 0
+        # else:
+        #     sinr_values.append(sinr)
 
         spectral_efficiency = result['spectral_efficiency']
         if spectral_efficiency == None:
@@ -205,79 +205,82 @@ def obtain_percentile_values(results, transmission_type, parameters, confidence_
             estimated_capacity_values_km2.append(estimated_capacity_km2)
 
     for confidence_interval in confidence_intervals:
-
+        # print(confidence_interval, 100-confidence_interval)
+        # print(np.percentile(
+        #         sinr_values, 100-confidence_interval, method='closest_observation'
+        #     ))
         output.append({
             'confidence_interval': confidence_interval,
             'tranmission_type': transmission_type,
             'path_loss': np.percentile(
-                path_loss_values, confidence_interval #<- low path loss is better
+                path_loss_values, confidence_interval, method='closest_observation' #<- low path loss is better
             ),
             'received_power': np.percentile(
-                received_power_values, 100 - confidence_interval
+                received_power_values, 100 - confidence_interval, method='closest_observation'
             ),
             'interference': np.percentile(
-                interference_values, confidence_interval #<- low interference is better
+                interference_values, confidence_interval, method='closest_observation' #<- low interference is better
             ),
             'noise': np.percentile(
-                noise_values, confidence_interval #<- low interference is better
+                noise_values, confidence_interval, method='closest_observation' #<- low interference is better
             ),
             'sinr': np.percentile(
-                sinr_values, 100 - confidence_interval
+                sinr_values, 100 - confidence_interval, method='closest_observation'
             ),
             'spectral_efficiency': np.percentile(
-                spectral_efficiency_values, 100 - confidence_interval
+                spectral_efficiency_values, 100 - confidence_interval, method='closest_observation'
             ),
             'capacity_mbps': np.percentile(
-                estimated_capacity_values, 100 - confidence_interval
+                estimated_capacity_values, 100 - confidence_interval, method='closest_observation'
             ),
             'capacity_mbps_km2': np.percentile(
-                estimated_capacity_values_km2, 100 - confidence_interval
+                estimated_capacity_values_km2, 100 - confidence_interval, method='closest_observation'
             )
         })
 
     return output
 
 
-def obtain_threshold_values_choice(results, parameters):
-    """
+# def obtain_threshold_values_choice(results, parameters):
+#     """
 
-    Get the threshold capacity based on a given percentile.
+#     Get the threshold capacity based on a given percentile.
 
-    Parameters
-    ----------
-    results : list of dicts
-        All data returned from the system simulation.
-    parameters : dict
-        Contains all necessary simulation parameters.
+#     Parameters
+#     ----------
+#     results : list of dicts
+#         All data returned from the system simulation.
+#     parameters : dict
+#         Contains all necessary simulation parameters.
 
-    Output
-    ------
-    matching_result : float
-        Contains the chosen percentile value based on the input data.
+#     Output
+#     ------
+#     matching_result : float
+#         Contains the chosen percentile value based on the input data.
 
-    """
-    sinr_values = []
+#     """
+#     sinr_values = []
 
-    percentile = parameters['percentile']
+#     percentile = parameters['percentile']
 
-    for result in results:
+#     for result in results:
 
-        sinr = result['sinr']
+#         sinr = result['sinr']
 
-        if sinr == None:
-            pass
-        else:
-            sinr_values.append(sinr)
+#         if sinr == None:
+#             pass
+#         else:
+#             sinr_values.append(sinr)
 
-    sinr = np.percentile(sinr_values, percentile, interpolation='nearest')
+#     sinr = np.percentile(sinr_values, percentile, interpolation='nearest')
 
-    matching_result = []
+#     matching_result = []
 
-    for result in results:
-        if float(result['sinr']) == float(sinr):
-            matching_result.append(result)
+#     for result in results:
+#         if float(result['sinr']) == float(sinr):
+#             matching_result.append(result)
 
-    return float(choice(matching_result))
+#     return float(choice(matching_result))
 
 
 def convert_results_geojson(data):
@@ -546,6 +549,7 @@ if __name__ == '__main__':
         'rx_height': 1.5,
         'network_load': 100,
         'sectorization': 3,
+        'iterations': 100,
     }
 
     # SPECTRUM_PORTFOLIO = [
@@ -647,14 +651,14 @@ if __name__ == '__main__':
     CONFIDENCE_INTERVALS = [
         # 10,
         50,
-        90,
+        # 90,
     ]
 
     def generate_site_radii(min, max, increment):
         for n in range(min, max, increment):
             yield n
 
-    INCREMENT_MA = (1000, 40000, 500) #(400, 40400, 1000) #1000,125)#
+    INCREMENT_MA = (500, 100000, 500) #(1000, 40000, 500) 
 
     SITE_RADII = {
         'macro': {
@@ -705,7 +709,8 @@ if __name__ == '__main__':
                         )
 
                 receivers = generate_receivers(site_area, PARAMETERS, 1)
-
+                # receivers = receivers[:100]
+                # print(len(receivers))
                 for frequency, bandwidth, generation, transmission_type in SPECTRUM_PORTFOLIO:
 
                     print('{}, {}, {}, {}'.format(frequency, bandwidth, generation, transmission_type))

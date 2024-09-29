@@ -43,37 +43,6 @@ def assess_cost(country, deciles):
         else:
             network_division = 1
 
-        # if decile['sharing_scenario'] in ['baseline', 'passive']:
-        #     decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment'])
-        #     decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build'])
-        #     decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation'])
-        #     decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance'])
-        #     decile['network_cost_power_usd'] =  (decile['network_new_sites'] * country['cost_power'])
-
-        # elif decile['sharing_scenario'] == 'srn':
-        #     if decile['geotype'] == 'urban' or decile['geotype'] == 'suburban':
-        #         decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment'])
-        #         decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build'])
-        #         decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation'])
-        #         decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance'])
-        #         decile['network_cost_power_usd'] =  (decile['network_new_sites'] * country['cost_power'])
-        #     else:   
-        #         decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment']) * network_division
-        #         decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build']) * network_division
-        #         decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation']) * network_division
-        #         decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance']) * network_division
-        #         decile['network_cost_power_usd'] =  (decile['network_new_sites'] * country['cost_power']) * network_division
-
-        # elif decile['sharing_scenario'] == 'active':
-        #     decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment']) * network_division
-        #     decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build']) * network_division
-        #     decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation']) * network_division
-        #     decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance']) * network_division
-        #     decile['network_cost_power_usd'] =  (decile['network_new_sites'] * country['cost_power']) * network_division
-        
-        # else:
-        #     print('Did not reognize sharing scenario')
-
         if decile['sharing_scenario'] =='passive':
             decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build']) * (1 / decile['networks'])
         else:

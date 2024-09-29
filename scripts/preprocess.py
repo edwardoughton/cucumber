@@ -267,9 +267,9 @@ def get_regional_data(country):
             'adb_region': country['adb_region'],
             'GID_id': region[gid_level],
             'GID_level': gid_level,
-            'population': (population_summation if population_summation else 0),
-            'area_km2': area_km2,
-            'population_km2': population_km2,
+            'population': round(population_summation if population_summation else 0,0),
+            'area_km2': round(area_km2,1),
+            'population_km2': round(population_km2,1),
         })
 
     results_df = pd.DataFrame(results)
@@ -428,7 +428,7 @@ def process_unconstrained_site_estimation(country):
             'GID_level': gid_level,
             # 'population': round(region['population']),
             # 'area_km2': round(region['area_km2']),
-            'total_existing_sites': max(total_existing_sites_2G, total_existing_sites_4G),
+            'total_existing_sites': round(max(total_existing_sites_2G, total_existing_sites_4G)),
             # 'total_estimated_sites_2G': round(total_existing_sites_2G),
             'total_existing_sites_4G': round(total_existing_sites_4G),
             # 'sites_estimated_2G_km2': round(total_existing_sites_2G / region['area_km2'],4),
@@ -617,29 +617,6 @@ def load_regions(country, path, sites_lut):
     return data_initial
 
 
-def define_geotype(x):
-    """
-    Allocate geotype given a specific population density.
-
-    """
-    if x['population_km2'] > 5000:
-        return 'urban'
-    elif x['population_km2'] > 1500:
-        return 'suburban 1'
-    elif x['population_km2'] > 1000:
-        return 'suburban 2'
-    elif x['population_km2'] > 500:
-        return 'rural 1'
-    elif x['population_km2'] > 100:
-        return 'rural 2'
-    elif x['population_km2'] > 50:
-        return 'rural 3'
-    elif x['population_km2'] > 10:
-        return 'rural 4'
-    else:
-        return 'rural 5'
-
-
 def aggregate_to_deciles(data_initial):
     """
 
@@ -691,7 +668,7 @@ def aggregate_to_deciles(data_initial):
 
     output = pd.DataFrame(output)
 
-    output['geotype'] = output.apply(define_geotype, axis=1)
+    # output['geotype'] = output.apply(define_geotype, axis=1)
 
     return output
 
@@ -748,23 +725,24 @@ if __name__ == '__main__':
 
     for country in countries:
 
-        # if not country['iso3'] == 'PLW':
+        # if not country['iso3'] == 'KOR':
         #     continue
+
         if "{}".format(country['adb_region']) == 'nan':
             continue
         print(country['adb_region'])
         print('----')
         print('-- Working on {}'.format(country['country_name']))
 
-        # process_country_shapes(country)
+        process_country_shapes(country)
 
-        # process_regions(country)
+        process_regions(country)
 
-        # process_settlement_layer(country)
+        process_settlement_layer(country)
 
         get_regional_data(country)
 
-        # process_unconstrained_site_estimation(country)
+        process_unconstrained_site_estimation(country)
 
         generate_deciles(country)
 
