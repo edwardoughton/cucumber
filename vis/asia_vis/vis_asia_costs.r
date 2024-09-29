@@ -5,7 +5,7 @@ library(ggpubr)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 filename = 'global_cost_results.csv'
-data <- read.csv(file.path(folder, '..', 'results', 'global_results', filename))
+data <- read.csv(file.path(folder, '..', '..','results', 'global_results', filename))
 
 data = data[(data$sharing_scenario == 'baseline'),]
 data = data[(data$energy_scenario == "aps-2030"),]
@@ -46,9 +46,10 @@ data$tech = factor(
 
 data$capacity = factor(
   data$capacity,
-  levels = c(20, 30, 40),
-  labels = c('20 GB / Month / Smartphone', '30 GB / Month / Smartphone',
-             '40 GB / Month / Smartphone')
+  levels = c(10, 20, 30),
+  labels = c('10 GB / Month / Smartphone',
+             '20 GB / Month / Smartphone', 
+             '30 GB / Month / Smartphone')
 )
 
 #### Costs: income group
@@ -69,8 +70,8 @@ subset <- subset %>%
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
-             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
+  labels = c('Low Income','Lower-Middle Income',
+             'Upper-Middle Income','High Income')
 )
 
 subset <- subset %>%
@@ -95,7 +96,7 @@ plot1 =
        subtitle = "Reported for Emerging Asia.",
        x = NULL, y="Financial Cost (US$Bn)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  guides(fill=guide_legend(nrow=2)) +
+  guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)
 
@@ -180,6 +181,6 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'costs_panel.png')
+path = file.path(folder, 'figures', 'g_costs_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()

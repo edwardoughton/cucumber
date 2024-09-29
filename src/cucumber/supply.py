@@ -44,7 +44,7 @@ def estimate_supply(country, deciles, capacity_lut):
             total_site_density *
             decile['area_km2']
         )
-        # print(decile['sharing_scenario'], total_site_density, decile['area_km2'], decile['network_required_sites'])
+        
         if decile['population_km2'] < country['pop_density_satellite_threshold']:
             decile['total_required_sites'] = 0
 
@@ -94,7 +94,8 @@ def find_site_density(country, decile, capacity_lut):
     if target_gb == 0:
         return 0
 
-    ci = '90'#str(ci)
+    ci = str(country['confidence'][0])
+
     unique_densities = set()
 
     capacity = 0

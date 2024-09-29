@@ -78,11 +78,13 @@ subset <- subset %>%
     values_to = "value"
   )
 
+# 'Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
+# 'Upper-Middle Income Country (UMIC)','High Income Country (HIC)'
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income Country (LIC)','Lower-Middle Income Country (LMIC)',
-             'Upper-Middle Income Country (LMIC)','High Income Country (HIC)')
+  labels = c('Low Income','Lower-Middle Income',
+             'Upper-Middle Income','High Income')
 )
 
 subset <- subset %>%
@@ -107,7 +109,7 @@ plot1 =
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y="Terawatt Hours (tWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  guides(fill=guide_legend(nrow=2)) +
+  guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)
 
@@ -190,7 +192,7 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-path = file.path(folder, 'figures', 'energy_panel.png')
+path = file.path(folder, 'figures', 'a_energy_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
 # 

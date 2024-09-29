@@ -28,7 +28,7 @@ def all_options():
     """
     output = []
 
-    capacities = [20, 30, 40] 
+    capacities = [10, 20, 30] 
     generations = ['4G', '5G']
     backhaul_types = ['wireless', 'fiber']
     energy_scenarios = ['aps-2030']#['sps-2022', 'sps-2030','aps-2030']
