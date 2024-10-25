@@ -14,6 +14,10 @@ data = data%>% filter(GID_0 %in% ls)
 data = select(data, GID_0, country_name, adb_region, 
               population, area_km2, satellite)
 
+data$country_name = replace(data$country_name, 
+                            data$country_name == "Lao People's Democratic Republic (the)", 
+                            "Laos") 
+
 satellite_areas = data[(data$satellite == 1),]
 satellite_areas = satellite_areas %>%
   group_by(country_name, adb_region, satellite) %>%
@@ -87,5 +91,5 @@ panel = ggarrange(
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'satellite_areas.png')
-ggsave(path, units="in", width=8, height=4, dpi=300)
+ggsave(path, units="in", width=8, height=6, dpi=300)
 while (!is.null(dev.list()))  dev.off()

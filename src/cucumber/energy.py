@@ -34,11 +34,20 @@ def assess_energy(country, deciles, on_grid_mix):
     
     for decile in deciles:
 
+        #get the distance between points sqrt(1/site density) / 2
+        #dividing by 2 gets the distance from the site to the cell edge
+        distance_km = math.sqrt(1/(decile['network_required_sites']/decile['area_km2']))/2
+        
         baseline_net_handle = 'baseline' + '_' + decile['geotype']
         baseline_networks = country['networks'][baseline_net_handle]
 
         if decile['backhaul'] == 'wireless':
-            selected_backhaul = wireless_bh_kwh
+            if distance_km < 20:
+                selected_backhaul = country['energy_wireless_small_kwh']
+            elif distance_km < 40:
+                selected_backhaul = country['energy_wireless_medium_kwh']
+            else:
+                selected_backhaul = country['energy_wireless_large_kwh']
         elif decile['backhaul'] == 'fiber':
             selected_backhaul = fiber_bh_kwh
 

@@ -52,9 +52,10 @@ data$tech = factor(
 
 data$capacity = factor(
   data$capacity,
-  levels = c(20, 30, 40),
-  labels = c('20 GB / Month / Smartphone', '30 GB / Month / Smartphone',
-             '40 GB / Month / Smartphone')
+  levels = c(10, 20, 30),
+  labels = c('10 GB / Month / Smartphone',
+             '20 GB / Month / Smartphone', 
+             '30 GB / Month / Smartphone')
 )
 
 data$energy_scenario = factor(

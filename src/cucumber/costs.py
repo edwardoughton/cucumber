@@ -33,15 +33,22 @@ def assess_cost(country, deciles):
 
     for decile in deciles:
 
+        #get the distance between points sqrt(1/site density) / 2
+        #dividing by 2 gets the distance from the site to the cell edge
+        distance_km = math.sqrt(1/(decile['network_required_sites']/decile['area_km2']))/2
+
         baseline_net_handle = 'baseline' + '_' + decile['geotype']
         baseline_networks = country['networks'][baseline_net_handle]
 
-        if decile['sharing_scenario'] in ['active', 'srn']:
-            net_handle = decile['sharing_scenario'] + '_' + decile['geotype']
-            networks = country['networks'][net_handle]
-            network_division = (networks/baseline_networks)
-        else:
-            network_division = 1
+        if decile['backhaul'] == 'wireless':
+            if distance_km < 20:
+                selected_backhaul_cost = country['cost_wireless_small']
+            elif distance_km < 40:
+                selected_backhaul_cost = country['cost_wireless_medium']
+            else:
+                selected_backhaul_cost = country['cost_wireless_large']
+        elif decile['backhaul'] == 'fiber':
+            selected_backhaul_cost = country['cost_fiber_suburban_m'] * 1e3 * distance_km
 
         if decile['sharing_scenario'] =='passive':
             decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build']) * (1 / decile['networks'])
@@ -49,12 +56,14 @@ def assess_cost(country, deciles):
             decile['network_cost_site_build_usd'] = (decile['network_new_sites'] * country['cost_site_build'])
 
         decile['network_cost_equipment_usd'] = (decile['network_new_sites'] * country['cost_equipment'])
+        decile['network_cost_backhaul_usd'] = (decile['backhaul_new'] * selected_backhaul_cost)
         decile['network_cost_installation_usd'] = (decile['network_new_sites'] * country['cost_installation'])
         decile['network_cost_operation_and_maintenance_usd'] = (decile['network_new_sites'] * country['cost_operation_and_maintenance'])
         decile['network_cost_power_usd'] =  (decile['network_new_sites'] * country['cost_power'])
 
         decile['network_new_cost_usd'] = (
             decile['network_cost_equipment_usd'] + 
+            decile['network_cost_backhaul_usd'] +
             decile['network_cost_site_build_usd'] +
             decile['network_cost_installation_usd'] + 
             decile['network_cost_operation_and_maintenance_usd'] +
@@ -75,6 +84,7 @@ def assess_cost(country, deciles):
         #costs
         decile['total_new_cost_usd'] = calc(decile, 'network_new_cost_usd')
         decile['total_cost_equipment_usd'] = calc(decile, 'network_cost_equipment_usd')
+        decile['total_cost_backhaul_usd'] = calc(decile, 'network_cost_backhaul_usd')
         if decile['sharing_scenario'] =='passive':
             decile['total_cost_site_build_usd'] = decile['network_cost_site_build_usd']
         else:

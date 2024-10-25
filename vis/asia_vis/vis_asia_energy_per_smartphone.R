@@ -62,9 +62,10 @@ data$tech = factor(
 
 data$capacity = factor(
   data$capacity,
-  levels = c(20, 30, 40),
-  labels = c('20 GB / Month / Smartphone', '30 GB / Month / Smartphone',
-             '40 GB / Month / Smartphone')
+  levels = c(10, 20, 30),
+  labels = c('10 GB / Month / Smartphone',
+             '20 GB / Month / Smartphone', 
+             '30 GB / Month / Smartphone')
 )
 
 data$energy_scenario = factor(
@@ -132,11 +133,11 @@ max_value = max(round(subset$value,3)) + (max(round(subset$value,3))/5)
 plot1 =
   ggplot(subset, aes(x = tech, y = value, fill=income)) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
+  geom_text(aes(label = paste(round(value,1),"")), size=2, vjust=.5,hjust=-.2,
               position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
-  labs(title="(A) Cell Site Energy Consumption per Served Smartphone by Income Group.",
+  labs(title="(A) Cell Site Energy Consumption Per Served Smartphone by Income Group.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y="Kilowatt Hours (kWh)")  +
@@ -211,11 +212,11 @@ max_value = max(round(subset$value,3)) + + (max(round(subset$value,3))/5)
 plot2 =
   ggplot(subset, aes(x = tech, y = value, fill=adb_region)) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
+  geom_text(aes(label = paste(round(value,1),"")), size=2, vjust=.5,hjust=-.2,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
-  labs(title="(B) Cell Site Energy Consumption per Served Smartphone by Region.",
+  labs(title="(B) Cell Site Energy Consumption Per Served Smartphone by Region.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
        x = NULL, y="Kilowatt Hours (kWh)")  +
