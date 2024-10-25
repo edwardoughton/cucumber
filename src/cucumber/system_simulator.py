@@ -100,7 +100,7 @@ class SimulationManager(object):
 
             path_loss, r_model, r_distance = self.estimate_path_loss(
                 receiver, frequency, environment, simulation_parameters, 
-                random_variation
+                random_variation, generation
             )
 
             received_power = self.estimate_received_power(self.transmitter,
@@ -109,7 +109,7 @@ class SimulationManager(object):
 
             interference, i_model, ave_distance, ave_inf_pl = self.estimate_interference(
                 receiver, frequency, environment, simulation_parameters, 
-                random_variations[::-1])
+                random_variations[::-1], generation)
 
             noise = self.estimate_noise(
                 bandwidth
@@ -156,7 +156,7 @@ class SimulationManager(object):
 
 
     def estimate_path_loss(self, receiver, frequency, environment,
-        simulation_parameters, random_variation):
+        simulation_parameters, random_variation, generation):
         """
 
         Function to calculate the path loss between a transmitter
@@ -199,9 +199,19 @@ class SimulationManager(object):
         if strt_distance < 20:
             strt_distance = 20
 
+        if strt_distance < simulation_parameters['los_breakpoint_m'] :
+            type_of_sight = 'los'
+        else:
+            type_of_sight = 'nlos'
+        
+        seed_value = (simulation_parameters['seed_value2_{}'.format(generation)] +
+            simulation_parameters['seed_value2_{}'.format(environment)]
+        )
+            
         path_loss, variation = path_loss_calculator(
             strt_distance,
             frequency,
+            environment,
             simulation_parameters,
             random_variation
         )
@@ -253,7 +263,7 @@ class SimulationManager(object):
 
 
     def estimate_interference(self, receiver, frequency, environment,
-        simulation_parameters, random_variation):
+        simulation_parameters, random_variation, generation):
         """
         Calculate interference from other sites.
 
@@ -317,12 +327,12 @@ class SimulationManager(object):
             else:
                 type_of_sight = 'nlos'
 
-            # seed_value = (simulation_parameters['seed_value2_{}'.format(generation)] +
-            #             simulation_parameters['seed_value2_{}'.format(environment)]
-            # )
+            seed_value = (simulation_parameters['seed_value2_{}'.format(generation)] +
+                        simulation_parameters['seed_value2_{}'.format(environment)]
+            )
 
             path_loss, variation = path_loss_calculator(
-                interference_strt_distance, frequency, 
+                interference_strt_distance, frequency, environment,
                 simulation_parameters, random_variation[index:index+1][0])
 
             received_interference = self.estimate_received_power(

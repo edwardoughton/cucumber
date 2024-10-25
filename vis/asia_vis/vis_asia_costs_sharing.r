@@ -11,7 +11,7 @@ ls = c("ARM","AZE","GEO","KAZ","KGZ","TJK","TKM","UZB","CHN","HKG","KOR","MNG",
        "LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM","FJI","PNG","VUT","COK",
        "KIR","MHL","FSM","NRU","NIU","PLW","WSM","SLB","TON","TUV")
 data = data%>% filter(GID_0 %in% ls)
-data = data[(data$capacity == 30),]
+data = data[(data$capacity == 20),]
 data = data[(data$energy_scenario == "aps-2030"),]
 data$tech = paste(data$generation, data$backhaul)
 
@@ -86,7 +86,7 @@ plot1 =
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
     labs(title=expression(paste("(A) Financial Cost of Universal Broadband for Infrastructure Sharing by Income Group.")),
          fill=NULL,
-         subtitle = "Reported for Emerging Asia for 30 GB/Month.",
+         subtitle = "Reported for Emerging Asia for 20 GB/Month.",
          x = NULL, y="Financial Cost (US$Bn)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=1)) +
@@ -161,7 +161,7 @@ plot2 =
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("(B) Financial Cost of Universal Broadband for Infrastructure Sharing by Region.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia for 30 GB/Month.",
+       subtitle = "Reported for Emerging Asia for 20 GB/Month.",
        x = NULL, y="Financial Cost (US$Bn)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +

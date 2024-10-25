@@ -11,7 +11,7 @@ ls = c("ARM","AZE","GEO","KAZ","KGZ","TJK","TKM","UZB","CHN","HKG","KOR","MNG",
        "LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM","FJI","PNG","VUT","COK",
        "KIR","MHL","FSM","NRU","NIU","PLW","WSM","SLB","TON","TUV")
 data = data%>% filter(GID_0 %in% ls)
-data = data[(data$capacity == 30),]
+data = data[(data$capacity == 20),]
 data$tech = paste(data$generation, data$backhaul)
 
 data = select(data, GID_0, #capacity,
@@ -106,7 +106,7 @@ plot1 =
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
   labs(title=expression(paste("(A) Infrastructure Sharing Cell Site Operational Emissions (", CO[2], ") by Income Group.")),
        fill=NULL,
-       subtitle = "Reported for 30 GB/Month under the IEA Announced Policy Scenario 2030.",
+       subtitle = "Reported for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=1)) +
@@ -177,7 +177,7 @@ plot2 =
         axis.text.x = element_text(angle = 45, hjust=1)) +
   labs(title=expression(paste("(B) Infrastructure Sharing Cell Site Operational Emissions (", CO[2], ") by Region.")),
        fill=NULL,
-       subtitle = "Reported for 30 GB/Month under the IEA Announced Policy Scenario 2030.",
+       subtitle = "Reported for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +

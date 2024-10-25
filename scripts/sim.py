@@ -535,6 +535,10 @@ def write_frequency_lookup_table(results, environment, site_radius,
 if __name__ == '__main__':
 
     PARAMETERS = {
+        'seed_value': 42,
+        'seed_value2_urban': 1,
+        'seed_value2_suburban': 2,
+        'seed_value2_rural': 3,
         'seed_value2_4G': 4,
         'seed_value2_5G': 6,
         'seed_value2_free-space': 14,
@@ -552,20 +556,12 @@ if __name__ == '__main__':
         'iterations': 100,
     }
 
-    # SPECTRUM_PORTFOLIO = [
-    #     (0.7, 10, '5G', '1x1'),
-    #     (0.8, 10, '4G', '1x1'),
-    #     (1.8, 10, '4G', '1x1'),
-    #     (2.6, 10, '4G', '1x1'),
-    #     (3.5, 40, '5G', '1x1'),
-    # ]
-
     SPECTRUM_PORTFOLIO = [
         (0.7, 10, '5G', '4x4'),
         (0.8, 10, '4G', '2x2'),
         (1.8, 10, '4G', '2x2'),
         (2.6, 10, '4G', '2x2'),
-        (3.5, 40, '5G', '2x2'),
+        (3.5, 40, '5G', '4x4'),
     ]
 
     ANT_TYPES = [
@@ -658,13 +654,20 @@ if __name__ == '__main__':
         for n in range(min, max, increment):
             yield n
 
-    INCREMENT_MA = (500, 100000, 500) #(1000, 40000, 500) 
+    INCREMENT_MA = (500, 50000, 500)#100000, 500) #(1000, 40000, 500) 
 
     SITE_RADII = {
         'macro': {
-            'free-space':
-                generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2])
+            'urban':
+                generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
+            'suburban':
+                generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
+            'rural':
+                generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2]),
             },
+            # 'free-space':
+            #     generate_site_radii(INCREMENT_MA[0],INCREMENT_MA[1],INCREMENT_MA[2])
+            # },
         }
 
     unprojected_point = {
@@ -682,7 +685,10 @@ if __name__ == '__main__':
     projected_crs = 'epsg:3857'
 
     environments =[
-        'free-space'
+        'urban',
+        'suburban',
+        'rural'
+        # 'free-space'
     ]
 
     for environment in environments:
@@ -709,8 +715,7 @@ if __name__ == '__main__':
                         )
 
                 receivers = generate_receivers(site_area, PARAMETERS, 1)
-                # receivers = receivers[:100]
-                # print(len(receivers))
+
                 for frequency, bandwidth, generation, transmission_type in SPECTRUM_PORTFOLIO:
 
                     print('{}, {}, {}, {}'.format(frequency, bandwidth, generation, transmission_type))

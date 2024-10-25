@@ -226,7 +226,7 @@ def collect_results(countries):
     output.to_csv(path_out, index=False)
 
     output = output[[
-        'GID_0',
+        'GID_0','decile',
         'capacity','generation',
         'backhaul','energy_scenario','sharing_scenario',
         'income', 'wb_region','adb_region',#'product',
@@ -237,6 +237,7 @@ def collect_results(countries):
         'network_upgraded_sites','network_new_sites',
         'total_upgraded_sites','total_new_sites', 
         'total_cost_equipment_usd',
+        'total_cost_backhaul_usd',
         'total_cost_site_build_usd',
         'total_cost_installation_usd',
         'total_cost_operation_and_maintenance_usd',
@@ -397,6 +398,7 @@ if __name__ == '__main__':
             'network_required_sites', 
             'network_existing_sites',
             'network_upgraded_sites','network_new_sites',
+            'backhaul_existing','backhaul_new',
             'total_upgraded_sites','total_new_sites', 
             # 'network_existing_energy_kwh','network_new_energy_kwh',
             'total_existing_energy_kwh','total_new_energy_kwh',
@@ -419,6 +421,7 @@ if __name__ == '__main__':
             'network_required_sites', 
             'network_existing_sites',
             'network_upgraded_sites','network_new_sites',
+            'backhaul_existing','backhaul_new',
             'total_upgraded_sites','total_new_sites', 
             # 'network_existing_energy_kwh','network_new_energy_kwh',
             'total_existing_energy_kwh','total_new_energy_kwh',
