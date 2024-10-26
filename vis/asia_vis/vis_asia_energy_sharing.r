@@ -3,9 +3,12 @@ library(tidyverse)
 library(ggpubr)
 
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
-
 filename = 'global_results.csv'
-data <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
+data_all <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
+
+data = data_all
+# data = data[(data$GID_0 == 'ARM'),]
+
 ls = c("ARM","AZE","GEO","KAZ","KGZ","TJK","TKM","UZB","CHN","HKG","KOR","MNG",
        "TWN","BTN","NPL","MDV","AFG","BGD","IND","PAK","LKA","BRN","KHM","IDN",
        "LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM","FJI","PNG","VUT","COK",
@@ -14,7 +17,7 @@ data = data%>% filter(GID_0 %in% ls)
 data = data[(data$capacity == 20),]
 data$tech = paste(data$generation, data$backhaul)
 
-data = select(data, GID_0, #capacity,
+data = select(data, GID_0, iteration,
               tech, #capacity, 
               energy_scenario, sharing_scenario,
               income, adb_region,
@@ -29,7 +32,7 @@ data = select(data, GID_0, #capacity,
 )
 
 data = data %>%
-  group_by(GID_0, tech, sharing_scenario, energy_scenario,
+  group_by(GID_0, iteration, tech, sharing_scenario, energy_scenario,
            income, adb_region) %>%
   summarise(
     population_total = round(sum(population_total, na.rm=TRUE),0),
@@ -70,7 +73,7 @@ data$energy_scenario = factor(
 data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 
 #### Emissions: income group
-subset = select(data, income, tech, sharing_scenario,
+subset = select(data, iteration, income, tech, sharing_scenario,
                 total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
@@ -88,20 +91,34 @@ subset$income = factor(
 )
 
 subset <- subset %>%
-  group_by(income, tech, sharing_scenario) %>%
+  group_by(iteration, income, tech, sharing_scenario) %>%
   summarize(
     value = sum(value)
     )
 
-subset$value = subset$value / 1e9 #convert kwh -> twh
+subset <- subset %>%
+  ungroup() %>%
+  group_by(income, tech, sharing_scenario) %>%
+  mutate(
+    value_mean = round(mean(value)/ 1e9,3), #convert kwh -> twh
+    value_sd = round(sd(value)/ 1e9,3)      #convert kwh -> twh
+  )
 
-max_value = max(round(subset$value,3)) + (max(round(subset$value,3))/5)
+subset = select(subset, income, tech, sharing_scenario, value_mean, value_sd)
+subset = unique(subset)         
+
+max_value = max(round(subset$value_mean,3)) + (max(round(subset$value_mean,3))/5)
 
 plot1 =
-  ggplot(subset, aes(x = tech, y = value, fill=income)) +
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(income, -value_mean))) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
-              position = position_dodge(.9), angle=90) +
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
+            vjust=1.5,hjust=-.15,
+            position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
   labs(title="(A) Infrastructure Sharing Cell Site Energy Consumption by Income Group.",
@@ -119,7 +136,7 @@ plot1 =
 # while (!is.null(dev.list()))  dev.off()
 
 #### Emissions demand: regions
-subset = select(data, adb_region, tech, sharing_scenario,
+subset = select(data, iteration, adb_region, tech, sharing_scenario,
                 total_existing_energy_kwh, total_new_energy_kwh)
 
 subset <- subset %>%
@@ -139,39 +156,33 @@ subset$adb_region = factor(
 )
 
 subset <- subset %>%
-  group_by(adb_region, tech, sharing_scenario) %>%
+  group_by(iteration, adb_region, tech, sharing_scenario) %>%
   summarize(
     value = sum(value)
   )
 
-subset$value = subset$value / 1e9 #convert kwh -> twh
+subset <- subset %>%
+  ungroup() %>%
+  group_by(adb_region, tech, sharing_scenario) %>%
+  mutate(
+    value_mean = round(mean(value)/ 1e9,3), #convert kwh -> twh
+    value_sd = round(sd(value)/ 1e9,3)      #convert kwh -> twh
+  )
 
-# df_errorbar <-
-#   subset |>
-#   group_by(adb_region, tech, energy_scenario) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, energy_scenario) |>
-#   summarize(
-#     adb_region = 'South Asia',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
+subset = select(subset, adb_region, tech, sharing_scenario, value_mean, value_sd)
+subset = unique(subset)         
 
-# min_value = min(round(df_errorbar$low,3))
-# max_value = max(round(df_errorbar$high,3)) + .5
-max_value = max(round(subset$value,3)) + + (max(round(subset$value,3))/5)
-
-# min_value[min_value > 0] = 0
+max_value = max(round(subset$value_mean,3)) + + (max(round(subset$value_mean,3))/5)
 
 plot2 =
-  ggplot(subset, aes(x = tech, y = value, fill=adb_region)) +
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(adb_region, -value_mean))) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=1.6, vjust=.5,hjust=-.2,
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
+            vjust=1.5,hjust=-.15,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +

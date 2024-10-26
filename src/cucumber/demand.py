@@ -44,6 +44,7 @@ def estimate_demand(country, deciles):
         if not decile['area_km2'] > 0:
             continue
 
+        decile['iteration'] = country['iteration']
         decile['income'] = country['income']
         decile['wb_region'] = country['wb_region']
         decile['adb_region'] = country['adb_region']

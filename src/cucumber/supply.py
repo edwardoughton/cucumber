@@ -94,7 +94,7 @@ def find_site_density(country, decile, capacity_lut):
     if target_gb == 0:
         return 0
 
-    ci = str(country['confidence'][0])
+    ci = str(country['confidence'])
 
     unique_densities = set()
 

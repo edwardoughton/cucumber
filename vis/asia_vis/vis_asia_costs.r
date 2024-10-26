@@ -5,13 +5,16 @@ library(ggpubr)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 filename = 'global_cost_results.csv'
-data <- read.csv(file.path(folder, '..', '..','results', 'global_results', filename))
+data_all <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
+
+data = data_all
+# data = data[(data$GID_0 == 'ARM'),]
 
 data = data[(data$sharing_scenario == 'baseline'),]
 data = data[(data$energy_scenario == "aps-2030"),]
 data$tech = paste(data$generation, data$backhaul)
 
-data = select(data, GID_0, #capacity,
+data = select(data, GID_0, iteration,
               tech, capacity, energy_scenario,
               income, adb_region,
               # population_total, area_km2,
@@ -26,7 +29,7 @@ data = select(data, GID_0, #capacity,
 )
 
 data = data %>%
-  group_by(GID_0, tech, capacity, income, adb_region,) %>%
+  group_by(GID_0, iteration, tech, capacity, income, adb_region,) %>%
   summarise(
     # population_total = round(sum(population_total, na.rm=TRUE),0),
     # area_km2 = round(sum(area_km2, na.rm=TRUE),0),
@@ -55,7 +58,7 @@ data$capacity = factor(
 )
 
 #### Costs: income group
-subset = select(data, income, tech, capacity,
+subset = select(data, iteration, income, tech, capacity,
                 total_cost_equipment_usd,
                 total_cost_backhaul_usd,
                 total_cost_site_build_usd,
@@ -78,20 +81,34 @@ subset$income = factor(
 )
 
 subset <- subset %>%
-  group_by(income, tech, capacity) %>%
+  group_by(iteration, income, tech, capacity) %>%
   summarize(
     value = sum(value)
     )
 
-subset$value = subset$value / 1e9 
+subset <- subset %>%
+  ungroup() %>%
+  group_by(income, tech, capacity) %>%
+  mutate(
+    value_mean = round(mean(value)/ 1e9,3), #convert kwh -> twh
+    value_sd = round(sd(value)/ 1e9,3)      #convert kwh -> twh
+  )
 
-max_value = max(round(subset$value,3)) + (max(round(subset$value,3))/5)
+subset = select(subset, income, tech, capacity, value_mean, value_sd)
+subset = unique(subset)         
+
+max_value = max(round(subset$value_mean,3)) + (max(round(subset$value_mean,3))/4)
 
 plot1 =
-  ggplot(subset, aes(x = tech, y = value, fill=income)) +
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(income, -value_mean))) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
-              position = position_dodge(.9), angle=90) +
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
+            vjust=1.5,hjust=-.15,
+            position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
   labs(title=expression(paste("(A) Financial Cost of Universal Broadband by Income Group.")),
@@ -109,7 +126,7 @@ plot1 =
 # while (!is.null(dev.list()))  dev.off()
 
 #### Emissions demand: regions
-subset = select(data, adb_region, tech, capacity,
+subset = select(data, iteration, adb_region, tech, capacity,
                 total_cost_equipment_usd,
                 total_cost_backhaul_usd,
                 total_cost_site_build_usd,
@@ -134,37 +151,33 @@ subset$adb_region = factor(
 )
 
 subset <- subset %>%
-  group_by(adb_region, tech, capacity) %>%
+  group_by(iteration, adb_region, tech, capacity) %>%
   summarize(
     value = sum(value)
   )
 
-subset$value = subset$value / 1e9 #convert t -> mt
+subset <- subset %>%
+  ungroup() %>%
+  group_by(adb_region, tech, capacity) %>%
+  mutate(
+    value_mean = round(mean(value)/ 1e9,3), #convert kwh -> twh
+    value_sd = round(sd(value)/ 1e9,3)      #convert kwh -> twh
+  )
 
-# df_errorbar <-
-#   subset |>
-#   group_by(wb_region, tech, energy_scenario) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, energy_scenario) |>
-#   summarize(
-#     wb_region = 'South Asia',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
+subset = select(subset, adb_region, tech, capacity, value_mean, value_sd)
+subset = unique(subset)         
 
-# min_value = min(round(df_errorbar$low,3))
-# max_value = max(round(df_errorbar$high,3)) + .5
-max_value = max(round(subset$value,3)) + + (max(round(subset$value,3))/5)
+max_value = max(round(subset$value_mean,3)) + + (max(round(subset$value_mean,3))/4)
 
 plot2 =
-  ggplot(subset, aes(x = tech, y = value, fill=adb_region)) +
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(adb_region, -value_mean))) +
   geom_bar(stat="identity", position='dodge') +
-  geom_text(aes(label = paste(round(value,0),"")), size=2, vjust=.5,hjust=-.2,
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
+            vjust=1.5,hjust=-.15,
             position = position_dodge(.9), angle=90) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 45, hjust=1)) +
@@ -185,6 +198,7 @@ panel = ggarrange(
   legend = 'bottom')
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
+folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 path = file.path(folder, 'figures', 'g_costs_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
