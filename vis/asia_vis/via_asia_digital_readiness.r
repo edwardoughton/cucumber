@@ -35,9 +35,9 @@ plot1 =
                 hjust = ifelse(value >= 0, -.2, 1)), size=2.2) + #, vjust=.4,hjust=1) +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 0, hjust=.7, size=8,vjust=1)) +
-  labs(title="Digital Readiness Index for Emerging Asia Countries.",
+  labs(title="Digital Readiness Index for Developing Asia.",
        fill=NULL,
-       subtitle = "Reported for standardized scores from Cisco (2021) by Region.",
+       subtitle = "Reported for standardized scores from Cisco (2021) by region.",
        x = NULL, y="Standardized digital readiness score")  +
   scale_y_continuous(expand = c(0, 0), limits = c(-3, 5)) +
   scale_fill_viridis_d() +

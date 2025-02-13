@@ -5,7 +5,6 @@ library(ggpubr)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'global_results.csv'
 data_all <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
-
 data = data_all
 # data = data[(data$GID_0 == 'ARM'),]
 
@@ -78,7 +77,12 @@ data$income = factor(
   labels = c('Low Income','Lower-Middle Income',
              'Upper-Middle Income','High Income')
 )
-
+# data$income = factor(
+#   data$income,
+#   levels = c('LIC','UMIC','LMIC','HIC'),
+#   labels = c('Low Income',
+#              'Upper-Middle Income','Lower-Middle Income','High Income')
+# )
 data$adb_region = factor(
   data$adb_region,
   levels = c('Caucasus and Central Asia','East Asia',
@@ -155,24 +159,25 @@ subset = unique(subset)
 max_value = max(round(subset$value_mean,3)) + (max(round(subset$value_mean,3))/5)
 
 plot1 = 
-  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(income, -value_mean))) +
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(income, -value_mean))) + 
   geom_bar(stat="identity", position='dodge') +
   geom_errorbar(data = subset,
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(A) Cell Site Operational Emissions Per Served Smartphone (", CO[2], ") by Income Group.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by magnitude for developing Asia under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
   guides(fill=guide_legend(nrow=1)) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(breaks=c('Low Income','Lower-Middle Income',
+                                'Upper-Middle Income','High Income')) +
   facet_grid(~capacity)
 
 subset = select(data, iteration, adb_region, tech, capacity,
@@ -233,26 +238,119 @@ plot2 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(B) Cell Site Operational Emissions Per Served Smartphone (", CO[2], ") by Region.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by magnitude for developing Asia under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
+  scale_fill_viridis_d(breaks=c('Caucasus and Central Asia','East Asia',
+                                'South Asia','Southeast Asia','The Pacific')) +
   facet_grid(~capacity)
 
-panel = ggarrange(
-  plot1,
-  plot2,
-  # labels = c("A", "B", "C"),
-  ncol = 1, nrow = 2,
-  common.legend = FALSE,
-  legend = 'bottom')
 
+###############
+
+subset = select(data, iteration, GID_0, tech, capacity,
+                population_with_smartphones,
+                total_new_emissions_t_co2, 
+                total_existing_emissions_t_co2)
+
+top_countries <- c("CHN", "IND", "IDN", "PAK")
+subset = subset %>%
+  filter(GID_0 %in% top_countries) %>%
+  group_by(iteration, GID_0, tech, capacity) %>%
+  summarize(
+    population_with_smartphones = sum(population_with_smartphones),
+    total_new_emissions_t_co2 = sum(total_new_emissions_t_co2), 
+    total_existing_emissions_t_co2 = sum(total_existing_emissions_t_co2)
+  )
+
+subset$total_new_emissions_kg_co2_per_user = (
+  (subset$total_new_emissions_t_co2 * 1e3) / subset$population_with_smartphones
+)  #(convert to kg)
+
+subset$total_existing_emissions_kg_co2_per_user = (
+  (subset$total_existing_emissions_t_co2 * 1e3) / subset$population_with_smartphones
+)  #(convert to kg)
+
+subset <- subset %>%
+  pivot_longer(
+    cols = `total_new_emissions_kg_co2_per_user`:`total_existing_emissions_kg_co2_per_user`,
+    names_to = "metric",
+    values_to = "value"
+  )
+
+subset <- subset %>%
+  group_by(iteration, GID_0, tech, capacity) %>%
+  summarize(
+    value = sum(value)
+  )
+
+subset <- subset %>%
+  ungroup() %>%
+  group_by(GID_0, tech, capacity) %>%
+  mutate(
+    value_mean = round(mean(value),3),
+    value_sd = round(sd(value),3)     
+  )
+
+
+subset$GID_0 = factor(
+  subset$GID_0,
+  levels = c('CHN', 'IND', 'IDN', 'PAK'),
+  labels = c('China', 'India', 'Indonesia', 'Pakistan')
+)
+
+subset = select(subset, GID_0, tech, capacity, value_mean, value_sd)
+subset = unique(subset)         
+
+max_value = max(round(subset$value_mean,3)) + + (max(round(subset$value_mean,3))/5)
+top_countries <- c('China', 'India', 'Indonesia', 'Pakistan')
+
+plot3 = ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(GID_0, -value_mean))) +
+  geom_bar(stat="identity", position='dodge') +
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
+  labs(title=expression(paste("(C) Cell Site Operational Emissions Per Served Smartphone (", CO[2], ") by Top Four Countries.")),
+       fill=NULL,
+       subtitle = "Ordered by magnitude for developing Asia under the IEA Announced Policy Scenario 2030.",
+       x = NULL, y=expression(paste("Kilograms of ", CO[2])), sep="")  +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
+  scale_fill_viridis_d(breaks=top_countries) +
+  facet_grid(~capacity)
+
+################
+adjusted_legend_theme <- theme(
+  legend.margin = margin(-10, 0, 0, 0),  # Moves legend up
+  legend.position = 'bottom'
+)
+
+plot1 <- plot1 + adjusted_legend_theme
+plot2 <- plot2 + adjusted_legend_theme
+plot3 <- plot3 + adjusted_legend_theme
+
+panel <- ggarrange(
+  plot1, plot2, plot3,
+  ncol = 1, nrow = 3,
+  common.legend = FALSE,
+  legend = 'bottom',
+  heights = c(1, 1, 1)  # Equal height distribution
+)
+
+# Save the plot
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'd_emissions_per_smartphone_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
-while (!is.null(dev.list()))  dev.off()
+while (!is.null(dev.list())) dev.off()

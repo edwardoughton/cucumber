@@ -115,18 +115,19 @@ plot1 =
   aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
   position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
   width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(A) Cell Site Operational Emissions (", CO[2], ") by Income Group.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by mangitude for developing Asia under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
   guides(fill=guide_legend(nrow=1)) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(breaks=c('Low Income','Lower-Middle Income',
+                                'Upper-Middle Income','High Income')) +
   facet_grid(~capacity)
 
 # dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
@@ -180,178 +181,84 @@ plot2 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(B) Cell Site Operational Emissions (", CO[2], ") by Region.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by magnitude for developing Asia under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
+  scale_fill_viridis_d(breaks=c('Caucasus and Central Asia','East Asia',
+                                'South Asia','Southeast Asia','The Pacific')) +
   facet_grid(~capacity)
 
-panel = ggarrange(
-  plot1,
-  plot2,
-  # labels = c("A", "B", "C"),
-  ncol = 1, nrow = 2,
+###############
+# Filter data for the top four countries
+top_countries <- c("CHN", "IND", "IDN", "PAK")
+subset_countries <- data %>%
+  filter(GID_0 %in% top_countries) %>%
+  group_by(GID_0, tech, capacity) %>%
+  summarize(
+    value_mean = round(mean(total_existing_emissions_t_co2 + total_new_emissions_t_co2) / 1e6, 3),  # Convert kWh -> TWh
+    value_sd = round(sd(total_existing_emissions_t_co2 + total_new_emissions_t_co2) / 1e6, 3)
+  )
+
+subset_countries$GID_0 = factor(
+  subset_countries$GID_0,
+  levels = c('CHN', 'IND', 'IDN', 'PAK'),
+  labels = c('China', 'India', 'Indonesia', 'Pakistan')
+)
+
+# Define max value for scaling
+max_value = max(round(subset_countries$value_mean, 3)) + (max(round(subset_countries$value_mean, 3)) / 5)
+top_countries <- c('China', 'India', 'Indonesia', 'Pakistan')
+
+# Create the new plot (C)
+plot3 =
+  ggplot(subset_countries, aes(x = tech, y = value_mean, fill = reorder(GID_0, -value_mean))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(
+    aes(y = value_mean, ymin = value_mean - value_sd, ymax = value_mean + value_sd),
+    position = position_dodge(width = .9), lwd = 0.5, show.legend = FALSE,
+    width = 0.1, color = "#FF0000FF"
+  ) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = "bottom") +
+  labs(
+    title = expression(paste("(C) Cell Site Operational Emissions (", CO[2], ") by Top Four Countries.")),
+    fill = NULL,
+    subtitle = "Ordered by magnitude for developing Asia under the IEA Announced Policy Scenario 2030.",
+    x = NULL, y = expression(paste("Megatonnes of ", CO[2]))) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
+  scale_fill_viridis_d(breaks = top_countries) +
+  facet_grid(~capacity)
+
+
+################
+adjusted_legend_theme <- theme(
+  legend.margin = margin(-10, 0, 0, 0),  # Moves legend up
+  legend.position = 'bottom'
+)
+
+plot1 <- plot1 + adjusted_legend_theme
+plot2 <- plot2 + adjusted_legend_theme
+plot3 <- plot3 + adjusted_legend_theme
+
+panel <- ggarrange(
+  plot1, plot2, plot3,
+  ncol = 1, nrow = 3,
   common.legend = FALSE,
-  legend = 'bottom')
+  legend = 'bottom',
+  heights = c(1, 1, 1)  # Equal height distribution
+)
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'b_emissions_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
-
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, income,
-#                 total_existing_emissions_t_co2, total_new_emissions_t_co2)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_emissions_t_co2`:`total_new_emissions_t_co2`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset = subset[(subset$income != 'HIC'),]
-# 
-# subset$income = factor(
-#   subset$income,
-#   levels = c('LIC','LMIC','UMIC'),
-#   labels = c('Low Income\nCountries (LICs)','Lower-Middle Income\nCountries (LMICs)',
-#              'Upper-Middle Income\nCountries (LMICs)')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_emissions_t_co2','total_existing_emissions_t_co2'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, income) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# subset$value = subset$value / 1e6 #convert t -> Mt
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, income) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, income) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot3 =
-#   ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,1),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title=expression(paste("Emerging Asia Total Mobile Site Operational Emissions by Income Group")),
-#        fill=NULL,
-#        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(income~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'emissions_new_vs_existing_income.png')
-# ggsave(path, units="in", width=8, height=6, dpi=300)
-# while (!is.null(dev.list()))  dev.off()
-# 
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, adb_region,
-#                 total_existing_emissions_t_co2, total_new_emissions_t_co2)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_emissions_t_co2`:`total_new_emissions_t_co2`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset$adb_region = factor(
-#   subset$adb_region,
-#   levels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific'
-#   ),
-#   labels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_emissions_t_co2','total_existing_emissions_t_co2'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, adb_region) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# subset$value = subset$value / 1e6 #convert t -> Mt
-# 
-# # totals <- subset %>%
-# #   group_by(tech, capacity) %>%
-# #   summarize(value = signif(sum(value))) #convert kwh -> twh
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, adb_region) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, adb_region) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot4 =
-#   ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,1),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title=expression(paste("Emerging Asia Total Mobile Site Operational Emissions by Income Group")),
-#        fill=NULL,
-#        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(adb_region~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'emissions_new_vs_existing_regions.png')
-# ggsave(path, units="in", width=8, height=10, dpi=300)
-# while (!is.null(dev.list()))  dev.off()

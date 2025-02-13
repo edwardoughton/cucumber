@@ -6,9 +6,7 @@ folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 
 filename = 'global_cost_results.csv'
 data_all <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
-
 data = data_all
-# data = data[(data$GID_0 == 'ARM'),]
 
 data = data[(data$sharing_scenario == 'baseline'),]
 data = data[(data$energy_scenario == "aps-2030"),]
@@ -106,18 +104,19 @@ plot1 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(A) Financial Cost of Universal Broadband by Income Group.")),
        fill=NULL,
-       subtitle = "Reported for Emerging Asia.",
+       subtitle = "Ordered by magnitude and reported for developing Asia.",
        x = NULL, y="Financial Cost (US$Bn)")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
   guides(fill=guide_legend(nrow=1)) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(breaks=c('Low Income','Lower-Middle Income',
+                                'Upper-Middle Income','High Income')) +
   facet_grid(~capacity)
 
 # dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
@@ -176,26 +175,108 @@ plot2 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
     labs(title=expression(paste("(B) Financial Cost of Universal Broadband by Region.")),
          fill=NULL,
-         subtitle = "Reported for Emerging Asia.",
+         subtitle = "Ordered by magnitude and reported for developing Asia.",
          x = NULL, y="Financial Cost (US$Bn)")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
+  scale_fill_viridis_d(breaks=c('Caucasus and Central Asia','East Asia',
+                                'South Asia','Southeast Asia','The Pacific')) +
   facet_grid(~capacity)
 
-panel = ggarrange(
-  plot1,
-  plot2,
-  # labels = c("A", "B", "C"),
-  ncol = 1, nrow = 2,
+############
+subset = select(data, iteration, GID_0, tech, capacity,
+                total_cost_equipment_usd,
+                total_cost_backhaul_usd,
+                total_cost_site_build_usd,
+                total_cost_installation_usd,
+                total_cost_operation_and_maintenance_usd,
+                total_cost_power_usd)
+
+top_countries <- c("CHN", "IND", "IDN", "PAK")
+subset <- subset %>%
+  filter(GID_0 %in% top_countries)
+
+subset <- subset %>%
+  pivot_longer(
+    cols = `total_cost_equipment_usd`:`total_cost_power_usd`,
+    names_to = "metric",
+    values_to = "value"
+  )
+
+subset <- subset %>%
+  group_by(iteration, GID_0, tech, capacity) %>%
+  summarize(value = sum(value), .groups = "drop")
+
+# Compute mean and standard deviation per country, tech, and capacity
+subset <- subset %>%
+  group_by(GID_0, tech, capacity) %>%
+  mutate(
+    value_mean = round(mean(value) / 1e9, 3), # Convert USD to billion USD
+    value_sd = round(sd(value) / 1e9, 3)      # Convert USD to billion USD
+  ) %>%
+  ungroup()
+
+# Select distinct rows for plotting
+subset = subset %>%
+  select(GID_0, tech, capacity, value_mean, value_sd) %>%
+  unique()
+
+subset$GID_0 = factor(
+  subset$GID_0,
+  levels = c('CHN', 'IND', 'IDN', 'PAK'),
+  labels = c('China', 'India', 'Indonesia', 'Pakistan')
+)
+
+# Define maximum value for scaling
+max_value = max(round(subset$value_mean,3)) + (max(round(subset$value_mean,3))/4)
+top_countries <- c('China', 'India', 'Indonesia', 'Pakistan')
+
+# Generate plot
+plot3 = ggplot(subset, aes(x = tech, y = value_mean, fill = reorder(GID_0, -value_mean))) +
+  geom_bar(stat="identity", position='dodge') +
+  geom_errorbar(
+    aes(y = value_mean, ymin = value_mean - value_sd, ymax = value_mean + value_sd),
+    position = position_dodge(width = .9), lwd = 0.5, show.legend = FALSE,
+    width = 0.1, color = "#FF0000FF"
+  ) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
+  labs(
+    title = "(C) Financial Cost of Universal Broadband by Top Four Countries.",
+    fill = NULL,
+    subtitle = "Ordered by magnitude and reported for selected Asian countries.",
+    x = NULL, y = "Financial Cost (US$Bn)"
+  ) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +  
+  scale_fill_viridis_d(breaks = c("China", "India", "Indonesia", "Pakistan")) +
+  facet_grid(~capacity)
+
+################
+adjusted_legend_theme <- theme(
+  legend.margin = margin(-10, 0, 0, 0),  # Moves legend up
+  legend.position = 'bottom'
+)
+
+plot1 <- plot1 + adjusted_legend_theme
+plot2 <- plot2 + adjusted_legend_theme
+plot3 <- plot3 + adjusted_legend_theme
+
+panel <- ggarrange(
+  plot1, plot2, plot3,
+  ncol = 1, nrow = 3,
   common.legend = FALSE,
-  legend = 'bottom')
+  legend = 'bottom',
+  heights = c(1, 1, 1)  # Equal height distribution
+)
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)

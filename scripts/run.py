@@ -10,8 +10,6 @@ import os
 import csv
 import configparser
 import pandas as pd
-import geopandas
-from collections import OrderedDict
 from tqdm import tqdm
 
 from cucumber.demand import estimate_demand
@@ -20,7 +18,6 @@ from cucumber.energy import assess_energy
 from cucumber.emissions import assess_emissions
 from cucumber.costs import assess_cost
 
-# from options import all_options, PARAMETERS
 from misc import find_country_list
 
 CONFIG = configparser.ConfigParser()
@@ -287,159 +284,159 @@ def collect_satellite_areas(countries):
 if __name__ == '__main__':
 
     countries = find_country_list([])
-    # path = os.path.join(DATA_INTERMEDIATE, 'uq_inputs.csv')
-    # options = pd.read_csv(path)
-    # options = options.to_dict('records')
+    path = os.path.join(DATA_INTERMEDIATE, 'uq_inputs.csv')
+    options = pd.read_csv(path)
+    options = options.to_dict('records')
 
-    # if not os.path.exists(OUTPUT):
-    #     os.makedirs(OUTPUT)
+    if not os.path.exists(OUTPUT):
+        os.makedirs(OUTPUT)
 
-    # path = os.path.join(DATA_INTERMEDIATE, 'luts', 'capacity_lut_by_frequency.csv')
-    # capacity_lut = read_capacity_lut(path)
+    path = os.path.join(DATA_INTERMEDIATE, 'luts', 'capacity_lut_by_frequency.csv')
+    capacity_lut = read_capacity_lut(path)
 
-    # country_parameters = load_country_parameters()
+    country_parameters = load_country_parameters()
 
-    # filename = 'iea_electricity_emissions_factors.csv'
-    # folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
-    # path = os.path.join(folder, filename)
-    # emissions_lut = read_emissions_lut(path)
+    filename = 'iea_electricity_emissions_factors.csv'
+    folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
+    path = os.path.join(folder, filename)
+    emissions_lut = read_emissions_lut(path)
 
-    # for country in tqdm(countries):#[:1]:
+    for country in tqdm(countries):#[:1]:
 
-    #     if "{}".format(country['adb_region']) == 'nan':
-    #         continue
+        if "{}".format(country['adb_region']) == 'nan':
+            continue
         
-    #     iso3 = country['iso3']
-    #     country['networks'] = country_parameters[country['iso3']]['networks']
+        iso3 = country['iso3']
+        country['networks'] = country_parameters[country['iso3']]['networks']
 
-    #     # if not iso3 == "KOR":
-    #     #     continue
+        # if not iso3 == "KOR":
+        #     continue
 
-    #     print('--Working on {}'.format(iso3))
+        print('--Working on {}'.format(iso3))
         
-    #     OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
+        OUTPUT_COUNTRY = os.path.join(OUTPUT, iso3)
 
-    #     if not os.path.exists(OUTPUT_COUNTRY):
-    #         os.makedirs(OUTPUT_COUNTRY)
+        if not os.path.exists(OUTPUT_COUNTRY):
+            os.makedirs(OUTPUT_COUNTRY)
 
-    #     filename = 'decile_data.csv'
-    #     path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
-    #     deciles_all = pd.read_csv(path_out)#[:1]
+        filename = 'decile_data.csv'
+        path_out = os.path.join(DATA_INTERMEDIATE, country['iso3'], filename)
+        deciles_all = pd.read_csv(path_out)#[:1]
 
-    #     output = []
-    #     energy_output = []
-    #     emissions_output = []
+        output = []
+        energy_output = []
+        emissions_output = []
 
-    #     for option in options:#[:2]:
+        for option in options:#[:2]:
 
-    #         country_params = country
-    #         country_params.update(option)
+            country_params = country
+            country_params.update(option)
 
-    #         deciles = deciles_all
+            deciles = deciles_all
 
-    #         folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
-    #         filename = 'WEO2023_Extended_Data_Regions.csv'
-    #         path_in = os.path.join(folder, filename)
-    #         energy_scenario = option['option'].split('_')[3]
-    #         on_grid_mix = load_on_grid_mix(country_params, energy_scenario, path_in)
+            folder = os.path.join(DATA_RAW, 'IEA_data', 'WEO2023 extended data')
+            filename = 'WEO2023_Extended_Data_Regions.csv'
+            path_in = os.path.join(folder, filename)
+            energy_scenario = option['option'].split('_')[3]
+            on_grid_mix = load_on_grid_mix(country_params, energy_scenario, path_in)
 
-    #         # capacity_generation_backhaul_energy_year
-    #         deciles['capacity'] = country_params['option'].split('_')[0]
-    #         deciles['generation'] = country_params['option'].split('_')[1]
-    #         deciles['backhaul'] = country_params['option'].split('_')[2]
-    #         deciles['energy_scenario'] = country_params['option'].split('_')[3]
-    #         deciles['sharing_scenario'] = country_params['option'].split('_')[4]
+            # capacity_generation_backhaul_energy_year
+            deciles['capacity'] = country_params['option'].split('_')[0]
+            deciles['generation'] = country_params['option'].split('_')[1]
+            deciles['backhaul'] = country_params['option'].split('_')[2]
+            deciles['energy_scenario'] = country_params['option'].split('_')[3]
+            deciles['sharing_scenario'] = country_params['option'].split('_')[4]
 
-    #         deciles = deciles.to_dict('records')
+            deciles = deciles.to_dict('records')
 
-    #         deciles = estimate_demand(
-    #             country_params,
-    #             deciles,
-    #         )
+            deciles = estimate_demand(
+                country_params,
+                deciles,
+            )
 
-    #         deciles = estimate_supply(
-    #             country_params,
-    #             deciles,
-    #             capacity_lut,
-    #         )
+            deciles = estimate_supply(
+                country_params,
+                deciles,
+                capacity_lut,
+            )
 
-    #         deciles, energy = assess_energy(
-    #             country_params,
-    #             deciles,
-    #             on_grid_mix
-    #         )
+            deciles, energy = assess_energy(
+                country_params,
+                deciles,
+                on_grid_mix
+            )
 
-    #         deciles, emissions = assess_emissions(
-    #             country_params,
-    #             deciles,
-    #             on_grid_mix,
-    #             emissions_lut
-    #         )
+            deciles, emissions = assess_emissions(
+                country_params,
+                deciles,
+                on_grid_mix,
+                emissions_lut
+            )
 
-    #         deciles = assess_cost(
-    #             country_params,
-    #             deciles,
-    #         )
+            deciles = assess_cost(
+                country_params,
+                deciles,
+            )
                    
-    #         output = output + deciles
-    #         energy_output = energy_output + energy
-    #         emissions_output = emissions_output + emissions
+            output = output + deciles
+            energy_output = energy_output + energy
+            emissions_output = emissions_output + emissions
 
-    #     output = pd.DataFrame(output)
-    #     if len(output) == 0:
-    #         continue
-    #     filename = 'results_{}.csv'.format(iso3)
-    #     path_out = os.path.join(OUTPUT_COUNTRY, filename)
-    #     output.to_csv(path_out, index=False)
+        output = pd.DataFrame(output)
+        if len(output) == 0:
+            continue
+        filename = 'results_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        output.to_csv(path_out, index=False)
 
-    #     output = output[[
-    #         'GID_0','iteration','decile',
-    #         'capacity','generation',
-    #         'backhaul','energy_scenario','sharing_scenario',
-    #         # 'income','wb_region','iea_classification',#'product',
-    #         'population_total', 'area_km2', 'population_km2',
-    #         'population_with_smartphones','smartphones_on_network',
-    #         'demand_mbps_km2',
-    #         'network_required_sites', 
-    #         'network_existing_sites',
-    #         'network_upgraded_sites','network_new_sites',
-    #         'backhaul_existing','backhaul_new',
-    #         'total_upgraded_sites','total_new_sites', 
-    #         # 'network_existing_energy_kwh','network_new_energy_kwh',
-    #         'total_existing_energy_kwh','total_new_energy_kwh',
-    #         # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
-    #         'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
-    #         'total_new_cost_usd'
-    #         ]]
-    #     filename = 'decile_emissions_{}.csv'.format(iso3)
-    #     path_out = os.path.join(OUTPUT_COUNTRY, filename)
-    #     output.to_csv(path_out, index=False)
+        output = output[[
+            'GID_0','iteration','decile',
+            'capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario',
+            # 'income','wb_region','iea_classification',#'product',
+            'population_total', 'area_km2', 'population_km2',
+            'population_with_smartphones','smartphones_on_network',
+            'demand_mbps_km2',
+            'network_required_sites', 
+            'network_existing_sites',
+            'network_upgraded_sites','network_new_sites',
+            'backhaul_existing','backhaul_new',
+            'total_upgraded_sites','total_new_sites', 
+            # 'network_existing_energy_kwh','network_new_energy_kwh',
+            'total_existing_energy_kwh','total_new_energy_kwh',
+            # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
+            'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
+            'total_new_cost_usd'
+            ]]
+        filename = 'decile_emissions_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        output.to_csv(path_out, index=False)
 
-    #     output = output[[
-    #         'GID_0','iteration',
-    #         'capacity','generation',
-    #         'backhaul','energy_scenario','sharing_scenario',
-    #         #'income', 'wb_region','iea_classification',#'product',
-    #         'population_total', 'area_km2', 'population_km2',
-    #         'population_with_smartphones','smartphones_on_network',
-    #         'demand_mbps_km2',
-    #         'network_required_sites', 
-    #         'network_existing_sites',
-    #         'network_upgraded_sites','network_new_sites',
-    #         'backhaul_existing','backhaul_new',
-    #         'total_upgraded_sites','total_new_sites', 
-    #         # 'network_existing_energy_kwh','network_new_energy_kwh',
-    #         'total_existing_energy_kwh','total_new_energy_kwh',
-    #         # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
-    #         'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
-    #         'total_new_cost_usd'
-    #         ]]
-    #     output = output.groupby([
-    #         'GID_0','iteration','capacity','generation',
-    #         'backhaul','energy_scenario','sharing_scenario'], as_index=False).sum()
-    #     filename = 'national_emissions_{}.csv'.format(iso3)
-    #     path_out = os.path.join(OUTPUT_COUNTRY, filename)
-    #     output.to_csv(path_out, index=False)
+        output = output[[
+            'GID_0','iteration',
+            'capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario',
+            #'income', 'wb_region','iea_classification',#'product',
+            'population_total', 'area_km2', 'population_km2',
+            'population_with_smartphones','smartphones_on_network',
+            'demand_mbps_km2',
+            'network_required_sites', 
+            'network_existing_sites',
+            'network_upgraded_sites','network_new_sites',
+            'backhaul_existing','backhaul_new',
+            'total_upgraded_sites','total_new_sites', 
+            # 'network_existing_energy_kwh','network_new_energy_kwh',
+            'total_existing_energy_kwh','total_new_energy_kwh',
+            # 'network_existing_emissions_t_co2','network_new_emissions_t_co2',
+            'total_existing_emissions_t_co2', 'total_new_emissions_t_co2',
+            'total_new_cost_usd'
+            ]]
+        output = output.groupby([
+            'GID_0','iteration','capacity','generation',
+            'backhaul','energy_scenario','sharing_scenario'], as_index=False).sum()
+        filename = 'national_emissions_{}.csv'.format(iso3)
+        path_out = os.path.join(OUTPUT_COUNTRY, filename)
+        output.to_csv(path_out, index=False)
 
     collect_results(countries)
 

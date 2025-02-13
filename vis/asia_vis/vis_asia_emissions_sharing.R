@@ -5,7 +5,6 @@ library(ggpubr)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 filename = 'global_results.csv'
 data_all <- read.csv(file.path(folder, '..', '..', 'results', 'global_results', filename))
-
 data = data_all
 # data = data[(data$GID_0 == 'ARM'),]
 
@@ -116,18 +115,19 @@ plot1 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1, size =8,vjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(A) Infrastructure Sharing Cell Site Operational Emissions (", CO[2], ") by Income Group.")),
        fill=NULL,
-       subtitle = "Reported for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by magnitude for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
   guides(fill=guide_legend(nrow=1)) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(breaks=c('Low Income','Lower-Middle Income',
+                                'Upper-Middle Income','High Income')) +
   facet_grid(~sharing_scenario)
 
 # dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
@@ -181,26 +181,99 @@ plot2 =
                 aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
                 position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
                 width = 0.1, color = "#FF0000FF") +
-  geom_text(aes(label = paste(round(value_mean,1),"")), size=1.8,
-            vjust=1.5,hjust=-.15,
-            position = position_dodge(.9), angle=90) +
-  theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
   labs(title=expression(paste("(B) Infrastructure Sharing Cell Site Operational Emissions (", CO[2], ") by Region.")),
        fill=NULL,
-       subtitle = "Reported for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
+       subtitle = "Ordered by magnitude for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-  scale_fill_viridis_d() +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
+  scale_fill_viridis_d(breaks=c('Caucasus and Central Asia','East Asia',
+                                'South Asia','Southeast Asia','The Pacific')) +
   facet_grid(~sharing_scenario)
 
-panel = ggarrange(
-  plot1,
-  plot2,
-  # labels = c("A", "B", "C"),
-  ncol = 1, nrow = 2,
+#### Emissions demand: COUNTRIES
+subset = select(data, iteration, GID_0, tech, sharing_scenario,
+                total_existing_emissions_t_co2, total_new_emissions_t_co2)
+
+top_countries <- c("CHN", "IND", "IDN", "PAK")
+subset = subset %>%
+  filter(GID_0 %in% top_countries) 
+
+subset <- subset %>%
+  pivot_longer(
+    cols = `total_existing_emissions_t_co2`:`total_new_emissions_t_co2`,
+    names_to = "metric",
+    values_to = "value"
+  )
+
+subset$GID_0 = factor(
+  subset$GID_0,
+  levels = c('CHN', 'IND', 'IDN', 'PAK'),
+  labels = c('China', 'India', 'Indonesia', 'Pakistan')
+)
+
+subset <- subset %>%
+  group_by(iteration, GID_0, tech, sharing_scenario) %>%
+  summarize(
+    value = sum(value)
+  )
+
+subset <- subset %>%
+  ungroup() %>%
+  group_by(GID_0, tech, sharing_scenario) %>%
+  mutate(
+    value_mean = round(mean(value)/ 1e6,3), #convert kwh -> twh
+    value_sd = round(sd(value)/ 1e6,3)      #convert kwh -> twh
+  )
+
+subset = select(subset, GID_0, tech, sharing_scenario, value_mean, value_sd)
+subset = unique(subset)         
+
+max_value = max(round(subset$value_mean,3)) + + (max(round(subset$value_mean,3))/5)
+top_countries <- c('China', 'India', 'Indonesia', 'Pakistan')
+
+plot3 =
+  ggplot(subset, aes(x = tech, y = value_mean, fill=reorder(GID_0, -value_mean))) +
+  geom_bar(stat="identity", position='dodge') +
+  geom_errorbar(data = subset,
+                aes(y = value_mean, ymin = value_mean-value_sd, ymax =  value_mean+value_sd),
+                position = position_dodge(width = .9),lwd = 0.5,show.legend = FALSE,
+                width = 0.1, color = "#FF0000FF") +
+  geom_text(aes(label = paste(round(value_mean, 1), ""), 
+                y = value_mean + value_sd + (max_value_countries * 0.03)),  
+            size = 2, vjust = 0.5, hjust = -0.15,  
+            position = position_dodge(.9), angle = 90) +
+  theme(legend.position = 'bottom') +
+  labs(title=expression(paste("(C) Infrastructure Sharing Cell Site Operational Emissions (", CO[2], ") by Top Four Countries.")),
+       fill=NULL,
+       subtitle = "Ordered by magnitude for 20 GB/Month under the IEA Announced Policy Scenario 2030.",
+       x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, max_value * 1.2)) +
+  scale_fill_viridis_d(breaks=top_countries) +
+  facet_grid(~sharing_scenario)
+
+################
+adjusted_legend_theme <- theme(
+  legend.margin = margin(-10, 0, 0, 0),  # Moves legend up
+  legend.position = 'bottom'
+)
+
+plot1 <- plot1 + adjusted_legend_theme
+plot2 <- plot2 + adjusted_legend_theme
+plot3 <- plot3 + adjusted_legend_theme
+
+panel <- ggarrange(
+  plot1, plot2, plot3,
+  ncol = 1, nrow = 3,
   common.legend = FALSE,
-  legend = 'bottom')
+  legend = 'bottom',
+  heights = c(1, 1, 1)  # Equal height distribution
+)
+
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'f_emissions_panel_sharing.png')

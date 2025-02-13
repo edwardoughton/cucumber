@@ -24,10 +24,6 @@ def generate_uq(global_parameters, options):
 
         for i in range(0, 100):
 
-            smartphone_penetration = random.randint(
-                global_parameters['smartphone_penetration_low'], 
-                global_parameters['smartphone_penetration_high']
-            )
             traffic_in_the_busy_hour_perc = random.randint(
                 global_parameters['traffic_in_the_busy_hour_perc_low'], 
                 global_parameters['traffic_in_the_busy_hour_perc_high']
@@ -104,7 +100,7 @@ def generate_uq(global_parameters, options):
             output.append({
                 'iteration': i,
                 'option': option,
-                'smartphone_penetration': smartphone_penetration,
+                'smartphone_penetration': global_parameters['smartphone_penetration'],
                 'traffic_in_the_busy_hour_perc': traffic_in_the_busy_hour_perc,
                 'pop_density_satellite_threshold': pop_density_satellite_threshold,
                 'return_period': global_parameters['return_period'],
@@ -141,9 +137,7 @@ def generate_uq(global_parameters, options):
 if __name__ == '__main__':
 
     PARAMETERS = {
-        'smartphone_penetration_low': 85,
-        'smartphone_penetration_baseline': 90,
-        'smartphone_penetration_high': 95,
+        'smartphone_penetration': 90,
         'traffic_in_the_busy_hour_perc_low': 15,
         'traffic_in_the_busy_hour_perc_baseline': 20,
         'traffic_in_the_busy_hour_perc_high': 25,
@@ -183,12 +177,12 @@ if __name__ == '__main__':
         'cost_wireless_small_low': 35000,
         'cost_wireless_small_baseline': 40000,
         'cost_wireless_small_high': 45000,
-        'cost_wireless_medium_low': 35000,
-        'cost_wireless_medium_baseline': 40000,
-        'cost_wireless_medium_high': 45000,
-        'cost_wireless_large_low': 75000,
-        'cost_wireless_large_baseline': 80000,        
-        'cost_wireless_large_high': 85000,
+        'cost_wireless_medium_low': 45000,
+        'cost_wireless_medium_baseline': 50000,
+        'cost_wireless_medium_high': 55000,
+        'cost_wireless_large_low': 55000,
+        'cost_wireless_large_baseline': 60000,        
+        'cost_wireless_large_high': 65000,
         'energy_equipment_kwh_low': 4,
         'energy_equipment_kwh_baseline': 5,
         'energy_equipment_kwh_high': 6,

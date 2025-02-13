@@ -52,10 +52,10 @@ plot1 =
          aes(x = reorder(country_name,population_perc), y = population_perc,
              fill = adb_region)) +
   geom_bar(stat="identity", position='dodge') + coord_flip() +
-  geom_text(aes(label = paste(round(population_perc,1),"%")), size=1.8, vjust=.4,hjust=-.2,
+  geom_text(aes(label = paste(round(population_perc,1),"%")), size=2, vjust=.4,hjust=-.2,
               position = position_dodge(.9), angle=0) +
   theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 0, hjust=.5, size =8,vjust=1)) +
+        axis.text.x = element_text(angle=0, hjust=.5, size=8,vjust=1)) +
   labs(title="(A) Population Requiring Satellite.",
        fill=NULL,
        subtitle = "Population density <5 km^2.",
@@ -69,10 +69,10 @@ plot2 =
          aes(x = reorder(country_name,area_km2_perc), y = area_km2_perc,
              fill=adb_region)) +
   geom_bar(stat="identity", position='dodge') + coord_flip() +
-  geom_text(aes(label = paste(round(area_km2_perc,1),"%")), size=1.8, vjust=.4,hjust=-.2,
+  geom_text(aes(label = paste(round(area_km2_perc,1),"%")), size=2, vjust=.4,hjust=-.2,
             position = position_dodge(.9), angle=0) +
   theme(legend.position = 'bottom',
-        axis.text.x = element_text(angle = 0, hjust=0.5, size =8,vjust=1)) +
+        axis.text.x = element_text(angle=0, hjust=0.5, size =8,vjust=1)) +
   labs(title="(B) Area Requiring Satellite.",
        fill=NULL,
        subtitle = "Population density <5 km^2.",
