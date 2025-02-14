@@ -57,9 +57,9 @@ data$tech = factor(
 data$capacity = factor(
   data$capacity,
   levels = c(10, 20, 30),
-  labels = c('10 GB / Month / Smartphone',
-             '20 GB / Month / Smartphone', 
-             '30 GB / Month / Smartphone')
+  labels = c('10 GB / month / smartphone',
+             '20 GB / month / smartphone', 
+             '30 GB / month / smartphone')
 )
 
 data$energy_scenario = factor(
@@ -75,8 +75,8 @@ data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 data$income = factor(
   data$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 data$adb_region = factor(
@@ -89,8 +89,8 @@ data$adb_region = factor(
 )
 
 subset = data %>% ungroup()
-subset = subset[(subset$iteration == 0),] 
-subset = subset[(subset$capacity == '10 GB / Month / Smartphone'),]
+subset = subset[(subset$iteration == '0'),] 
+subset = subset[(subset$capacity == '10 GB / month / smartphone'),]
 subset = subset[(subset$tech == '4G (W)'),] 
 unique_smartphones = select(subset, GID_0, income, population_with_smartphones)
 unique_smartphones = unique(unique_smartphones)

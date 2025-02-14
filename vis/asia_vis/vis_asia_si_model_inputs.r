@@ -36,9 +36,15 @@ data$generation_twh = factor(
 data$scenario = factor(
   data$scenario,
   levels = c("aps-2030","sps-2030","sps-2022"),
-  labels = c("Announced Pledges Scenario (2030)",
-             "Stated Policies Scenario (2030)",
-             "Stated Policies Scenario (2022)")
+  labels = c("Announced pledges scenario (2030)",
+             "Stated policies scenario (2030)",
+             "Stated policies scenario (2022)")
+)
+
+data$region = factor(
+  data$region,
+  levels = c("Asia Pacific","China","Eurasia","India","Japan","Middle East"),
+  labels = c("Asia and Pacific","People’s Republic of China","Eurasia","India","Japan","Middle East")
 )
 
 co2_kg_kwh <- data$co2_g_kwh / 1e3
@@ -123,9 +129,9 @@ data$SCENARIO = factor(
   levels = c("Stated Policies Scenario 2022",
              "Stated Policies Scenario 2030",
              "Announced Pledges Scenario 2030"),
-  labels = c("Stated Policies Scenario (2022)",
-             "Stated Policies Scenario (2030)",
-             "Announced Pledges Scenario (2030)")
+  labels = c("Stated policies scenario (2022)",
+             "Stated policies scenario (2030)",
+             "Announced pledges scenario (2030)")
 )
 
 data$REGION = factor(
@@ -136,14 +142,14 @@ data$REGION = factor(
              "Brazil","Asia Pacific","Africa"),
   labels = c("United States" ,"Southeast Asia","Russia","North America", 
              "Middle East","Japan","India","European Union",
-             "Europe","Eurasia","China","Central/South America",
-             "Brazil","Asia Pacific","Africa")
+             "Europe","Eurasia","People’s Republic\nof China","Central/South America",
+             "Brazil","Asia and Pacific","Africa")
 )
 
 data$product = factor(
   data$product,
   levels = c("Nuclear","Oil","Coal: unabated","Natural gas: unabated","Renewables"),
-  labels = c("Nuclear","Oil","Unabated Coal","Unabated Natural Gas","Renewables")
+  labels = c("Nuclear","Oil","Unabated coal","Unabated natural gas","Renewables")
 )
 
 df_errorbar <-
@@ -175,7 +181,7 @@ ggplot(data, aes(x = REGION, y = value, fill=product)) +
   labs(title=expression("Electricity Generation by Technology Source"),
        fill=NULL,
        subtitle = "Reported by IEA regions for Asia.",
-       x = NULL, y=expression("Petawatt Hours (pWh)"), sep="")  +
+       x = NULL, y=expression("Petawatt hours (pWh)"), sep="")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   # guides(fill=guide_legend(nrow=1)) +
   guides(fill = guide_legend(reverse = FALSE,nrow=1)) +

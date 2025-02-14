@@ -39,9 +39,9 @@ plot1 = ggplot(data1, aes(x = inter_site_distance_km, y = path_loss_dB,
   geom_line() +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 0, hjust=.5, size =8,vjust=1)) +
-  labs(title="(A) Path Loss by Inter-Dite Distance",
+  labs(title="(A) Path Loss by Inter-Site Distance",
        color=NULL, shape=NULL,
-       x = 'Inter-Side Distance (km)', y="Path Loss (dB)")  +
+       x = 'Inter-site distance (km)', y="Path loss (dB)")  +
   scale_color_viridis_d() +
   scale_x_continuous(breaks = seq(0, max_distance, by = 2)) +
   facet_grid(~environment)
@@ -54,9 +54,9 @@ plot2 = ggplot(data2, aes(x = inter_site_distance_km, y = received_power_dBm,
   geom_line() +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 0, hjust=.5, size =8,vjust=1)) +
-  labs(title="(B) Received Power by Inter-Dite Distance",
+  labs(title="(B) Received Power by Inter-Site Distance",
        color=NULL, shape=NULL,
-       x = 'Inter-Side Distance (km)', y="Received Power (dBm)")  +
+       x = 'Inter-site distance (km)', y="Received power (dBm)")  +
   scale_color_viridis_d() +
   scale_x_continuous(breaks = seq(0, max_distance, by = 2)) +
   facet_grid(~environment)
@@ -69,9 +69,9 @@ plot3 = ggplot(data3, aes(x = inter_site_distance_km, y = interference_dBm,
   geom_line() +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 0, hjust=.5, size =8,vjust=1)) +
-  labs(title="(C) Interference by Inter-Dite Distance",
+  labs(title="(C) Interference by Inter-Site Distance",
        color=NULL, shape=NULL,
-       x = 'Inter-Side Distance (km)', y="Received Interference (dB)")  +
+       x = 'Inter-site distance (km)', y="Received interference (dB)")  +
   scale_color_viridis_d() +
   scale_x_continuous(breaks = seq(0, max_distance, by = 2)) +
   facet_grid(~environment)
@@ -84,9 +84,9 @@ plot4 = ggplot(data4, aes(x = inter_site_distance_km, y = capacity_mbps_km2,
   geom_line() +
   theme(legend.position = 'bottom',
         axis.text.x = element_text(angle = 0, hjust=.5, size =8,vjust=1)) +
-  labs(title="(D) Capacity by Inter-Dite Distance",
+  labs(title="(D) Capacity by Inter-Site Distance",
        color=NULL, shape=NULL,
-       x = 'Inter-Side Distance (km)', y="Capacity (Mbps/km^2)")  +
+       x = 'Inter-site distance (km)', y="Capacity (Mbps/km^2)")  +
   scale_color_viridis_d() +
   # scale_y_continuous(limits = c(0, 700)) +
   scale_x_continuous(breaks = seq(0, max_distance, by = 2)) +

@@ -52,9 +52,9 @@ data$tech = factor(
 data$capacity = factor(
   data$capacity,
   levels = c(10, 20, 30),
-  labels = c('10 GB / Month / Smartphone',
-             '20 GB / Month / Smartphone', 
-             '30 GB / Month / Smartphone')
+  labels = c('10 GB / month / smartphone',
+             '20 GB / month / smartphone', 
+             '30 GB / month / smartphone')
 )
 
 #### Costs: income group
@@ -76,8 +76,8 @@ subset <- subset %>%
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 subset <- subset %>%
@@ -114,7 +114,7 @@ plot1 =
   labs(title=expression(paste("(A) Financial Cost of Universal Broadband by Income Group.")),
        fill=NULL,
        subtitle = "Reported for Emerging Asia.",
-       x = NULL, y="Financial Cost (US$Bn)")  +
+       x = NULL, y="Financial cost ($ billion)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
@@ -184,7 +184,7 @@ plot2 =
     labs(title=expression(paste("(B) Financial Cost of Universal Broadband by Region.")),
          fill=NULL,
          subtitle = "Reported for Emerging Asia.",
-         x = NULL, y="Financial Cost (US$Bn)")  +
+         x = NULL, y="Financial cost ($ billion)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)

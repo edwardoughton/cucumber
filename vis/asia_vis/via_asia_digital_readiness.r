@@ -22,10 +22,73 @@ data$metric = factor(
              'Ease.of.Doing.Business', 'Human.Capital', 'Start.Up.Environment',
              'Technology.Adoption', 'Technology.Infrastructure'
   ),
-  labels = c('Business & Govt. Investment',
+  labels = c('Business and Government Investment',
              'Ease of Doing Business', 'Human Capital', 'Start-Up Environment',
              'Technology Adoption', 'Technology Infrastructure')
 )
+
+data$Country = factor(
+  data$Country,
+  levels = c(
+    "Afghanistan",
+    "Armenia",
+    "Azerbaijan",
+    "Bangladesh",      
+    "Cambodia",
+    "China",
+    "Georgia",
+    "India",           
+    "Indonesia",
+    "Kazakhstan",
+    "Kyrgyzstan",
+    "Laos",            
+    "Malaysia",
+    "Mongolia",
+    "Myanmar",
+    "Nepal",           
+    "Pakistan",
+    "Papua New Guinea",
+    "Philippines",
+    "Singapore",       
+    "South Korea",
+    "Sri Lanka",
+    "Tajikistan",
+    "Thailand",        
+    "Timor-Leste",
+    "Uzbekistan",
+    "Vietnam" 
+  ),
+  labels = c(
+    "Afghanistan",
+    "Armenia",
+    "Azerbaijan",
+    "Bangladesh",      
+    "Cambodia",
+    "People’s Republic of China",
+    "Georgia",
+    "India",           
+    "Indonesia",
+    "Kazakhstan",
+    "Kyrgyz Republic",
+    "Lao People’s Democratic Republic",            
+    "Malaysia",
+    "Mongolia",
+    "Myanmar",
+    "Nepal",           
+    "Pakistan",
+    "Papua New Guinea",
+    "Philippines",
+    "Singapore",       
+    "Republic of Korea",
+    "Sri Lanka",
+    "Tajikistan",
+    "Thailand",        
+    "Timor-Leste",
+    "Uzbekistan",
+    "Viet Nam" 
+  )
+)
+
 
 plot1 = 
   ggplot(data,
@@ -46,5 +109,5 @@ plot1 =
 
 dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'digital_readiness.png')
-ggsave(path, units="in", width=8, height=10, dpi=300)
+ggsave(path, units="in", width=9, height=10, dpi=300)
 while (!is.null(dev.list()))  dev.off()

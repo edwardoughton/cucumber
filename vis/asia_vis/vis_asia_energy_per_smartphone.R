@@ -57,9 +57,9 @@ data$tech = factor(
 data$capacity = factor(
   data$capacity,
   levels = c(10, 20, 30),
-  labels = c('10 GB / Month / Smartphone',
-             '20 GB / Month / Smartphone', 
-             '30 GB / Month / Smartphone')
+  labels = c('10 GB / month / smartphone',
+             '20 GB / month / smartphone', 
+             '30 GB / month / smartphone')
 )
 
 data$energy_scenario = factor(
@@ -75,8 +75,8 @@ data = data[(data$energy_scenario == "Announced Policy Scenario 2030"),]
 data$income = factor(
   data$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 data$adb_region = factor(
@@ -89,8 +89,8 @@ data$adb_region = factor(
 )
 
 subset = data %>% ungroup()
-subset = subset[(subset$iteration == 0),] 
-subset = subset[(subset$capacity == '10 GB / Month / Smartphone'),]
+subset = subset[(subset$iteration == '0'),] 
+subset = subset[(subset$capacity == '10 GB / month / smartphone'),]
 subset = subset[(subset$tech == '4G (W)'),] 
 unique_smartphones = select(subset, GID_0, income, population_with_smartphones)
 unique_smartphones = unique(unique_smartphones)
@@ -151,7 +151,7 @@ plot1 =
   labs(title="(A) Cell Site Energy Consumption Per Served Smartphone by Income Group.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Kilowatt Hours (kWh)")  +
+       x = NULL, y="Kilowatt hours (kWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
@@ -159,8 +159,8 @@ plot1 =
 
 ####
 subset = data %>% ungroup()
-subset = subset[(subset$iteration == 0),] 
-subset = subset[(subset$capacity == '10 GB / Month / Smartphone'),]
+subset = subset[(subset$iteration == '0'),] 
+subset = subset[(subset$capacity == '10 GB / month / smartphone'),]
 subset = subset[(subset$tech == '4G (W)'),] 
 unique_smartphones = select(subset, GID_0, adb_region, population_with_smartphones)
 unique_smartphones = unique(unique_smartphones)
@@ -221,7 +221,7 @@ plot2 =
   labs(title="(B) Cell Site Energy Consumption Per Served Smartphone by Region.",
        fill=NULL,
        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-       x = NULL, y="Kilowatt Hours (kWh)")  +
+       x = NULL, y="Kilowatt hours (kWh)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~capacity)
@@ -238,153 +238,3 @@ dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'c_energy_panel_per_smartphone.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
-
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, income,
-#         total_existing_energy_kwh_per_user, total_new_energy_kwh_per_user)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_energy_kwh_per_user`:`total_new_energy_kwh_per_user`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset = subset[(subset$income != 'HIC'),]
-# 
-# subset$income = factor(
-#   subset$income,
-#   levels = c('HIC','UMIC','LMIC','LIC'),
-#   labels = c('High Income\nCountries (HICs)','Upper-Middle Income\nCountries (LMICs)',
-#              'Lower-Middle Income\nCountries (LMICs)','Low Income\nCountries (LICs)')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_energy_kwh_per_user','total_existing_energy_kwh_per_user'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, income) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# # subset$value = subset$value / 1e9 #convert kwh -> twh
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, income) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, income) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot3 =
-#   ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,0),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title="Cell Site Energy Consumption per Served Smartphone by Income Group",
-#        fill=NULL,
-#        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y="Kilowatt Hours")  +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(income~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'energy_new_vs_existing_income_per_smartphone.png')
-# ggsave(path, units="in", width=8, height=6, dpi=300)
-# while (!is.null(dev.list()))  dev.off()
-# 
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, adb_region,
-#                 total_existing_energy_kwh, total_new_energy_kwh)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_energy_kwh`:`total_new_energy_kwh`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset$adb_region = factor(
-#   subset$adb_region,
-#   levels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific'
-#   ),
-#   labels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_energy_kwh','total_existing_energy_kwh'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, adb_region) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# subset$value = subset$value / 1e9 #convert kwh -> twh
-# 
-# # totals <- subset %>%
-# #   group_by(tech, capacity) %>%
-# #   summarize(value = signif(sum(value))) #convert kwh -> twh
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, adb_region) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, adb_region) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot4 =
-#     ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,1),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title="Cell Site Energy Consumption per Served Smartphone by Region",
-#        fill=NULL,
-#        subtitle = "Reported for Emerging Asia by the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y="Kilowatt Hours") +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(adb_region~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'energy_new_vs_existing_regions_per_smartphone.png')
-# ggsave(path, units="in", width=8, height=10, dpi=300)
-# while (!is.null(dev.list()))  dev.off()

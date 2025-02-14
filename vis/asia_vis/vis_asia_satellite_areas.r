@@ -14,9 +14,81 @@ data = data%>% filter(GID_0 %in% ls)
 data = select(data, GID_0, country_name, adb_region, 
               population, area_km2, satellite)
 
-data$country_name = replace(data$country_name, 
-                            data$country_name == "Lao People's Democratic Republic (the)", 
-                            "Laos") 
+data$country_name = replace(data$country_name,
+                            data$country_name == "Lao People's Democratic Republic (the)",
+                            "Lao People's\nDemocratic Republic")
+
+data$country_name = replace(data$country_name,
+                            data$country_name == "China",
+                            "People’s Republic\nof China")
+
+data$country_name = replace(data$country_name,
+                            data$country_name == "Kyrgyzstan",
+                            "Kyrgyz Republic")
+
+# 
+# data$country_name = factor(
+#   data$country_name,
+#   levels = c(
+#     "Afghanistan",
+#     "Armenia",
+#     "Azerbaijan",
+#     "Bangladesh",      
+#     "Cambodia",
+#     "China",
+#     "Georgia",
+#     "India",           
+#     "Indonesia",
+#     "Kazakhstan",
+#     "Kyrgyzstan",
+#     "Laos",            
+#     "Malaysia",
+#     "Mongolia",
+#     "Myanmar",
+#     "Nepal",           
+#     "Pakistan",
+#     "Papua New Guinea",
+#     "Philippines",
+#     "Singapore",       
+#     "South Korea",
+#     "Sri Lanka",
+#     "Tajikistan",
+#     "Thailand",        
+#     "Timor-Leste",
+#     "Uzbekistan",
+#     "Vietnam" 
+#   ),
+#   labels = c(
+#     "Afghanistan",
+#     "Armenia",
+#     "Azerbaijan",
+#     "Bangladesh",      
+#     "Cambodia",
+#     "People’s Republic of China",
+#     "Georgia",
+#     "India",           
+#     "Indonesia",
+#     "Kazakhstan",
+#     "Kyrgyz Republic",
+#     "Lao People’s Democratic Republic",            
+#     "Malaysia",
+#     "Mongolia",
+#     "Myanmar",
+#     "Nepal",           
+#     "Pakistan",
+#     "Papua New Guinea",
+#     "Philippines",
+#     "Singapore",       
+#     "Republic of Korea",
+#     "Sri Lanka",
+#     "Tajikistan",
+#     "Thailand",        
+#     "Timor-Leste",
+#     "Uzbekistan",
+#     "Viet Nam" 
+#   )
+# )
+
 
 satellite_areas = data[(data$satellite == 1),]
 satellite_areas = satellite_areas %>%
