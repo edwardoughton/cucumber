@@ -58,8 +58,8 @@ data$tech = factor(
 data$sharing_scenario = factor(
   data$sharing_scenario,
   levels = c('baseline','passive','active','srn'),
-  labels = c('Baseline (No Sharing)','Passive Sharing',
-             'Active Sharing','Shared Rural Network (SRN)')
+  labels = c('Baseline (no sharing)','Passive sharing',
+             'Active sharing','Shared rural network (SRN)')
 )
 
 data$energy_scenario = factor(
@@ -86,8 +86,8 @@ subset <- subset %>%
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 subset <- subset %>%

@@ -56,9 +56,9 @@ data$tech = factor(
 data$capacity = factor(
   data$capacity,
   levels = c(10, 20, 30),
-  labels = c('10 GB / Month / Smartphone',
-             '20 GB / Month / Smartphone', 
-             '30 GB / Month / Smartphone')
+  labels = c('10 GB / month / smartphone',
+             '20 GB / month / smartphone', 
+             '30 GB / month / smartphone')
 )
 
 data$energy_scenario = factor(
@@ -85,8 +85,8 @@ subset <- subset %>%
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 subset <- subset %>%
@@ -205,153 +205,3 @@ dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
 path = file.path(folder, 'figures', 'b_emissions_panel.png')
 ggsave(path, units="in", width=8, height=8, dpi=300)
 while (!is.null(dev.list()))  dev.off()
-
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, income,
-#                 total_existing_emissions_t_co2, total_new_emissions_t_co2)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_emissions_t_co2`:`total_new_emissions_t_co2`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset = subset[(subset$income != 'HIC'),]
-# 
-# subset$income = factor(
-#   subset$income,
-#   levels = c('LIC','LMIC','UMIC'),
-#   labels = c('Low Income\nCountries (LICs)','Lower-Middle Income\nCountries (LMICs)',
-#              'Upper-Middle Income\nCountries (LMICs)')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_emissions_t_co2','total_existing_emissions_t_co2'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, income) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# subset$value = subset$value / 1e6 #convert t -> Mt
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, income) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, income) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot3 =
-#   ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,1),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title=expression(paste("Emerging Asia Total Mobile Site Operational Emissions by Income Group")),
-#        fill=NULL,
-#        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(income~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'emissions_new_vs_existing_income.png')
-# ggsave(path, units="in", width=8, height=6, dpi=300)
-# while (!is.null(dev.list()))  dev.off()
-# 
-# #### emissions: new vs old
-# subset = select(data, tech, capacity, adb_region,
-#                 total_existing_emissions_t_co2, total_new_emissions_t_co2)
-# 
-# subset <- subset %>%
-#   pivot_longer(
-#     cols = `total_existing_emissions_t_co2`:`total_new_emissions_t_co2`,
-#     names_to = "metric",
-#     values_to = "value"
-#   )
-# 
-# subset$adb_region = factor(
-#   subset$adb_region,
-#   levels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific'
-#   ),
-#   labels = c('Caucasus and Central Asia','East Asia',
-#              'South Asia','Southeast Asia','The Pacific')
-# )
-# 
-# subset$metric = factor(
-#   subset$metric,
-#   levels = c('total_new_emissions_t_co2','total_existing_emissions_t_co2'),
-#   labels = c('New', 'Existing')
-# )
-# 
-# subset <- subset %>%
-#   group_by(metric, tech, capacity, adb_region) %>%
-#   summarize(
-#     value = sum(value)
-#   )
-# 
-# subset$value = subset$value / 1e6 #convert t -> Mt
-# 
-# # totals <- subset %>%
-# #   group_by(tech, capacity) %>%
-# #   summarize(value = signif(sum(value))) #convert kwh -> twh
-# 
-# df_errorbar <-
-#   subset |>
-#   group_by(metric, tech, capacity, adb_region) |>
-#   summarize(
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   ) |>
-#   group_by(tech, capacity, adb_region) |>
-#   summarize(
-#     metric = 'New',
-#     # low = sum(low),
-#     value = sum(value)#,
-#     # high = sum(high)
-#   )
-# 
-# max_value = max(round(df_errorbar$value,3)) + (max(round(df_errorbar$value,3))/5)
-# 
-# plot4 =
-#   ggplot(subset, aes(x = tech, y = value, fill=metric)) +
-#   geom_bar(stat="identity", position='stack') +
-#   geom_text(data = df_errorbar,
-#             aes(label = paste(round(value,1),"")), size = 2,angle=0,
-#             vjust =-0.7, hjust =.3, angle = 0)+
-#   theme(legend.position = 'bottom',
-#         axis.text.x = element_text(angle = 45, hjust=1)) +
-#   labs(title=expression(paste("Emerging Asia Total Mobile Site Operational Emissions by Income Group")),
-#        fill=NULL,
-#        subtitle = "Reported for the IEA Announced Policy Scenario 2030.",
-#        x = NULL, y=expression(paste("Megatonnes of ", CO[2])), sep="")  +
-#   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
-#   scale_fill_viridis_d() +
-#   facet_grid(adb_region~capacity)
-# 
-# dir.create(file.path(folder, 'figures'), showWarnings = FALSE)
-# path = file.path(folder, 'figures', 'emissions_new_vs_existing_regions.png')
-# ggsave(path, units="in", width=8, height=10, dpi=300)
-# while (!is.null(dev.list()))  dev.off()

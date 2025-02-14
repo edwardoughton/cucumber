@@ -48,8 +48,8 @@ data$tech = factor(
 data$sharing_scenario = factor(
   data$sharing_scenario,
   levels = c('baseline','passive','active','srn'),
-  labels = c('Baseline (No Sharing)','Passive Sharing',
-             'Active Sharing','Shared Rural Network (SRN)')
+  labels = c('Baseline (no sharing)','Passive sharing',
+             'Active sharing','Shared rural network (SRN)')
 )
 
 #### Emissions: income group
@@ -61,8 +61,8 @@ subset$value = subset$total_new_cost_usd
 subset$income = factor(
   subset$income,
   levels = c('LIC','LMIC','UMIC','HIC'),
-  labels = c('Low Income','Lower-Middle Income',
-             'Upper-Middle Income','High Income')
+  labels = c('Low income','Lower-middle income',
+             'Upper-middle income','High income')
 )
 
 subset <- subset %>%
@@ -99,7 +99,7 @@ plot1 =
     labs(title=expression(paste("(A) Financial Cost of Universal Broadband for Infrastructure Sharing by Income Group.")),
          fill=NULL,
          subtitle = "Reported for Emerging Asia for 20 GB/Month.",
-         x = NULL, y="Financial Cost (US$Bn)")  +
+         x = NULL, y="Financial Cost ($ billions)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   guides(fill=guide_legend(nrow=1)) +
   scale_fill_viridis_d() +
@@ -163,7 +163,7 @@ plot2 =
   labs(title=expression(paste("(B) Financial Cost of Universal Broadband for Infrastructure Sharing by Region.")),
        fill=NULL,
        subtitle = "Reported for Emerging Asia for 20 GB/Month.",
-       x = NULL, y="Financial Cost (US$Bn)")  +
+       x = NULL, y="Financial Cost ($ billions)")  +
   scale_y_continuous(expand = c(0, 0), limits = c(0, max_value)) +
   scale_fill_viridis_d() +
   facet_grid(~sharing_scenario)
